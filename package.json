@@ -1,0 +1,32 @@
+{
+  "name": "twitchbot",
+  "version": "1.0.0",
+  "description": "Twitch Chat Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VinceGman/TwitchBot.git"
+  },
+  "author": "Vince Gonzalez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VinceGman/TwitchBot/issues"
+  },
+  "homepage": "https://github.com/VinceGman/TwitchBot#readme",
+  "dependencies": {
+    "coinlore-crypto-prices": "^0.1.1",
+    "comma-number": "^2.1.0",
+    "deep-object-diff": "^1.1.7",
+    "discord.js": "^13.6.0",
+    "dotenv": "^8.6.0",
+    "googleapis": "^85.0.0",
+    "node-nlp": "^4.22.18",
+    "nodemon": "^2.0.15",
+    "spotify-api.js": "^9.0.3",
+    "sqlite3": "^5.0.2",
+    "tmi.js": "^1.8.4"
+  }
+}
