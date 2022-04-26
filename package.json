@@ -25,8 +25,10 @@
     "googleapis": "^85.0.0",
     "node-nlp": "^4.22.18",
     "nodemon": "^2.0.15",
+    "randomcolor": "^0.6.2",
     "spotify-api.js": "^9.0.3",
     "sqlite3": "^5.0.2",
-    "tmi.js": "^1.8.4"
+    "tmi.js": "^1.8.4",
+    "unique-names-generator": "^4.7.1"
   }
 }

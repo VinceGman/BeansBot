@@ -1,77 +1,74 @@
-// const Discord = require('discord.js');
-// const discord_client = new Discord.Client();
-// require('dotenv').config();
-
-// module.exports = {
-//   name: 'conf',
-//   description: "confess anonymously",
-//   admin: false,
-//   type: "test",
-//   execute(message, args, admin) {
-//     // TODO: https://www.npmjs.com/package/wordpos
-//     // TODO: https://www.npmjs.com/package/spotify-url-info
-//     // TODO: add another level of identity abstraction
-//     // TODO: support multiple attachments, support discord gifs, support saved gifs
-//     // TODO: mutually exclusive reserved alias
-//     if (message.content.length > 2000) {
-//       message.channel.send("This message is too long. Send in parts.");
-//       return;
-//     }
-
-//     //discord_confessions = discord_client.channels.cache.get(process.env.confessions_id);
-
-//     let date = new Date();
-//     let obf_id = ((message.author.id * 23 * date.getDate() * (date.getMonth() + 1)) % 1000000).toString().slice(0, 6);
-
-//     let confessEmbed = new Discord.MessageEmbed()
-//       .setColor(`#${obf_id}`)
-//       .setTitle(`user_id: ${obf_id}`)
-//       .setDescription(`${message}`)
-//       .setFooter(`${date.toDateString()}`)
-//       .setTimestamp();
-
-//     //discord_confessions.send(confessEmbed);
-//     return;
-//   }
-// }
-
 require('dotenv').config(); // .env values
 const { MessageEmbed } = require('discord.js');
+const { uniqueNamesGenerator, adjectives, colors, animals, countries, names, languages, starWars } = require('unique-names-generator');
+let randomColor = require('randomcolor');
 
 module.exports = {
   name: 'conf',
   description: "confess things anonymously",
   admin: false,
-  type: "final",
-  execute(msg, run_type) {
+  type: "test",
+  async execute(discord_client, msg, run_type) {
     if (run_type != this.type) return;
 
-    let channel = msg.client.guilds.cache.get(process.env.server_id).channels.cache.get(process.env.discord_bot_log_id);
+    let server = discord_client.guilds.cache.get(process.env.server_id);
+    let user = server.members.cache.find(m => m.id === msg.author.id);
+
+    if (!user._roles.includes(process.env.confessions_role_id)) {
+      msg.channel.send('You need the confessions role to confess.');
+      return;
+    }
+
+    if (user.communicationDisabledUntilTimestamp != null) {
+      msg.channel.send("You'll be able to confess when your timeout ends.");
+      return;
+    }
+
+    let { getBanList } = require('./ban_list.js');
+    let ban_list = await getBanList();
+    if (ban_list.includes(user.user.id)) {
+      msg.channel.send("You're currently banned from confessions. If you have any questions, ask Sore#1414.");
+      return;
+    }
+
+    if (msg.content.length > 2000) {
+      msg.channel.send("This message is too long. Send in parts.");
+      return;
+    }
+
+    let channel = msg.client.guilds.cache.get(process.env.server_id).channels.cache.get(process.env.confessions_channel_id);
 
     let date = new Date();
-    let obf_id = ((msg.author.id * 23 * date.getDate() * (date.getMonth() + 1)) % 1000000).toString().slice(0, 6);
+    let day_secret = await this.secret(date.getDate());
+    let month_secret = await this.secret(date.getMonth() + 1);
+    let obf_id = ((msg.author.id * day_secret * month_secret) % 1000000).toString().slice(0, 6);
+
+    let generatedName = uniqueNamesGenerator({
+      dictionaries: [adjectives, animals],
+      length: 2,
+      seed: obf_id,
+    });
 
     let confessEmbed = new MessageEmbed()
-      .setColor(`#${obf_id}`)
-      .setTitle(`user_id: ${obf_id}`)
+      .setColor(randomColor({ seed: obf_id }))
+      .setTitle(`${generatedName}`)
       .setDescription(`${msg.content}`)
-      .setFooter({ text: date.toDateString()})
+      .setFooter({ text: `ID: ${obf_id}` })
       .setTimestamp();
 
-    // if (msg.attachments.size > 1) {
-
-    // }
-    // for (let [key, value] of msg.attachments) {
-    //   try {
-    //     confessEmbed.setImage(value.url);
-    //   }
-    //   catch (e) {
-    //     console.log(e);
-    //   }
-    // }
+    try {
+      msg.attachments.forEach(a => confessEmbed.setImage(a.url));
+    }
+    catch (err) {
+      console.log(err);
+    }
 
     channel.send({ embeds: [confessEmbed] });
 
     return;
+  },
+  async secret(num) {
+    let secrets = [149, 211, 331, 137, 359, 97, 479, 7, 491, 353, 5, 17, 19, 509, 257, 239, 347, 47, 269, 421, 31, 499, 191, 13, 83, 461, 311, 379, 229, 487, 457];
+    return secrets[num - 1];
   }
 }
