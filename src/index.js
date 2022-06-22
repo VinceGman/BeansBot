@@ -9,7 +9,7 @@ const discord_client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD
 discord_client.commands = new Collection();
 
 let prefix = '+';
-let run_type = 'test';
+let run_type = 'final';
 
 const commandFiles = fs.readdirSync('./src/commands/').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -19,12 +19,9 @@ for (const file of commandFiles) {
 }
 
 
-discord_client.on('ready', () => {
+discord_client.on('ready', async () => {
   console.log(`----------------------${discord_client.user.username} Online----------------------`);
   discord_client.user.setActivity("with code", { type: 'PLAYING' });
-
-  // const server = discord_client.guilds.cache.get(process.env.server_id);
-  // console.log(server.name);
 
   // let commands = server.commands;
 
@@ -33,11 +30,8 @@ discord_client.on('ready', () => {
   //   description: 'marco polo',
   // });
 
-  if (process.env.HOME == 'C:\\Users\\Vince') {
+  if (process.env.USERDOMAIN == 'DESKTOP-UI1NSUQ') {
     run_type = 'test';
-  }
-  else if (process.env.HOME == '/root') {
-    run_type = 'final';
   }
 });
 

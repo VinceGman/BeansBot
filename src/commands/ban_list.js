@@ -5,7 +5,7 @@ module.exports = {
     name: 'ban_list',
     description: "allows admins to ban or remove ban from confessions",
     admin: true,
-    type: "test",
+    type: "final",
     async execute(discord_client, msg, args, admin) {
         let ban_list = await this.getBanList();
 
@@ -51,7 +51,7 @@ module.exports = {
     async printBanList(discord_client, msg, ban_list, description) {
         let banlistEmbed = new MessageEmbed()
             .setColor(`#000000`)
-            .setTitle(`Confession Ban_List`)
+            .setTitle(`Confessions Ban_List`)
             .setDescription(description)
             .setFooter({ text: `Beans Staff Message` })
             .setTimestamp();

@@ -7,12 +7,13 @@ module.exports = {
   name: 'conf',
   description: "confess things anonymously",
   admin: false,
-  type: "test",
+  type: "final",
   async execute(discord_client, msg, run_type) {
     if (run_type != this.type) return;
 
     let server = discord_client.guilds.cache.get(process.env.server_id);
-    let user = server.members.cache.find(m => m.id === msg.author.id);
+    let users = await server.members.fetch()
+    let user = users.find(m => m.id === msg.author.id);
 
     if (!user._roles.includes(process.env.confessions_role_id)) {
       msg.channel.send('You need the confessions role to confess.');
@@ -27,7 +28,7 @@ module.exports = {
     let { getBanList } = require('./ban_list.js');
     let ban_list = await getBanList();
     if (ban_list.includes(user.user.id)) {
-      msg.channel.send("You're currently banned from confessions. If you have any questions, ask Sore#1414.");
+      msg.channel.send("You're currently banned from confessions. If you have any questions, ask Sore.");
       return;
     }
 
