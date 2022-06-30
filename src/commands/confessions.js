@@ -4,12 +4,16 @@ const { uniqueNamesGenerator, adjectives, colors, animals, countries, names, lan
 let randomColor = require('randomcolor');
 
 module.exports = {
-  name: 'conf',
+  name: 'confessions',
   description: "confess things anonymously",
   admin: false,
   type: "final",
-  async execute(discord_client, msg, run_type) {
-    if (run_type != this.type) return;
+  active_service: true,
+  async execute(discord_client, msg) {
+    if (!this.active_service) {
+      msg.channel.send("Confessions is currently down for maintenance.")
+      return;
+    }
 
     let server = discord_client.guilds.cache.get(process.env.server_id);
     let users = await server.members.fetch()
@@ -20,7 +24,7 @@ module.exports = {
       return;
     }
 
-    if (user.communicationDisabledUntilTimestamp != null) {
+    if (Number.isInteger(user.communicationDisabledUntilTimestamp) && user.communicationDisabledUntilTimestamp - Date.now() > 0) {
       msg.channel.send("You'll be able to confess when your timeout ends.");
       return;
     }
@@ -71,5 +75,8 @@ module.exports = {
   async secret(num) {
     let secrets = [149, 211, 331, 137, 359, 97, 479, 7, 491, 353, 5, 17, 19, 509, 257, 239, 347, 47, 269, 421, 31, 499, 191, 13, 83, 461, 311, 379, 229, 487, 457];
     return secrets[num - 1];
+  },
+  async service_toggle() {
+    this.active_service = !this.active_service;
   }
 }

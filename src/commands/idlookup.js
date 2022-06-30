@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-let { secret } = require('./conf.js');
+let { secret } = require('./confessions.js');
 
 module.exports = {
     name: 'idlookup',

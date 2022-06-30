@@ -22,6 +22,9 @@ for (const file of commandFiles) {
 discord_client.on('ready', async () => {
   console.log(`----------------------${discord_client.user.username} Online----------------------`);
   discord_client.user.setActivity("with code", { type: 'PLAYING' });
+  
+  const server = discord_client.guilds.cache.get(process.env.server_id);
+  let members = await server.members.fetch();
 
   // let commands = server.commands;
 
@@ -48,8 +51,8 @@ discord_client.on('messageCreate', async msg => {
 
   if (msg.guildId === null) {
     try {
-      //console.log(`${msg.author.username}: ${msg.content}`);
-      discord_client.commands.get('conf').execute(discord_client, msg, run_type);
+      if (discord_client.commands.get('confessions').type != run_type) return;
+      discord_client.commands.get('confessions').execute(discord_client, msg);
     }
     catch (err) {
       msg.channel.send("Confessions don't work right now or something went wrong with this message.");
