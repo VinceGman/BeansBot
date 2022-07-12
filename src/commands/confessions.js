@@ -20,7 +20,7 @@ module.exports = {
     let user = users.find(m => m.id === msg.author.id);
 
     if (!user._roles.includes(process.env.confessions_role_id)) {
-      msg.channel.send('You need the confessions role to confess.');
+      msg.channel.send('You need the confessions role to confess. Go to #commands and type this -> .confessions');
       return;
     }
 
@@ -48,15 +48,15 @@ module.exports = {
     let month_secret = await this.secret(date.getMonth() + 1);
     let obf_id = ((msg.author.id * day_secret * month_secret) % 1000000).toString().slice(0, 6);
 
-    let generatedName = uniqueNamesGenerator({
-      dictionaries: [adjectives, animals],
-      length: 2,
-      seed: obf_id,
-    });
+    // let generatedName = uniqueNamesGenerator({
+    //   dictionaries: [adjectives, animals],
+    //   length: 2,
+    //   seed: obf_id,
+    // });
 
     let confessEmbed = new MessageEmbed()
       .setColor(randomColor({ seed: obf_id }))
-      .setTitle(`${generatedName}`)
+      .setTitle(`ID: ${obf_id}`)
       .setDescription(`${msg.content}`)
       .setFooter({ text: `ID: ${obf_id}` })
       .setTimestamp();

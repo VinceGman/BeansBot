@@ -19,6 +19,7 @@
   "dependencies": {
     "coinlore-crypto-prices": "^0.1.1",
     "comma-number": "^2.1.0",
+    "cron": "^2.0.0",
     "deep-object-diff": "^1.1.7",
     "discord.js": "^13.6.0",
     "dotenv": "^8.6.0",

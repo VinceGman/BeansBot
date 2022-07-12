@@ -1,6 +1,5 @@
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
-const { active_service } = require('./confessions.js');
 
 module.exports = {
     name: 'status',
@@ -21,7 +20,8 @@ module.exports = {
                 const service = require(`./${file}`);
 
                 if (service.hasOwnProperty('active_service')) {
-                    status_embed.addField(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, `Active: ${service.active_service}`, false);
+                    let active = service.active_service ? 'This service is active.' : 'This service is down.';
+                    status_embed.addField(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, `${active}`, false);
                 }
             }
 
@@ -38,7 +38,8 @@ module.exports = {
             }
 
             if (service) {
-                msg.channel.send(`Service: ${service.name.charAt(0).toUpperCase()}${service.name.slice(1)} | Active: ${service.active_service}`);
+                let active = service.active_service ? 'This service is active.' : 'This service is down.';
+                msg.channel.send(`Service: ${service.name.charAt(0).toUpperCase()}${service.name.slice(1)} | ${active}`);
             }
             else {
                 msg.channel.send('This service does not exist.');

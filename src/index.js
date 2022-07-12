@@ -11,6 +11,8 @@ discord_client.commands = new Collection();
 let prefix = '+';
 let run_type = 'final';
 
+module.exports = { prefix: prefix }
+
 const commandFiles = fs.readdirSync('./src/commands/').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
@@ -18,13 +20,37 @@ for (const file of commandFiles) {
   discord_client.commands.set(command.name, command);
 }
 
+// var CronJob = require('cron').CronJob;
+// var job = new CronJob(
+// 	'0 18 * * *',
+// 	function() {
+// 		console.log('It is now noon.');
+// 	},
+// 	null,
+// 	false,
+// 	'America/Phoenix'
+// );
+// job.start();
+
 
 discord_client.on('ready', async () => {
   console.log(`----------------------${discord_client.user.username} Online----------------------`);
-  discord_client.user.setActivity("with code", { type: 'PLAYING' });
-  
+  discord_client.user.setActivity("with her feelings", { type: 'PLAYING' });
+
   const server = discord_client.guilds.cache.get(process.env.server_id);
   let members = await server.members.fetch();
+
+  // const s5_server = discord_client.guilds.cache.get(process.env.server_id);
+  // let s5_roles = await s5_server.roles.fetch();
+  // let swap = false; 
+  // s5_roles.forEach(r => {
+  //   if (r.name.includes('Level')) {
+  //     r.edit({ hoist: swap });
+  //   }
+  //   else if (r.name.includes('Color')) {
+  //     r.edit({ hoist: !swap })
+  //   }
+  // });
 
   // let commands = server.commands;
 
