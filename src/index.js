@@ -2,7 +2,7 @@ const fs = require('fs');
 require('dotenv').config(); // .env values
 const { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } = require('deep-object-diff');
 
-const { Client, Collection } = require('discord.js');
+const { Client, Collection, MessageEmbed } = require('discord.js');
 const discord_client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS', 'DIRECT_MESSAGES'], partials: ['MESSAGE', 'CHANNEL'] });
 
 
@@ -37,8 +37,34 @@ discord_client.on('ready', async () => {
   console.log(`----------------------${discord_client.user.username} Online----------------------`);
   discord_client.user.setActivity("with her feelings", { type: 'PLAYING' });
 
-  const server = discord_client.guilds.cache.get(process.env.server_id);
-  let members = await server.members.fetch();
+  // const server = discord_client.guilds.cache.get(process.env.server_id);
+  // let members = await server.members.fetch();
+
+
+  // const channel = discord_client.channels.cache.get('955489802600464507');
+
+  // // Create message pointer
+  // let message = await channel.messages
+  //   .fetch({ limit: 1 })
+  //   .then(messagePage => (messagePage.size === 1 ? messagePage.at(0) : null));
+
+  // let count = 0;
+  // while (message && count <= 1000) {
+  //   await channel.messages
+  //     .fetch({ limit: 100, before: message.id })
+  //     .then(messagePage => {
+  //       messagePage.forEach(msg => {
+  //         count += 100;
+  //         console.log('processed: 100 more messages');
+  //         // do shit
+  //       });
+
+  //       // Update our message pointer to be last message in page of messages
+  //       message = 0 < messagePage.size ? messagePage.at(messagePage.size - 1) : null;
+  //     });
+  // }
+
+
 
   // const s5_server = discord_client.guilds.cache.get(process.env.server_id);
   // let s5_roles = await s5_server.roles.fetch();
@@ -62,6 +88,17 @@ discord_client.on('ready', async () => {
   if (process.env.USERDOMAIN == 'DESKTOP-UI1NSUQ') {
     run_type = 'test';
   }
+
+  const bot_log = discord_client.channels.cache.get(process.env.discord_bot_log_id);
+  bot_log.send({
+    embeds:
+      [new MessageEmbed()
+        .setColor(`#000000`)
+        .setTitle(`System Restart`) 
+        .setDescription(`run_env: **${run_type}**`)
+        .setFooter({ text: `Beans Staff Message` })
+        .setTimestamp()]
+  });
 });
 
 // discord_client.on('interactionCreate', async interaction => {
@@ -91,7 +128,7 @@ discord_client.on('messageCreate', async msg => {
     try {
       if (discord_client.commands.get(command).type != run_type) return;
 
-      if (msg.member.roles.cache.some(role => role.name === 'Mods') || msg.member.roles.cache.some(role => role.id == process.env.admin_role_id)) {
+      if (msg.member.roles.cache.some(role => role.name === 'Mods' || role.id == process.env.admin_role_id)) {
         discord_client.commands.get(command).execute(discord_client, msg, args, true);
       }
       else {
