@@ -52,6 +52,7 @@ $RECYCLE.BIN/
 deprecated
 node_modules
 credentials.json
+service-account.json
 *.env
 *.txt
 *.db

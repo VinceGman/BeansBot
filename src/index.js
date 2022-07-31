@@ -9,7 +9,7 @@ const discord_client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD
 discord_client.commands = new Collection();
 
 let prefix = '+';
-let run_type = 'final';
+let run_type = 'production';
 
 module.exports = { prefix: prefix }
 
@@ -37,6 +37,7 @@ discord_client.on('ready', async () => {
   console.log(`----------------------${discord_client.user.username} Online----------------------`);
   discord_client.user.setActivity("with her feelings", { type: 'PLAYING' });
 
+  fs.promises.writeFile('service-account.json', process.env.service_account);
   // const server = discord_client.guilds.cache.get(process.env.server_id);
   // let members = await server.members.fetch();
 

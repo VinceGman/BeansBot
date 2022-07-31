@@ -1,11 +1,18 @@
-const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
+
+// https://console.cloud.google.com/apis/dashboard?project=beans-326017&show=all
+// https://console.cloud.google.com/firestore/data?project=beans-326017
+const { Firestore, FieldValue } = require('@google-cloud/firestore');
+const db = new Firestore({
+    projectId: 'beans-326017',
+    keyFilename: './service-account.json'
+});
 
 module.exports = {
     name: 'secretsanta',
     description: "secretsanta",
     admin: false,
-    type: "final",
+    type: "production",
     async execute(discord_client, msg, args, admin) {
         let secretsanta = await this.getsecretsanta();
 
@@ -22,6 +29,9 @@ module.exports = {
                 let user = msg.author;
 
                 if (!secretsanta.includes(user.id)) {
+                    await db.doc('lists/secret_santa').update({
+                        members: FieldValue.arrayUnion(user.id)
+                    });
                     secretsanta.push(user.id);
                     this.printsecretsanta(discord_client, msg, secretsanta, `Added user -> ${user.username}#${user.discriminator}`);
                 }
@@ -29,13 +39,15 @@ module.exports = {
                     this.printsecretsanta(discord_client, msg, secretsanta, `User already joined.`);
                 }
 
-                fs.promises.writeFile('secretsanta.txt', secretsanta.join('\n'));
                 return;
             }
             else if (args[0] == 'leave') {
                 let user = msg.author;
 
                 if (secretsanta.includes(user.id)) {
+                    await db.doc('lists/secret_santa').update({
+                        members: FieldValue.arrayRemove(user.id)
+                    });
                     secretsanta = secretsanta.filter(value => value != user.id);
                     this.printsecretsanta(discord_client, msg, secretsanta, `Removed user -> ${user.username}#${user.discriminator}`);
                 }
@@ -43,7 +55,6 @@ module.exports = {
                     this.printsecretsanta(discord_client, msg, secretsanta, `User has not joined.`);
                 }
 
-                fs.promises.writeFile('secretsanta.txt', secretsanta.join('\n'));
                 return;
             }
             else if (args[0] == 'start') {
@@ -74,7 +85,10 @@ module.exports = {
                     }
                 }
 
-                fs.promises.writeFile('secretsanta.txt', ''); // clears secretsanta
+                // clears secretsanta
+                await db.doc('lists/secret_santa').set({
+                    members: []
+                });
 
                 for (let i = 0; i < final.length; i++) {
                     let one_who_gifts = (await discord_client.guilds.cache.get(process.env.server_id).members.fetch()).find(u => u.user.id == final[i][0]);
@@ -96,20 +110,18 @@ module.exports = {
         }
     },
     async getsecretsanta() {
-        let secretsanta = '';
+        let secretsanta = [];
+
         try {
-            secretsanta = await fs.promises.readFile('secretsanta.txt', 'utf8');
+            (await db.doc('lists/secret_santa').get())._fieldsProto.members.arrayValue.values.forEach(m => {
+                secretsanta.push(m.stringValue);
+            });
         }
         catch (err) {
             console.log(err);
         }
 
-        if (secretsanta == '') {
-            return [];
-        }
-        else {
-            return secretsanta.split('\n');
-        }
+        return secretsanta;
     },
     async printsecretsanta(discord_client, msg, secretsanta, description) {
         let secretsantaEmbed = new MessageEmbed()

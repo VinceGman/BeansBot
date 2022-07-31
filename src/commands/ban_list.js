@@ -5,7 +5,7 @@ module.exports = {
     name: 'ban_list',
     description: "allows admins to ban or remove ban from confessions",
     admin: true,
-    type: "final",
+    type: "production",
     async execute(discord_client, msg, args, admin) {
         let ban_list = await this.getBanList();
 

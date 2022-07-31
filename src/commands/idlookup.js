@@ -5,7 +5,7 @@ module.exports = {
     name: 'idlookup',
     description: "idlookup for the users in confessions",
     admin: true,
-    type: "final",
+    type: "production",
     async execute(discord_client, msg, args, admin) {
         if (args.length == 0 || args.length == 2 || args.length >= 4) {
             msg.channel.send("+idlookup <id> | +idlookup <id> <month> <day>");

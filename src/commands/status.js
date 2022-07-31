@@ -5,7 +5,7 @@ module.exports = {
     name: 'status',
     description: "status of beans",
     admin: true,
-    type: "final",
+    type: "production",
     async execute(discord_client, msg, args, admin) {
         if (args.length <= 0) {
             let status_embed = new MessageEmbed()

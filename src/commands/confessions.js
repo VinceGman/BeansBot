@@ -7,7 +7,7 @@ module.exports = {
   name: 'confessions',
   description: "confess things anonymously",
   admin: false,
-  type: "final",
+  type: "production",
   active_service: true,
   async execute(discord_client, msg) {
     if (!this.active_service) {

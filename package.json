@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/VinceGman/TwitchBot#readme",
   "dependencies": {
+    "@google-cloud/firestore": "^5.0.2",
     "coinlore-crypto-prices": "^0.1.1",
     "comma-number": "^2.1.0",
     "cron": "^2.0.0",
