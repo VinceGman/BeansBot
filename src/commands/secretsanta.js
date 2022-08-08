@@ -99,7 +99,7 @@ module.exports = {
                 let secretsantaEmbed = new MessageEmbed()
                     .setColor(`#000000`)
                     .setTitle(`Secret Santa`)
-                    .setDescription(`Secret Santa has begun. You'll receive a direct message from Beans#8062 with your chosen person.`)
+                    .setDescription(`Secret Santa has begun. You'll receive a direct message from **Beans#8062** with your chosen person.`)
                     .setFooter({ text: `Beans Staff Message` })
                     .setTimestamp();
 
