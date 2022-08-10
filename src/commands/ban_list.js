@@ -1,9 +1,16 @@
-const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
+
+// https://console.cloud.google.com/apis/dashboard?project=beans-326017&show=all
+// https://console.cloud.google.com/firestore/data?project=beans-326017
+const { Firestore, FieldValue } = require('@google-cloud/firestore');
+const db = new Firestore({
+    projectId: 'beans-326017',
+    keyFilename: './service-account.json'
+});
 
 module.exports = {
     name: 'ban_list',
-    description: "allows admins to ban or remove ban from confessions",
+    description: "confessions ban_list manager",
     admin: true,
     type: "production",
     async execute(discord_client, msg, args, admin) {
@@ -22,31 +29,33 @@ module.exports = {
         }
 
         if (ban_list.includes(user.user.id)) {
+            await db.doc('lists/ban_list').update({
+                members: FieldValue.arrayRemove(user.user.id)
+            });
             ban_list = ban_list.filter(value => value != user.user.id);
             this.printBanList(discord_client, msg, ban_list, `Removed user from ban_list -> ${user.user.username}#${user.user.discriminator}`);
         }
         else {
+            await db.doc('lists/ban_list').update({
+                members: FieldValue.arrayUnion(user.user.id)
+            });
             ban_list.push(user.user.id);
             this.printBanList(discord_client, msg, ban_list, `Added user to ban_list -> ${user.user.username}#${user.user.discriminator}`);
         }
-
-        fs.promises.writeFile('ban_list.txt', ban_list.join('\n'));
     },
     async getBanList() {
-        let ban_list = '';
+        let ban_list = [];
+
         try {
-            ban_list = await fs.promises.readFile('ban_list.txt', 'utf8');
+            (await db.doc('lists/ban_list').get())._fieldsProto.members.arrayValue.values.forEach(m => {
+                ban_list.push(m.stringValue);
+            });
         }
         catch (err) {
             console.log(err);
         }
 
-        if (ban_list == '') {
-            return [];
-        }
-        else {
-            return ban_list.split('\n');
-        }
+        return ban_list;
     },
     async printBanList(discord_client, msg, ban_list, description) {
         let banlistEmbed = new MessageEmbed()

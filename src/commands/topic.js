@@ -12,7 +12,7 @@ const db = new Firestore({
 
 module.exports = {
     name: 'topic',
-    description: "topic change command",
+    description: "topic change in topic chat",
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {

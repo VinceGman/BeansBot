@@ -10,7 +10,7 @@ const db = new Firestore({
 
 module.exports = {
     name: 'secretsanta',
-    description: "secretsanta",
+    description: "secretsanta to trade pfps",
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {

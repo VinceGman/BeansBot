@@ -5,7 +5,7 @@ let randomColor = require('randomcolor');
 
 module.exports = {
   name: 'confessions',
-  description: "confess things anonymously",
+  description: "confess anonymously",
   admin: false,
   type: "production",
   active_service: true,
