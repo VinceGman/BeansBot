@@ -89,17 +89,18 @@ discord_client.on('ready', async () => {
   if (process.env.USERDOMAIN == 'DESKTOP-UI1NSUQ') {
     run_type = 'test';
   }
-
-  const bot_log = discord_client.channels.cache.get(process.env.discord_bot_log_id);
-  bot_log.send({
-    embeds:
-      [new MessageEmbed()
-        .setColor(`#000000`)
-        .setTitle(`System Restart`) 
-        .setDescription(`run_env: **${run_type}**`)
-        .setFooter({ text: `Beans Staff Message` })
-        .setTimestamp()]
-  });
+  else {
+    const bot_log = discord_client.channels.cache.get(process.env.discord_bot_log_id);
+    bot_log.send({
+      embeds:
+        [new MessageEmbed()
+          .setColor(`#000000`)
+          .setTitle(`System Restart`)
+          .setDescription(`run_env: **${run_type}**`)
+          .setFooter({ text: `Beans Staff Message` })
+          .setTimestamp()]
+    });
+  }
 });
 
 // discord_client.on('interactionCreate', async interaction => {
@@ -112,6 +113,11 @@ discord_client.on('ready', async () => {
 
 discord_client.on('messageCreate', async msg => {
   if (msg.author.bot) return;
+
+  if (msg.channel.id == '1009310724109123625') {
+    discord_client.commands.get('adventure').execute(discord_client, msg);
+    return; 
+  }
 
   if (msg.guildId === null) {
     try {

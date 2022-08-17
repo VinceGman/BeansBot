@@ -6,7 +6,7 @@ let randomColor = require('randomcolor');
 module.exports = {
   name: 'confessions',
   description: "confess anonymously",
-  admin: false,
+  admin: true,
   type: "production",
   active_service: true,
   async execute(discord_client, msg) {

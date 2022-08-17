@@ -18,6 +18,8 @@
   "homepage": "https://github.com/VinceGman/TwitchBot#readme",
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
+    "adventurejs": "^1.0.1",
+    "anime-character-random": "^1.0.13",
     "coinlore-crypto-prices": "^0.1.1",
     "comma-number": "^2.1.0",
     "cron": "^2.0.0",
@@ -30,6 +32,7 @@
     "spotify-api.js": "^9.0.3",
     "sqlite3": "^5.0.2",
     "tmi.js": "^1.8.4",
-    "unique-names-generator": "^4.7.1"
+    "unique-names-generator": "^4.7.1",
+    "wrap-text": "^1.0.9"
   }
 }
