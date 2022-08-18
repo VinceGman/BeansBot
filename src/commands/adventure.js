@@ -16,11 +16,15 @@ module.exports = {
             return;
         }
 
+        if (msg.content.startsWith('ooc') || msg.content.startsWith('-') || (msg.content.startsWith('(') && msg.content.endsWith(')')) || msg.content.startsWith('>') || msg.content.startsWith('/')) {
+            return;
+        }
+
         if (!this.game) {
             this.game = adventure.makeState();
         }
 
-        if (msg.content == 'start' || msg.content == 'Start') {
+        if (msg.content.toLowerCase() == 'start') {
             if (this.game.isDone()) {
                 this.game = adventure.makeState();
             }
@@ -29,6 +33,13 @@ module.exports = {
         let in_text = msg.content == 'null' ? '-' : msg.content;
         let out_text_array = this.game.advance(in_text);
         let out_text = out_text_array.join('\n');
+
+        if (out_text == '') {
+            if (this.game.isDone()) {
+                msg.channel.send(`\`\`\`say 'start' to play\`\`\``);
+            }
+            return;
+        }
 
         msg.channel.send(`\`\`\`${out_text}\`\`\``);
     },
