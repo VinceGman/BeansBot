@@ -16,7 +16,7 @@ module.exports = {
             return;
         }
 
-        if (msg.content.startsWith('ooc') || msg.content.startsWith('-') || (msg.content.startsWith('(') && msg.content.endsWith(')')) || msg.content.startsWith('>') || msg.content.startsWith('/')) {
+        if (msg.content.startsWith('ooc') || msg.content.startsWith('-') || (msg.content.startsWith('(') && msg.content.endsWith(')')) || msg.content.startsWith('>') || msg.content.startsWith('/') || (msg.content.startsWith('"') && msg.content.endsWith('"'))) {
             return;
         }
 
