@@ -148,7 +148,6 @@ discord_client.on('messageCreate', async msg => {
       }
     }
     catch (err) {
-      msg.channel.send(`This is not a command. See **${prefix}help** for commands.`);
       console.error(err);
     }
     return;
