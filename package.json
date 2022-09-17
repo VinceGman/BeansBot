@@ -18,8 +18,8 @@
   "homepage": "https://github.com/VinceGman/TwitchBot#readme",
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
+    "@shineiichijo/marika": "^2.0.5",
     "adventurejs": "^1.0.1",
-    "anime-character-random": "^1.0.13",
     "coinlore-crypto-prices": "^0.1.1",
     "comma-number": "^2.1.0",
     "cron": "^2.0.0",
