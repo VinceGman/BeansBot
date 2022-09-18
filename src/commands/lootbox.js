@@ -112,7 +112,7 @@ module.exports = {
         }, { merge: true });
 
         await db.collection('cards').add({
-            name: character.mal.name.stringValue,
+            name: character.mal.name.stringValue.trim(),
             anime: character.mal.origin.stringValue,
             image: character.mal.image.stringValue,
             owner_id: msg.author.id,
