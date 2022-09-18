@@ -1,6 +1,8 @@
 const { MessageEmbed } = require('discord.js');
 const wrapText = require("wrap-text");
 let textWrap = 31;
+let timer = {};
+let cooldown = 6;
 
 // https://console.cloud.google.com/apis/dashboard?project=beans-326017&show=all
 // https://console.cloud.google.com/firestore/data?project=beans-326017
@@ -16,6 +18,15 @@ module.exports = {
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
+        let current_time = Math.floor(Date.now() / 1000);
+        if (timer.hasOwnProperty(msg.author.id.toString())) {
+            if (current_time < timer[msg.author.id.toString()] + cooldown) {
+                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Profile Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
+                return;
+            }
+        }
+        timer[msg.author.id.toString()] = current_time;
+
         let user = (await db.doc(`members/${msg.author.id}`).get())._fieldsProto;
         let pulls = (await db.collection('cards').where('owner_id', '==', msg.author.id).get())._docs();
         let amount;

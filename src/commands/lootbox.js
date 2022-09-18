@@ -5,7 +5,7 @@ const wrapText = require("wrap-text");
 let textWrap = 31;
 let cardCost = 1200;
 let timer = {};
-let cooldown = 10;
+let cooldown = 6;
 
 // save all cards, make editions
 // queue them in the database for really fast grabs

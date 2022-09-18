@@ -41,19 +41,19 @@ module.exports = {
                 reimburse = 400;
                 break;
             case 'Uncommon':
-                reimburse = 1200;
+                reimburse = 800;
                 break;
             case 'Rare':
-                reimburse = 4800;
+                reimburse = 3600;
                 break;
             case 'Epic':
-                reimburse = 12000;
+                reimburse = 7200;
                 break;
             case 'Legendary':
-                reimburse = 36000;
+                reimburse = 14400;
                 break;
             case 'Ultimate':
-                reimburse = 48000;
+                reimburse = 28800;
                 break;
             default:
                 msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Character not found.`);
