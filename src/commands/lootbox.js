@@ -122,7 +122,7 @@ module.exports = {
             color: color,
             rarity: rarity,
             edition: "1",
-            rank: character.rank,
+            rank: character.rank.toString(),
         }).catch(err => msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This product wasn't stored properly. Please contact Sore#1414.`));
     },
     async createCard(start, end, data, msg) {
