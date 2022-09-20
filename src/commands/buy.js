@@ -2,7 +2,7 @@ const { MessageEmbed } = require('discord.js');
 const wrapText = require("wrap-text");
 let textWrap = 31;
 let timer = {};
-let cooldown = 60;
+let cooldown = 10;
 
 // https://console.cloud.google.com/apis/dashboard?project=beans-326017&show=all
 // https://console.cloud.google.com/firestore/data?project=beans-326017

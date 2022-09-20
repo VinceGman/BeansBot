@@ -77,6 +77,6 @@ module.exports = {
             credits: amount.toString(),
         }, { merge: true });
 
-        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Reimbursed: ${reimburse} - Total Credits: ${amount}`);
+        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Reimbursed: ${reimburse}`);
     }
 }

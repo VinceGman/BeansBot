@@ -37,9 +37,29 @@ module.exports = {
             amount = 12000;
         }
 
-        let owned = '';
-        pulls.forEach(p => { owned += `${p._fieldsProto.name.stringValue} - ${p._fieldsProto.stars.stringValue}\n`; });
-        owned = owned == '' ? '[none]' : owned.substring(0, 974);
+        let owned = [];
+        pulls.forEach(p => {
+            owned.push({ name: p._fieldsProto.name.stringValue, rank: +p._fieldsProto.rank.stringValue, stars: p._fieldsProto.stars.stringValue, protected: p._fieldsProto.protected.booleanValue, for_sale: p._fieldsProto.for_sale.booleanValue });
+        });
+
+        owned.sort((a, b) => (a.rank > b.rank) ? 1 : -1);
+
+        let ownedText = '';
+        let i = 0;
+        while (ownedText.length <= 920 && i < owned.length) {
+            let lock = '';
+            if (owned[i].protected) {
+                lock = ' - 🔒';
+            }
+            let sale = '';
+            if (owned[i].for_sale) {
+                sale = ' - ✅'
+            }
+            ownedText += `${owned[i].name}${lock}${sale} - #${owned[i].rank} - ${owned[i].stars}\n`;
+            i++;
+        }
+
+        // owned = owned == '' ? '[none]' : owned.substring(0, 974);
 
         // let profile_embed = new MessageEmbed()
         //     .addField('Currency', `${amount} credits`, false)
@@ -52,7 +72,7 @@ module.exports = {
         let profile_embed = new MessageEmbed()
             .setTitle(`${wrapText(msg.author.username, textWrap)}`)
             .addField('Currency', `${amount} credits`, false)
-            .addField('W&H Owned', `${owned}`, false)
+            .addField('W&H Owned', `${ownedText}`, false)
             .setThumbnail(msg.author.avatarURL())
             .setColor(`#ADD8E6`)
             .setFooter({ text: wrapText(`BHP Profile`, textWrap) })
