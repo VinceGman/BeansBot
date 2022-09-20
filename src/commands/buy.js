@@ -16,7 +16,7 @@ module.exports = {
     name: 'buy',
     description: "buy cards",
     admin: false,
-    type: "test",
+    type: "production",
     async execute(discord_client, msg, args, admin) {
         if (args.length == 0) {
             let buy_guide = new MessageEmbed()
