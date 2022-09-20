@@ -59,15 +59,7 @@ module.exports = {
             i++;
         }
 
-        // owned = owned == '' ? '[none]' : owned.substring(0, 974);
-
-        // let profile_embed = new MessageEmbed()
-        //     .addField('Currency', `${amount} credits`, false)
-        //     .addField('W&H Owned', `${wrapText(owned, textWrap)}`, false)
-        //     .setAuthor({ name: msg.author.username, iconURL: msg.author.avatarURL() })
-        //     .setColor(`#ADD8E6`)
-        //     .setFooter({ text: wrapText(`BHP Profile`, textWrap) })
-        //     .setTimestamp();
+        ownedText = ownedText == '' ? '[none]' : ownedText;
 
         let profile_embed = new MessageEmbed()
             .setTitle(`${wrapText(msg.author.username, textWrap)}`)
@@ -77,9 +69,6 @@ module.exports = {
             .setColor(`#ADD8E6`)
             .setFooter({ text: wrapText(`BHP Profile`, textWrap) })
             .setTimestamp();
-        // \n${msg.author.username}#${msg.author.discriminator} - ${pulls} owned
-        // .setTitle(`${wrapText(msg.author.username, textWrap)}`)
-        // .setDescription(`${wrapText('wahh', textWrap)}`)
 
         msg.channel.send({ embeds: [profile_embed] });
     }
