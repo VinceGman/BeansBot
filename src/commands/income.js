@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const wrapText = require("wrap-text");
 let textWrap = 31;
-let cooldown = 16;
+let cooldown = 12;
 
 // save all cards, make editions
 // queue them in the database for really fast grabs
@@ -45,9 +45,9 @@ module.exports = {
         if ((income + (cooldown * 60 * 60)) <= current_time) {
             // available 
             income = current_time;
-            amount += 19200;
+            amount += 14400;
 
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Credits Earned: 19200 - Total: ${amount} - Cooldown: <t:${income + (cooldown * 60 * 60)}:R>`);
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Credits Earned: 14400 - Total: ${amount} - Cooldown: <t:${income + (cooldown * 60 * 60)}:R>`);
         }
         else {
             msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Income Cooldown: <t:${income + (cooldown * 60 * 60)}:R>`);
