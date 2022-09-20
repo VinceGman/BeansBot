@@ -16,8 +16,21 @@ module.exports = {
     name: 'buy',
     description: "buy cards",
     admin: false,
-    type: "production",
+    type: "test",
     async execute(discord_client, msg, args, admin) {
+        if (args.length == 0) {
+            let buy_guide = new MessageEmbed()
+                .setTitle(`Buy Guide`)
+                .setDescription('To ensure you get the product you want, you now must specify rank at purchase.')
+                .setColor('#000000')
+                .addField('+buy Nezuko Kamado 123', `buys card 'Nezuko Kamado' with rank #123 at lowest price offer`, false)
+                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setTimestamp();
+
+            msg.channel.send({ embeds: [buy_guide] });
+            return;
+        }
+
         let current_time = Math.floor(Date.now() / 1000);
         if (timer.hasOwnProperty(msg.author.id.toString())) {
             if (current_time < timer[msg.author.id.toString()] + cooldown) {
@@ -36,9 +49,11 @@ module.exports = {
             buyer_amount = 12000;
         }
 
-        let character = await db.collection(`cards`).where('for_sale', '==', true).where('name', '==', args.join(' ')).orderBy('selling_price', 'asc').get();
+        let rank = args.pop();
+
+        let character = await db.collection(`cards`).where('for_sale', '==', true).where('name', '==', args.join(' ')).where('rank', '==', rank).orderBy('selling_price', 'asc').get();
         if (character._docs()[0] == null) {
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Character not found.`);
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Character not found. +buy <name> <rank>`);
             return;
         }
 
