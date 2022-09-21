@@ -18,37 +18,37 @@ module.exports = {
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
-        let current_time = Math.floor(Date.now() / 1000);
-        if (timer.hasOwnProperty(msg.author.id.toString())) {
-            if (current_time < timer[msg.author.id.toString()] + cooldown) {
-                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Sell Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
-                return;
-            }
-        }
-        timer[msg.author.id.toString()] = current_time;
+        // let current_time = Math.floor(Date.now() / 1000);
+        // if (timer.hasOwnProperty(msg.author.id.toString())) {
+        //     if (current_time < timer[msg.author.id.toString()] + cooldown) {
+        //         msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Market Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
+        //         return;
+        //     }
+        // }
+        // timer[msg.author.id.toString()] = current_time;
 
-        let character = await db.collection(`cards`).where('for_sale', '==', true).where('name', '==', args.join(' ')).orderBy('selling_price', 'asc').get();
-        if (character._docs()[0] == null) {
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Character not found.`);
-            return;
-        }
+        // let character = await db.collection(`cards`).where('for_sale', '==', true).where('name', '==', args.join(' ')).orderBy('selling_price', 'asc').get();
+        // if (character._docs()[0] == null) {
+        //     msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Character not found.`);
+        //     return;
+        // }
 
-        character = character._docs()[0]._fieldsProto;
-        // console.log(character);
+        // character = character._docs()[0]._fieldsProto;
+        // // console.log(character);
 
-        // console.log(character._docs()[0]._fieldsProto, price);
+        // // console.log(character._docs()[0]._fieldsProto, price);
 
-        let character_embed = new MessageEmbed()
-            .setTitle(`${wrapText(character.name.stringValue, textWrap)}`)
-            .setDescription(`${wrapText(character.origin.stringValue, textWrap)}`)
-            .setImage(`${character.image.stringValue}`)
-            .setColor(character.color.stringValue) // #ffa31a
-            .addField('Rank', `#${character.rank.stringValue}`, true)
-            .addField('Rarity', `${character.rarity.stringValue} - ${character.stars.stringValue}`, true)
-            .addField('Selling Price', `${character.selling_price.stringValue}`, false)
-            .setFooter({ text: wrapText(`ED1 - ${msg.author.username}#${msg.author.discriminator}`, textWrap) })
-            .setTimestamp();
+        // let character_embed = new MessageEmbed()
+        //     .setTitle(`${wrapText(character.name.stringValue, textWrap)}`)
+        //     .setDescription(`${wrapText(character.origin.stringValue, textWrap)}`)
+        //     .setImage(`${character.image.stringValue}`)
+        //     .setColor(character.color.stringValue) // #ffa31a
+        //     .addField('Rank', `#${character.rank.stringValue}`, true)
+        //     .addField('Rarity', `${character.rarity.stringValue} - ${character.stars.stringValue}`, true)
+        //     .addField('Selling Price', `${character.selling_price.stringValue}`, false)
+        //     .setFooter({ text: wrapText(`ED1 - ${msg.author.username}#${msg.author.discriminator}`, textWrap) })
+        //     .setTimestamp();
 
-        msg.channel.send({ embeds: [character_embed] });
+        // msg.channel.send({ embeds: [character_embed] });
     }
 }
