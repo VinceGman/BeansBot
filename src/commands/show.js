@@ -18,15 +18,28 @@ const db = new Firestore({
 });
 
 module.exports = {
-    name: 'see',
+    name: 'show',
     description: "look at a character",
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
+        if (args.length == 0) {
+            let show_guide = new MessageEmbed()
+                .setTitle(`Show Guide`)
+                .setColor('#000000')
+                .addField('+show 123', `shows card with rank #123`, false)
+                .addField('+show Nezuko Kamado', `shows card with name 'Nezuko Kamado'`, false)
+                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setTimestamp();
+
+            msg.channel.send({ embeds: [show_guide] });
+            return;
+        }
+
         let current_time = Math.floor(Date.now() / 1000);
         if (timer.hasOwnProperty(msg.author.id.toString())) {
             if (current_time < timer[msg.author.id.toString()] + cooldown) {
-                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - See Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
+                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Show Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
                 return;
             }
         }

@@ -51,7 +51,7 @@ $RECYCLE.BIN/
 
 deprecated
 node_modules
+plans
 service-account.json
 *.env
 *.txt
-*.csv

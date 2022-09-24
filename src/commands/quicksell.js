@@ -21,6 +21,24 @@ module.exports = {
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
+        if (args.length == 0) {
+            let quicksell_guide = new MessageEmbed()
+                .setTitle(`Quicksell Guide`)
+                .setDescription(`+quicksell (name) -> +quicksell Levi`)
+                .setColor('#000000')
+                .addField('Common', `400`, false)
+                .addField('Uncommon', `800`, false)
+                .addField('Rare', `3600`, false)
+                .addField('Epic', `7200`, false)
+                .addField('Legendary', `14400`, false)
+                .addField('Ultimate', `28800`, false)
+                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setTimestamp();
+
+            msg.channel.send({ embeds: [quicksell_guide] });
+            return;
+        }
+
         let current_time = Math.floor(Date.now() / 1000);
         if (timer.hasOwnProperty(msg.author.id.toString())) {
             if (current_time < timer[msg.author.id.toString()] + cooldown) {
