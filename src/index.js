@@ -50,8 +50,8 @@ discord_client.on('messageCreate', async msg => {
     const args = msg.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
-    if (msg.channel.name != 'commands' && !(msg.member.roles.cache.some(role => role.name === 'Mods' || role.id == process.env.admin_role_id)) && command != 'topic') return;
-    
+    if (msg.channel.name != 'commands' && !(msg.member.roles.cache.some(role => role.name === 'Mods') && command != 'topic')) return;
+
     try {
       if (discord_client.commands.get(command).type != run_type) return;
 
