@@ -46,7 +46,11 @@ discord_client.on('ready', async () => {
 discord_client.on('messageCreate', async msg => {
   if (msg.author.bot) return;
 
-  if (msg.content.startsWith(prefix)) {
+  if (msg.guildId === null) {
+    msg.channel.send(`Direct message commands aren't supported yet.`);
+    return;
+  }
+  else if (msg.content.startsWith(prefix)) {
     const args = msg.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
