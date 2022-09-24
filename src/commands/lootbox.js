@@ -22,7 +22,7 @@ const db = new Firestore({
 
 module.exports = {
     name: 'lootbox',
-    description: "10000 collectible characters",
+    description: "rolls for 10000 collectibles",
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {

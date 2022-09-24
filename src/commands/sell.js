@@ -14,7 +14,7 @@ const db = new Firestore({
 
 module.exports = {
     name: 'sell',
-    description: "sell your cards",
+    description: "sell cards on the market",
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {

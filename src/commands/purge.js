@@ -18,17 +18,31 @@ module.exports = {
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
+        if (args.length == 0) {
+            let purge_guide = new MessageEmbed()
+                .setTitle(`Purge Guide`)
+                .setDescription('You can mass quicksell to the market. The number provided purges that star amount.')
+                .setColor('#000000')
+                .addField('+purge 1', `quicksells all 1 stars in your inventory that aren't protected`, false)
+                .addField('+purge 4', `quicksells all 4 stars in your inventory that aren't protected`, false)
+                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setTimestamp();
+
+            msg.channel.send({ embeds: [purge_guide] });
+            return;
+        }
+
         let current_time = Math.floor(Date.now() / 1000);
         if (timer.hasOwnProperty(msg.author.id.toString())) {
             if (current_time < timer[msg.author.id.toString()] + cooldown) {
-                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Profile Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
+                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Purge Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
                 return;
             }
         }
         timer[msg.author.id.toString()] = current_time;
 
-        let stars = '★';
-        for (let i = 1; i < args[0]; i++) {
+        let stars = '';
+        for (let i = 0; i < +args[0]; i++) {
             stars += '★';
         }
 

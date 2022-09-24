@@ -14,7 +14,7 @@ const db = new Firestore({
 
 module.exports = {
     name: 'buy',
-    description: "buy cards",
+    description: "buy cards on the market",
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
@@ -34,7 +34,7 @@ module.exports = {
         let current_time = Math.floor(Date.now() / 1000);
         if (timer.hasOwnProperty(msg.author.id.toString())) {
             if (current_time < timer[msg.author.id.toString()] + cooldown) {
-                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Sell Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
+                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Buy Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
                 return;
             }
         }

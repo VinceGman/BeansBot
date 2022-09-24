@@ -28,7 +28,7 @@ module.exports = {
                 .setTitle(`Show Guide`)
                 .setColor('#000000')
                 .addField('+show 123', `shows card with rank #123`, false)
-                .addField('+show Nezuko Kamado', `shows card with name 'Nezuko Kamado'`, false)
+                .addField('+show Nezuko Kamado', `shows cards with name 'Nezuko Kamado'`, false)
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
                 .setTimestamp();
 
@@ -45,12 +45,12 @@ module.exports = {
         }
         timer[msg.author.id.toString()] = current_time;
 
-        let character = {};
+        let characters = [];
 
         if (args.length == 1 && !isNaN(args[0])) {
             try {
-                character.mal = (await db.doc(`edition_one/${args[0]}`).get())._fieldsProto;
-                if (character.mal == null) {
+                characters.push((await db.doc(`edition_one/${args[0]}`).get())._fieldsProto);
+                if (characters[0] == null) {
                     msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Character not found.`);
                     return;
                 }
@@ -67,7 +67,9 @@ module.exports = {
                     msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Character not found.`);
                     return;
                 }
-                character.mal = query._docs()[0]._fieldsProto;
+                for (let i = 0; i < query._docs().length; i++) {
+                    characters.push(query._docs()[i]._fieldsProto);
+                }
             }
             catch (err) {
                 msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - System Error: Anime API Failed`);
@@ -75,49 +77,50 @@ module.exports = {
             }
         }
 
-        character.rank = +character.mal.rank.stringValue;
+        for (let i = 0; i < characters.length; i++) {
 
-        let stars = '★';
-        let color = '#FFFFFF';
-        let rarity = 'Common';
+            let stars = '★';
+            let color = '#FFFFFF';
+            let rarity = 'Common';
 
-        if (character.rank <= 4000) {
-            stars = '★★';
-            color = '#7aaf74';
-            rarity = 'Uncommon';
-        }
-        if (character.rank <= 1000) {
-            stars = '★★★';
-            color = '#0070DD';
-            rarity = 'Rare';
-        }
-        if (character.rank <= 400) {
-            stars = '★★★★';
-            color = '#c369ec';
-            rarity = 'Epic';
-        }
-        if (character.rank <= 100) {
-            stars = '★★★★★';
-            color = '#ffab4b';
-            rarity = 'Legendary';
-        }
-        if (character.rank <= 10) {
-            stars = '★★★★★★';
-            color = '#fc5d65';
-            rarity = 'Ultimate';
-        }
+            if (characters[i].rank.stringValue <= 4000) {
+                stars = '★★';
+                color = '#7aaf74';
+                rarity = 'Uncommon';
+            }
+            if (characters[i].rank.stringValue <= 1000) {
+                stars = '★★★';
+                color = '#0070DD';
+                rarity = 'Rare';
+            }
+            if (characters[i].rank.stringValue <= 400) {
+                stars = '★★★★';
+                color = '#c369ec';
+                rarity = 'Epic';
+            }
+            if (characters[i].rank.stringValue <= 100) {
+                stars = '★★★★★';
+                color = '#ffab4b';
+                rarity = 'Legendary';
+            }
+            if (characters[i].rank.stringValue <= 10) {
+                stars = '★★★★★★';
+                color = '#fc5d65';
+                rarity = 'Ultimate';
+            }
 
-        let character_embed = new MessageEmbed()
-            .setTitle(`${wrapText(character.mal.name.stringValue, textWrap)}`)
-            .setDescription(`${wrapText(character.mal.origin.stringValue, textWrap)}`)
-            .setImage(`${character.mal.image.stringValue}`)
-            .setColor(color) // #ffa31a
-            .addField('Rank', `#${character.rank}`, true)
-            .addField('Rarity', `${rarity} - ${stars}`, true)
-            .setFooter({ text: wrapText(`ED1 - ${msg.author.username}#${msg.author.discriminator}`, textWrap) })
-            .setTimestamp();
+            let character_embed = new MessageEmbed()
+                .setTitle(`${wrapText(characters[i].name.stringValue, textWrap)}`)
+                .setDescription(`${wrapText(characters[i].origin.stringValue, textWrap)}`)
+                .setImage(`${characters[i].image.stringValue}`)
+                .setColor(color) // #ffa31a
+                .addField('Rank', `#${characters[i].rank.stringValue}`, true)
+                .addField('Rarity', `${rarity} - ${stars}`, true)
+                .setFooter({ text: wrapText(`ED1 - ${msg.author.username}#${msg.author.discriminator}`, textWrap) })
+                .setTimestamp();
 
-        msg.channel.send({ embeds: [character_embed] });
+            msg.channel.send({ embeds: [character_embed] });
+        }
 
     }
 }

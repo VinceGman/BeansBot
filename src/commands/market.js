@@ -14,41 +14,52 @@ const db = new Firestore({
 
 module.exports = {
     name: 'market',
-    description: "ask the market what's the deal",
+    description: "shows what a card is selling for",
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
-        // let current_time = Math.floor(Date.now() / 1000);
-        // if (timer.hasOwnProperty(msg.author.id.toString())) {
-        //     if (current_time < timer[msg.author.id.toString()] + cooldown) {
-        //         msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Market Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
-        //         return;
-        //     }
-        // }
-        // timer[msg.author.id.toString()] = current_time;
+        if (args.length == 0) {
+            let market_guide = new MessageEmbed()
+                .setTitle(`Market Guide`)
+                .setDescription('You can see how much a card is being sold at on the market.')
+                .setColor('#000000')
+                .addField('+market Nezuko Kamado 123', `shows the market price for the card 'Nezuko Kamado' with rank #123`, false)
+                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setTimestamp();
 
-        // let character = await db.collection(`cards`).where('for_sale', '==', true).where('name', '==', args.join(' ')).orderBy('selling_price', 'asc').get();
-        // if (character._docs()[0] == null) {
-        //     msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Character not found.`);
-        //     return;
-        // }
+            msg.channel.send({ embeds: [market_guide] });
+            return;
+        }
 
-        // character = character._docs()[0]._fieldsProto;
-        // // console.log(character);
+        let current_time = Math.floor(Date.now() / 1000);
+        if (timer.hasOwnProperty(msg.author.id.toString())) {
+            if (current_time < timer[msg.author.id.toString()] + cooldown) {
+                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Market Cooldown: <t:${timer[msg.author.id.toString()] + cooldown}:R>`);
+                return;
+            }
+        }
+        timer[msg.author.id.toString()] = current_time;
 
-        // // console.log(character._docs()[0]._fieldsProto, price);
+        let rank = args.pop();
+        let character = await db.collection(`cards`).where('for_sale', '==', true).where('name', '==', args.join(' ')).where('rank', '==', rank).orderBy('selling_price', 'asc').get();
+        if (character._docs()[0] == null) {
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - There could be no listings. Check that it's the right information. +market <name> <rank>`);
+            return;
+        }
 
-        // let character_embed = new MessageEmbed()
-        //     .setTitle(`${wrapText(character.name.stringValue, textWrap)}`)
-        //     .setDescription(`${wrapText(character.origin.stringValue, textWrap)}`)
-        //     .setImage(`${character.image.stringValue}`)
-        //     .setColor(character.color.stringValue) // #ffa31a
-        //     .addField('Rank', `#${character.rank.stringValue}`, true)
-        //     .addField('Rarity', `${character.rarity.stringValue} - ${character.stars.stringValue}`, true)
-        //     .addField('Selling Price', `${character.selling_price.stringValue}`, false)
-        //     .setFooter({ text: wrapText(`ED1 - ${msg.author.username}#${msg.author.discriminator}`, textWrap) })
-        //     .setTimestamp();
+        character = character._docs()[0]._fieldsProto;
 
-        // msg.channel.send({ embeds: [character_embed] });
+        let character_embed = new MessageEmbed()
+            .setTitle(`${wrapText(character.name.stringValue, textWrap)}`)
+            .setDescription(`${wrapText(character.origin.stringValue, textWrap)}`)
+            .setImage(`${character.image.stringValue}`)
+            .setColor(character.color.stringValue) // #ffa31a
+            .addField('Rank', `#${character.rank.stringValue}`, true)
+            .addField('Rarity', `${character.rarity.stringValue} - ${character.stars.stringValue}`, true)
+            .addField('Selling Price', `${character.selling_price.stringValue}`, false)
+            .setFooter({ text: wrapText(`ED1 - ${msg.author.username}#${msg.author.discriminator}`, textWrap) })
+            .setTimestamp();
+
+        msg.channel.send({ embeds: [character_embed] });
     }
 }

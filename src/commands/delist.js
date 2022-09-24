@@ -14,10 +14,23 @@ const db = new Firestore({
 
 module.exports = {
     name: 'delist',
-    description: "don't sell that card",
+    description: "take a card off the market",
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
+        if (args.length == 0) {
+            let delist_guide = new MessageEmbed()
+                .setTitle(`Delist Guide`)
+                .setDescription('If you no longer wish to sell a card, delist it. Note: using +sell on a card again will change the listing price without needing to delist.')
+                .setColor('#000000')
+                .addField('+delist Nezuko Kamado 123', `delists card 'Nezuko Kamado' with rank #123 from the market`, false)
+                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setTimestamp();
+
+            msg.channel.send({ embeds: [delist_guide] });
+            return;
+        }
+
         let current_time = Math.floor(Date.now() / 1000);
         if (timer.hasOwnProperty(msg.author.id.toString())) {
             if (current_time < timer[msg.author.id.toString()] + cooldown) {
@@ -27,9 +40,10 @@ module.exports = {
         }
         timer[msg.author.id.toString()] = current_time;
 
-        let character = await db.collection(`cards`).where('owner_id', '==', msg.author.id).where('name', '==', args.join(' ')).get();
+        let rank = args.pop();
+        let character = await db.collection(`cards`).where('owner_id', '==', msg.author.id).where('name', '==', args.join(' ')).where('rank', '==', rank).get();
         if (character._docs()[0] == null) {
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Character not found.`);
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Character not found. +delist <name> <rank>`);
             return;
         }
 
