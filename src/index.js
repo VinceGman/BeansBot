@@ -72,9 +72,8 @@ discord_client.on('messageCreate', async msg => {
       }
     }
     catch (err) {
-      console.error(err);
+      // console.error(err);
     }
-    return;
   }
 });
 
