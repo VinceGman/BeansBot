@@ -56,3 +56,4 @@ lootbox
 service-account.json
 *.env
 *.txt
+*.csv
