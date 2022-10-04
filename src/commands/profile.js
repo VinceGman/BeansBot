@@ -19,7 +19,7 @@ module.exports = {
 
         if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
 
-        let credits = +(await require('../utility/identity').identity(msg.author.id)).credits;
+        let credits = +(await require('../utility/queries').user(msg.author.id)).credits;
         let owned = (await db.collection('edition_one').where('owner_id', '==', msg.author.id).orderBy("rank", "asc").get())._docs();
 
         let ownedText = '';
