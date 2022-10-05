@@ -3,15 +3,64 @@ module.exports = {
     description: "shows your money and collectibles",
     admin: false,
     type: "production",
-    cooldown: 6,
+    cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
 
         if (args.length > 0) {
             if (msg.mentions.users.size > 0) {
                 this.display_profile(discord_client, msg, msg.mentions.users.keys().next().value);
+                return;
             }
-            return;
+
+            if (args.length == 1) {
+                msg.channel.send('+profile (name | color | image) (content) -> +profile name The Emperor')
+                return;
+            }
+
+            // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
+            const { Firestore } = require('@google-cloud/firestore');
+            const db = new Firestore({
+                projectId: 'beans-326017',
+                keyFilename: './service-account.json'
+            });
+
+            let att = args.shift();
+            let pref_att, pref_value;
+            switch (att) {
+                case 'name':
+                    pref_att = 'pref_name';
+                    pref_value = args.join(' ');
+                    if (pref_value.length > 30) {
+                        msg.channel.send('The name must be less than 30 characters.');
+                        return;
+                    }
+                    break;
+                case 'image':
+                    const isImageURL = require('image-url-validator').default;
+                    pref_att = 'pref_image';
+                    pref_value = args.join(' ');
+                    if (!(await isImageURL(pref_value))) {
+                        msg.channel.send('The image must be an image link.');
+                        return;
+                    }
+                    break;
+                case 'color':
+                    const { validateHTMLColorHex } = require("validate-color");
+                    pref_att = 'pref_color';
+                    pref_value = args.join(' ');
+                    if (!validateHTMLColorHex(pref_value)) {
+                        msg.channel.send('The color must be a hex code.');
+                        return;
+                    }
+                    break;
+                default:
+                    msg.channel.send('The available profile preference changes are: name, image and color.');
+                    return;
+            }
+            await db.doc(`members/${msg.author.id}`).set({
+                [pref_att]: pref_value.toString(),
+            }, { merge: true });
         }
         else {
             this.display_profile(discord_client, msg, msg.author.id);
@@ -36,7 +85,8 @@ module.exports = {
 
         let user = discord_client.users.cache.find(user => user.id === id);
 
-        let credits = +(await require('../utility/queries').user(id)).credits;
+        let db_user = await require('../utility/queries').user(id);
+        let credits = db_user.credits;
         let owned = (await db.collection('edition_one').where('owner_id', '==', id).orderBy("rank", "asc").get())._docs();
 
         let ownedText = '';
@@ -52,11 +102,11 @@ module.exports = {
         ownedText = ownedText == '' ? '[none]' : ownedText;
 
         let profile_embed = new MessageEmbed()
-            .setTitle(`${wrapText(user.username, textWrap)}`)
+            .setTitle(`${wrapText(db_user.pref_name ?? user.username, textWrap)}`)
             .addField('Currency', `${credits} credits`, false)
             .addField('Cards Owned', `${ownedText}`, false)
-            .setThumbnail(user.avatarURL())
-            .setColor(`#ADD8E6`)
+            .setThumbnail(db_user.pref_image ?? user.avatarURL())
+            .setColor(db_user.pref_color ?? `#ADD8E6`)
             .setFooter({ text: wrapText(`BHP Profile`, textWrap) })
             .setTimestamp();
 

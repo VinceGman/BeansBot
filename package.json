@@ -19,20 +19,14 @@
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
     "@shineiichijo/marika": "^2.0.5",
-    "adventurejs": "^1.0.1",
     "coinlore-crypto-prices": "^0.1.1",
     "comma-number": "^2.1.0",
     "cron": "^2.0.0",
-    "deep-object-diff": "^1.1.7",
     "discord.js": "^13.6.0",
     "dotenv": "^8.6.0",
     "googleapis": "^85.0.0",
+    "image-url-validator": "^1.0.4",
     "nodemon": "^2.0.15",
-    "randomcolor": "^0.6.2",
-    "spotify-api.js": "^9.0.3",
-    "sqlite3": "^5.0.2",
-    "tmi.js": "^1.8.4",
-    "unique-names-generator": "^4.7.1",
     "validate-color": "^2.2.1",
     "wrap-text": "^1.0.9"
   }
