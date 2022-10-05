@@ -20,13 +20,15 @@ module.exports = {
         let income = user.hasOwnProperty('income') ? +user['income'] : 0;
 
         let charges = Math.floor(((current_time_in_seconds - income) / 3600));
-        let new_cooldown;
+        let new_cooldown, next_charge;
         if (charges > 6) {
             charges = 6;
             new_cooldown = current_time_in_seconds;
+            next_charge = new_cooldown + 3600;
         }
         else {
             new_cooldown = income + (charges * 3600);
+            next_charge = income + ((charges + 1) * 3600);
         }
 
         let booster = msg.member.roles.cache.some(role => role.name === 'Booster') ? 0.25 : 0;
@@ -35,7 +37,7 @@ module.exports = {
         let amount = charges * 2000;
         let pay = amount + booster * amount + patron * amount;
 
-        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - You had ${charges}/6 charges saved up. - Credits Earned: ${pay} - Fully Charged: <t:${new_cooldown + (6 * 3600)}:R>`);
+        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - You had ${charges}/6 charges saved up. - Credits Earned: ${pay} - Next Charge: <t:${next_charge}:R> - Fully Charged: <t:${new_cooldown + (6 * 3600)}:R>`);
 
         if (charges == 0) return;
         await db.doc(`members/${msg.author.id}`).set({
