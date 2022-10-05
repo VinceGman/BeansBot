@@ -35,11 +35,12 @@ module.exports = {
         let amount = charges * 2000;
         let pay = amount + booster * amount + patron * amount;
 
+        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - You had ${charges}/6 charges saved up. - Credits Earned: ${pay} - Fully Charged: <t:${new_cooldown + (6 * 3600)}:R>`);
+
+        if (charges == 0) return;
         await db.doc(`members/${msg.author.id}`).set({
             credits: (+user['credits'] + pay).toString(),
             income: new_cooldown.toString(),
         }, { merge: true });
-
-        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - You had ${charges}/6 charges saved up. - Credits Earned: ${pay}`);
     }
 }
