@@ -8,7 +8,9 @@ module.exports = {
         if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
 
         if (args.length > 0) {
-            this.display_profile(discord_client, msg, msg.mentions.users.keys().next().value);
+            if (msg.mentions.users.size > 0) {
+                this.display_profile(discord_client, msg, msg.mentions.users.keys().next().value);
+            }
             return;
         }
         else {
