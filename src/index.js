@@ -1,6 +1,5 @@
 const fs = require('fs');
 require('dotenv').config(); // .env values
-const { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } = require('deep-object-diff');
 
 const { Client, Collection, MessageEmbed } = require('discord.js');
 const discord_client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS', 'DIRECT_MESSAGES'], partials: ['MESSAGE', 'CHANNEL'] });
