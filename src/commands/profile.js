@@ -57,6 +57,15 @@ module.exports = {
                     }
                     msg.channel.send('Color Changed');
                     break;
+                case 'status':
+                    pref_att = 'pref_status';
+                    pref_value = args.join(' ');
+                    if (pref_value.length > 280) {
+                        msg.channel.send('The status must be less than 280 characters.');
+                        return;
+                    }
+                    msg.channel.send('Status Changed');
+                    break;
                 default:
                     msg.channel.send('The available profile preference changes are: name, image and color.');
                     return;
@@ -94,7 +103,7 @@ module.exports = {
 
         let ownedText = '';
         let i = 0;
-        while (ownedText.length <= 920 && i < owned.length) {
+        while (ownedText.length <= 850 && i < owned.length) {
             let lock = owned[i]._fieldsProto['protected'][owned[i]._fieldsProto['protected'].valueType] ? ' - 🔒' : '';
             let sale = owned[i]._fieldsProto['for_sale'][owned[i]._fieldsProto['for_sale'].valueType] ? ' - ✅' : '';
 
@@ -112,6 +121,10 @@ module.exports = {
             .setColor(db_user.pref_color ?? `#ADD8E6`)
             .setFooter({ text: wrapText(`BHP Profile`, textWrap) })
             .setTimestamp();
+
+        if (db_user.pref_status != null && db_user.pref_status != '') {
+            profile_embed.setDescription(db_user.pref_status)
+        }
 
         msg.channel.send({ embeds: [profile_embed] });
     }
