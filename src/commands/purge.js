@@ -3,7 +3,7 @@ module.exports = {
     description: "purge your cards",
     admin: false,
     type: "production",
-    cooldown: 6,
+    cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');
 
@@ -14,6 +14,8 @@ module.exports = {
                 .setColor('#000000')
                 .addField('+purge 1', `quicksells all 1 stars in your inventory that aren't protected`, false)
                 .addField('+purge 4', `quicksells all 4 stars in your inventory that aren't protected`, false)
+                .addField('+purge 1 2 4', `quicksells all 1, 2 and 4 star cards in your inventory that aren't protected`, false)
+                .addField('+purge all', `quicksells all cards in your inventory that aren't protected`, false)
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
                 .setTimestamp();
 
@@ -23,9 +25,34 @@ module.exports = {
 
         if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
 
-        let stars = '';
-        for (let i = 0; i < +args[0]; i++) {
-            stars += '★';
+        if (args.length > 6) {
+            msg.channel.send('Too many inputs.');
+            return;
+        }
+
+        let query = [];
+        if (args.length == 1) {
+            if (isNaN(args[0]) && args[0].toLowerCase() == 'all') {
+                query = ['★', '★★', '★★★', '★★★★', '★★★★★', '★★★★★★'];
+            }
+            else {
+                let stars = '';
+                for (let i = 0; i < +args[0]; i++) {
+                    stars += '★';
+                }
+                query.push(stars);
+            }
+        }
+        else if (args.length > 1 && args.length <= 6) {
+            args.forEach(arg => {
+                if (!isNaN(arg)) {
+                    let stars = '';
+                    for (let i = 0; i < +arg; i++) {
+                        stars += '★';
+                    }
+                    query.push(stars);
+                }
+            });
         }
 
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
@@ -35,7 +62,7 @@ module.exports = {
             keyFilename: './service-account.json'
         });
 
-        let characters = (await db.collection('edition_one').where('owner_id', '==', msg.author.id).where('protected', '==', false).where('stars', '==', stars).get())._docs();
+        let characters = (await db.collection('edition_one').where('owner_id', '==', msg.author.id).where('protected', '==', false).where('stars', 'in', query).get())._docs();
 
         let quicksell_sum = 0;
         characters.forEach(char => {
