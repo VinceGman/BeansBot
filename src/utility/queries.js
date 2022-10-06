@@ -9,7 +9,8 @@ module.exports = {
 
         let user = {};
 
-        let db_user = (await db.doc(`members/${id}`).get())._fieldsProto ?? { credits: { stringValue: '12000', valueType: 'stringValue' } };
+        let db_user = (await db.doc(`members/${id}`).get())._fieldsProto ?? {};
+        if (db_user.credits == null) db_user.credits = { stringValue: '12000', valueType: 'stringValue' };
         Object.keys(db_user).forEach(att => user[att] = db_user[att][db_user[att].valueType]);
 
         return user;
