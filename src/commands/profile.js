@@ -35,6 +35,7 @@ module.exports = {
                         msg.channel.send('The name must be less than 30 characters.');
                         return;
                     }
+                    msg.channel.send('Name Changed');
                     break;
                 case 'image':
                     const isImageURL = require('image-url-validator').default;
@@ -44,6 +45,7 @@ module.exports = {
                         msg.channel.send('The image must be an image link.');
                         return;
                     }
+                    msg.channel.send('Image Changed');
                     break;
                 case 'color':
                     const { validateHTMLColorHex } = require("validate-color");
@@ -53,6 +55,7 @@ module.exports = {
                         msg.channel.send('The color must be a hex code.');
                         return;
                     }
+                    msg.channel.send('Color Changed');
                     break;
                 default:
                     msg.channel.send('The available profile preference changes are: name, image and color.');
