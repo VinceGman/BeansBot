@@ -36,16 +36,22 @@ module.exports = {
                 query = ['★', '★★', '★★★', '★★★★', '★★★★★', '★★★★★★'];
             }
             else {
-                let stars = '';
-                for (let i = 0; i < +args[0]; i++) {
-                    stars += '★';
+                if (!isNaN(args[0]) && +args[0] <= 6) {
+                    let stars = '';
+                    for (let i = 0; i < +args[0]; i++) {
+                        stars += '★';
+                    }
+                    query.push(stars);
                 }
-                query.push(stars);
+                else {
+                    msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - **+purge** for more info.`);
+                    return;
+                }
             }
         }
         else if (args.length > 1 && args.length <= 6) {
             args.forEach(arg => {
-                if (!isNaN(arg)) {
+                if (!isNaN(arg) && +arg <= 6) {
                     let stars = '';
                     for (let i = 0; i < +arg; i++) {
                         stars += '★';
