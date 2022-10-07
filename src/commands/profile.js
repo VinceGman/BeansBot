@@ -1,5 +1,6 @@
 module.exports = {
     name: 'profile',
+    alias: ['prof', 'p'],
     description: "shows your money and collectibles",
     admin: false,
     type: "production",
@@ -14,7 +15,7 @@ module.exports = {
             }
 
             if (args.length == 1) {
-                msg.channel.send('+profile (name | color | image | status) (content) -> +profile name The Emperor')
+                msg.channel.send("+profile (name | color | image | status) (content) -> +profile name Bean's Lovely Waifus")
                 return;
             }
 
@@ -78,9 +79,6 @@ module.exports = {
             this.display_profile(discord_client, msg, msg.author.id);
             return;
         }
-    },
-    async personalize(msg, args) {
-
     },
     async display_profile(discord_client, msg, id) {
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017

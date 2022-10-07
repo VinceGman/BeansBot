@@ -1,5 +1,6 @@
 module.exports = {
     name: 'quicksell',
+    alias: ['qs'],
     description: "sell your cards back to the market",
     admin: false,
     type: "production",

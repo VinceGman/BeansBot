@@ -1,5 +1,6 @@
 module.exports = {
     name: 'show',
+    alias: ['see', 'look'],
     description: "look at a character",
     admin: false,
     type: "production",

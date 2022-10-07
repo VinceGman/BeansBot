@@ -16,6 +16,12 @@ const commandFiles = fs.readdirSync('./src/commands/').filter(file => file.endsW
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
 
+  if (command.hasOwnProperty('alias')) {
+    command.alias.forEach(alias => {
+      discord_client.commands.set(alias, command);
+    });
+  }
+
   discord_client.commands.set(command.name, command);
 }
 
