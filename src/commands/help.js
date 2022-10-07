@@ -21,14 +21,21 @@ module.exports = {
         for (const file of commandFiles) {
             const command = require(`./${file}`);
 
+            let aliases = '';
+            if (command.hasOwnProperty('alias')) {
+                command.alias.forEach(alias => {
+                    aliases += ` | +${alias}`
+                });
+            }
+
             if (command.hasOwnProperty('active_service') || command.type == 'test' || command.name == 'topic') {
                 // ignore
             }
             else if (command.admin == false) {
-                help_embed.addField(`+${command.name}`, `${command.description}`, true);
+                help_embed.addField(`+${command.name}${aliases}`, `${command.description}`, true);
             }
             else if (command.admin == true && admin) {
-                help_embed.addField(`+${command.name} - Admin Only`, `${command.description}`, true);
+                help_embed.addField(`+${command.name}${aliases} - Admin Only`, `${command.description}`, true);
             }
         }
 
