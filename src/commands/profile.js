@@ -14,7 +14,7 @@ module.exports = {
             }
 
             if (args.length == 1) {
-                msg.channel.send('+profile (name | color | image) (content) -> +profile name The Emperor')
+                msg.channel.send('+profile (name | color | image | status) (content) -> +profile name The Emperor')
                 return;
             }
 
@@ -67,7 +67,7 @@ module.exports = {
                     msg.channel.send('Status Changed');
                     break;
                 default:
-                    msg.channel.send('The available profile preference changes are: name, image and color.');
+                    msg.channel.send('The available profile preference changes are: name, image, status and color.');
                     return;
             }
             await db.doc(`members/${msg.author.id}`).set({
