@@ -1,7 +1,7 @@
 module.exports = {
-    name: 'quicksell',
-    alias: ['qs'],
-    description: "sell your cards back to the market",
+    name: 'give',
+    alias: ['gift'],
+    description: "give someone a card",
     admin: false,
     type: "production",
     cooldown: 6,
@@ -9,24 +9,35 @@ module.exports = {
         const { MessageEmbed } = require('discord.js');
 
         if (args.length == 0) {
-            let quicksell_guide = new MessageEmbed()
-                .setTitle(`Quicksell Guide`)
-                .setDescription(`+quicksell (name) -> +quicksell Levi\nor\n+quicksell (id) -> +quicksell 2`)
+            let give_guide = new MessageEmbed()
+                .setTitle(`Give Guide`)
+                .setDescription(`You can (forcefully) give someone a card. You must mention the user you'd like to gift anywhere in the message.`)
                 .setColor('#000000')
-                .addField('Common', `250`, false)
-                .addField('Uncommon', `500`, false)
-                .addField('Rare', `2500`, false)
-                .addField('Epic', `5000`, false)
-                .addField('Legendary', `15000`, false)
-                .addField('Ultimate', `25000`, false)
+                .addField('+give Eren Yeager @Sore', `gives the card with name 'Eren Yeager' to Sore.`, false)
+                .addField('+give @Sore Eren Yeager', `gives the card with name 'Eren Yeager' to Sore.`, false)
+                .addField('+give @Sore 47', `gives the card with rank #47 to Sore.`, false)
+                .addField('+give 47 @Sore', `gives the card with rank #47 to Sore.`, false)
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
                 .setTimestamp();
 
-            msg.channel.send({ embeds: [quicksell_guide] });
+            msg.channel.send({ embeds: [give_guide] });
             return;
         }
 
         if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
+
+        if (msg.mentions.users.size != 1) {
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - **+give** for more info.`);
+            return;
+        }
+
+        let recipient = msg.mentions.users.keys().next().value;
+        if (recipient == msg.author.id) {
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - All you do is take and take... **+give** for more info.`);
+            return;
+        }
+
+        args = args.filter(a => !a.includes('<@'));
 
         let attribute, match;
         if (args.length == 1 && !isNaN(args[0].replace('#', ''))) {
@@ -55,36 +66,10 @@ module.exports = {
             return;
         }
 
-        let reimburse = 0;
-        switch (character['rarity'][character['rarity'].valueType]) {
-            case 'Common':
-                reimburse = 250;
-                break;
-            case 'Uncommon':
-                reimburse = 500;
-                break;
-            case 'Rare':
-                reimburse = 2500;
-                break;
-            case 'Epic':
-                reimburse = 5000;
-                break;
-            case 'Legendary':
-                reimburse = 15000;
-                break;
-            case 'Ultimate':
-                reimburse = 25000;
-                break;
-            default:
-                reimburse = 0;
-        }
-
         const res = await db.collection('edition_one').doc(`${character_ref._ref._path.segments[1]}`).update({ // updates owner_id on character_ref card in database
-            owner_id: '',
+            owner_id: recipient,
         }).catch(err => msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This product wasn't stored properly. Please contact Sore#1414.`));
 
-        await require('../utility/credits').refund(msg.author.id, reimburse); // credits manager refunds
-
-        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Reimbursed: ${reimburse}`);
+        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Card Given.`);
     }
 }

@@ -27,7 +27,7 @@ module.exports = {
 
         return true;
     },
-    async refund(msg, cost) {
+    async refund(id, cost) {
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
         const { Firestore } = require('@google-cloud/firestore');
         const db = new Firestore({
@@ -35,13 +35,13 @@ module.exports = {
             keyFilename: './service-account.json'
         });
 
-        let db_user = (await db.doc(`members/${msg.author.id}`).get())._fieldsProto ?? {};
+        let db_user = (await db.doc(`members/${id}`).get())._fieldsProto ?? {};
         if (!db_user.hasOwnProperty('credits')) db_user['credits'] = { stringValue: '12000', valueType: 'stringValue' };
 
         let credits = +db_user['credits'][db_user['credits'].valueType];
         credits += cost;
 
-        await db.doc(`members/${msg.author.id}`).set({
+        await db.doc(`members/${id}`).set({
             credits: credits.toString(),
         }, { merge: true });
     },

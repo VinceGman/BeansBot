@@ -26,7 +26,7 @@ module.exports = {
         }
         catch (err) {
             msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - System Error: Anime API Failed`);
-            await require('../utility/credits').refund(msg, card_cost); // credits manager refunds on error
+            await require('../utility/credits').refund(msg.author.id, card_cost); // credits manager refunds on error
             return;
         }
 
