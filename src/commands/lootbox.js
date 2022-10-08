@@ -4,7 +4,7 @@ module.exports = {
     description: "rolls for 20000 collectibles",
     admin: false,
     type: "production",
-    cooldown: 4,
+    cooldown: 3,
     async execute(discord_client, msg, args, admin) {
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
         const { Firestore } = require('@google-cloud/firestore');
