@@ -21,10 +21,12 @@ module.exports = {
             return;
         }
 
-        if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
+        if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
         let characters = await require('../utility/queries').character(msg, args);
         if (!characters) return;
-        
-        characters.forEach(character => { require('../utility/embeds').print_card(discord_client, msg, character) });
+
+        let pages = [];
+        characters.forEach(character => { pages.push(require('../utility/embeds').make_card_embed(discord_client, msg, character)) });
+        await require('../utility/pagination').paginationEmbed(msg, pages);
     }
 }

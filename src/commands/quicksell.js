@@ -26,7 +26,7 @@ module.exports = {
             return;
         }
 
-        if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
+        if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
         let attribute, match;
         if (args.length == 1 && !isNaN(args[0].replace('#', ''))) {
@@ -79,10 +79,7 @@ module.exports = {
                 reimburse = 0;
         }
 
-        const res = await db.collection('edition_one').doc(`${character_ref._ref._path.segments[1]}`).update({ // updates owner_id on character_ref card in database
-            owner_id: '',
-        }).catch(err => msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This product wasn't stored properly. Please contact Sore#1414.`));
-
+        await require('../commands/purge').return_card(character);
         await require('../utility/credits').refund(msg.author.id, reimburse); // credits manager refunds
 
         msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Reimbursed: ${reimburse}`);

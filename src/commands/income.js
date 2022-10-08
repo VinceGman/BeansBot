@@ -14,7 +14,7 @@ module.exports = {
 
         let current_time_in_seconds = Math.floor(Date.now() / 1000);
 
-        if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
+        if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
         let user = await require('../utility/queries').user(msg.author.id);
         let income = user.hasOwnProperty('income') ? +user['income'] : 0;

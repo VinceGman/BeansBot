@@ -1,7 +1,7 @@
 let timer = {};
 
 module.exports = {
-    async timer(msg, cmd, cooldown_in_seconds) {
+    timer(msg, cmd, cooldown_in_seconds) {
         let current_time_in_seconds = Math.floor(Date.now() / 1000);
         let attribute = `${msg.author.id}_${cmd}`;
 

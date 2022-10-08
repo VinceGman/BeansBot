@@ -12,7 +12,7 @@ module.exports = {
             keyFilename: './service-account.json'
         }); // firestore credentials
 
-        if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
+        if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
         if (args.length == 1 && !isNaN(args[0]) && args[0] >= 1) {
             var page = +args[0];

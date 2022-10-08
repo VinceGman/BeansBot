@@ -15,7 +15,7 @@ module.exports = {
 
         let card_cost = 1000;
 
-        if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
+        if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
         if (!(await require('../utility/credits').transaction(msg, card_cost))) return; // credits manager validates transaction
 
         let roll_num = Math.floor(Math.random() * 20000) + 1; // [1, 20000]
@@ -30,10 +30,11 @@ module.exports = {
             return;
         }
 
-        await require('../utility/embeds').print_lootbox(msg, character); // embeds manager prints lootbox card
+        require('../utility/embeds').print_lootbox(msg, character); // embeds manager prints lootbox card
 
         const res = await db.collection('edition_one').doc(`${character_ref._ref._path.segments[1]}`).update({ // updates owner_id on character_ref card in database
             owner_id: msg.author.id.toString(),
+            owned: true,
         }).catch(err => msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This product wasn't stored properly. Please contact Sore#1414.`));
     }
 }

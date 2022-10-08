@@ -6,7 +6,7 @@ module.exports = {
     type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
-        if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
+        if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
         if (args.length > 0) {
             if (msg.mentions.users.size > 0) {
@@ -100,30 +100,42 @@ module.exports = {
         let owned = (await db.collection('edition_one').where('owner_id', '==', id).orderBy("rank", "asc").get())._docs();
 
         let ownedText = '';
+        let pages = [];
         let i = 0;
-        while (ownedText.length <= 850 && i < owned.length) {
-            let lock = owned[i]._fieldsProto['protected'][owned[i]._fieldsProto['protected'].valueType] ? ' - 🔒' : '';
-            let sale = owned[i]._fieldsProto['for_sale'][owned[i]._fieldsProto['for_sale'].valueType] ? ' - ✅' : '';
+        let page = 1;
+        do {
+            if (owned.length == 0) {
+                ownedText = '[none]';
+                pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned`, `${ownedText}`, false));
+            }
+            else {
+                if (ownedText.length >= 600) {
+                    pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned - p.${page}`, `${ownedText}`, false));
+                    page++;
+                    ownedText = '';
+                }
+                let lock = owned[i]._fieldsProto['protected'][owned[i]._fieldsProto['protected'].valueType] ? ' - 🔒' : '';
+                let sale = owned[i]._fieldsProto['for_sale'][owned[i]._fieldsProto['for_sale'].valueType] ? ' - ✅' : '';
 
-            ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
-            i++;
-        }
+                ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
+                if (i == owned.length - 1) {
+                    pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned - p.${page}`, `${ownedText}`, false));
+                }
+                i++;
+            }
+        } while (i < owned.length);
 
-        ownedText = ownedText == '' ? '[none]' : ownedText;
+        pages.forEach(page => {
+            page.setTitle(`${wrapText(db_user.pref_name ?? user.username, textWrap)}`)
+                .setThumbnail(db_user.pref_image ?? user.avatarURL())
+                .setColor(db_user.pref_color ?? `#ADD8E6`)
+                .setFooter({ text: wrapText(`BHP Profile`, textWrap) })
+                .setTimestamp();
 
-        let profile_embed = new MessageEmbed()
-            .setTitle(`${wrapText(db_user.pref_name ?? user.username, textWrap)}`)
-            .addField('Currency', `${credits} credits`, false)
-            .addField('Cards Owned', `${ownedText}`, false)
-            .setThumbnail(db_user.pref_image ?? user.avatarURL())
-            .setColor(db_user.pref_color ?? `#ADD8E6`)
-            .setFooter({ text: wrapText(`BHP Profile`, textWrap) })
-            .setTimestamp();
-
-        if (db_user.pref_status != null && db_user.pref_status != '') {
-            profile_embed.setDescription(db_user.pref_status)
-        }
-
-        msg.channel.send({ embeds: [profile_embed] });
+            if (db_user.pref_status != null && db_user.pref_status != '') {
+                page.setDescription(db_user.pref_status)
+            }
+        });
+        await require('../utility/pagination').paginationEmbed(msg, pages);
     }
 }

@@ -31,7 +31,7 @@ module.exports = {
             return;
         }
 
-        if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
+        if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
         try {
             if (args.length == 1 && args[0].toLowerCase() == 'all') {

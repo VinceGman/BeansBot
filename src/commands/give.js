@@ -24,7 +24,7 @@ module.exports = {
             return;
         }
 
-        if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
+        if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
         if (msg.mentions.users.size != 1) {
             msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - **+give** for more info.`);

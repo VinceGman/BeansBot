@@ -23,7 +23,7 @@ module.exports = {
             return;
         }
 
-        if (!(await require('../utility/timers').timer(msg, this.name, this.cooldown))) return; // timers manager checks cooldown
+        if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
         if (args.length > 6) {
             msg.channel.send('Too many inputs.');
@@ -116,6 +116,10 @@ module.exports = {
 
         const res = await db.doc(`edition_one/${character['rank_text'][character['rank_text'].valueType]}`).update({
             owner_id: '',
+            for_sale: false,
+            selling_price: 0,
+            protected: false,
+            owned: false,
         }).catch(err => msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This product wasn't stored properly. Please contact Sore#1414.`));
     }
 }
