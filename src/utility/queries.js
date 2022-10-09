@@ -29,8 +29,8 @@ module.exports = {
             match = args[0].replace('#', '');
         }
         else {
-            attribute = 'name_lower';
-            match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0].toLowerCase();
+            attribute = 'name';
+            match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0];
         }
 
         try {
@@ -60,8 +60,8 @@ module.exports = {
             match = args[0].replace('#', '');
         }
         else {
-            attribute = 'name_lower';
-            match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0].toLowerCase();
+            attribute = 'name';
+            match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0];
         }
 
         try {

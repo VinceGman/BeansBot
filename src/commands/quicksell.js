@@ -34,8 +34,8 @@ module.exports = {
             match = args[0].replace('#', '');
         }
         else {
-            attribute = 'name_lower';
-            match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0].toLowerCase();
+            attribute = 'name';
+            match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0];
         }
 
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017

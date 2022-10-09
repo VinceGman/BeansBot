@@ -31,7 +31,16 @@ module.exports = {
             var { matches, characters } = await require('../utility/queries').collection(msg, args);
         }
 
-        if (!characters) return;
+        if (!characters) {
+            // api error
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - System Error: Anime API Failed`);
+            return;
+        }
+        if (characters.length == 0) {
+            // no characters found
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - No character found.`);
+            return;
+        }
 
         characters.sort((a, b) => {
             return a.rank.integerValue - b.rank.integerValue;
