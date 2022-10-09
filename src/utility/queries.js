@@ -30,7 +30,7 @@ module.exports = {
         }
         else {
             attribute = 'name_lower';
-            match = require('../utility/searches').search('name', args.join(' ').toLowerCase());
+            match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0].toLowerCase();
         }
 
         try {
@@ -61,7 +61,7 @@ module.exports = {
         }
         else {
             attribute = 'name_lower';
-            match = require('../utility/searches').search('name', args.join(' ').toLowerCase());
+            match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0].toLowerCase();
         }
 
         try {
@@ -72,5 +72,47 @@ module.exports = {
             msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - No character found.`);
             return false;
         }
-    }
+    },
+    async collection(msg, args, limit = 50) { // returns one to many characters by name
+        // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
+        const { Firestore } = require('@google-cloud/firestore');
+        const db = new Firestore({
+            projectId: 'beans-326017',
+            keyFilename: './service-account.json'
+        });
+
+        let attribute = 'origin_lower';
+        let matches = require('../utility/searches').compound_search('collection', args.join(' ').toLowerCase());
+
+        let characters = [];
+        for (let match of matches) {
+            let db_characters = (await db.collection(`edition_one`).where(attribute, '==', match.toLowerCase()).orderBy("rank", "asc").limit(limit).get())._docs();
+            db_characters.forEach((char, index, db_characters) => {
+                db_characters[index] = char._fieldsProto;
+                characters.push(db_characters[index]);
+            });
+        }
+        return { matches: matches, characters: characters };
+    },
+    async owned_collection(msg, args, limit = 50) { // returns one to many characters by name
+        // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
+        const { Firestore } = require('@google-cloud/firestore');
+        const db = new Firestore({
+            projectId: 'beans-326017',
+            keyFilename: './service-account.json'
+        });
+
+        let attribute = 'origin_lower';
+        let matches = require('../utility/searches').compound_search('collection', args.join(' ').toLowerCase());
+
+        let characters = [];
+        for (let match of matches) {
+            let db_characters = (await db.collection(`edition_one`).where(attribute, '==', match.toLowerCase()).where('owned', '==', true).orderBy("rank", "asc").limit(limit).get())._docs();
+            db_characters.forEach((char, index, db_characters) => {
+                db_characters[index] = char._fieldsProto;
+                characters.push(db_characters[index]);
+            });
+        }
+        return { matches: matches, characters: characters };
+    },
 }

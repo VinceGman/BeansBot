@@ -1,7 +1,11 @@
 const fs = require('fs');
 require('dotenv').config(); // .env values
 
+require('lodash.permutations');
+let _ = require('lodash');
+
 const { Client, Collection, MessageEmbed } = require('discord.js');
+const { options } = require('./commands/collection');
 const discord_client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS', 'DIRECT_MESSAGES', 'GUILD_MESSAGE_REACTIONS'], partials: ['MESSAGE', 'CHANNEL'] });
 
 
@@ -16,13 +20,14 @@ const commandFiles = fs.readdirSync('./src/commands/').filter(file => file.endsW
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
 
-  if (command.hasOwnProperty('alias')) {
-    command.alias.forEach(alias => {
-      discord_client.commands.set(alias, command);
-    });
-  }
+  let poss_cmd_names = command.hasOwnProperty('alias') ? [command.name, ...command.alias] : [command.name];
+  let poss_cmd_options = command.hasOwnProperty('options') ? [[], ..._.flatMap(command.options, (v, i, a) => _.permutations(a, i + 1))] : [[]];
 
-  discord_client.commands.set(command.name, command);
+  for (let name of poss_cmd_names) {
+    for (let option of poss_cmd_options) {
+      discord_client.commands.set(name + option.join(''), command);
+    }
+  }
 }
 
 discord_client.on('ready', async () => {

@@ -17,8 +17,8 @@ module.exports = {
 
         msg.channel.send({ embeds: [character_embed] });
     },
-    make_card_embed(discord_client, msg, character) {
-        let owner = discord_client.users.cache.find(user => user.id === character['owner_id'][character['owner_id'].valueType]);
+    async make_card_embed(discord_client, msg, character) {
+        let owner = await discord_client.users.fetch(character['owner_id'][character['owner_id'].valueType]);
         owner = owner == null ? '[none]' : `${owner.username}#${owner.discriminator}`;
 
         let character_embed = new MessageEmbed()

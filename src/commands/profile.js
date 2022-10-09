@@ -1,16 +1,18 @@
 module.exports = {
     name: 'profile',
-    alias: ['prof', 'p'],
+    alias: ['p'],
+    options: ['i', 'c'],
     description: "shows your money and collectibles",
     admin: false,
     type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
+        let options = require('../utility/parsers').parse_command(msg, this.name, this.alias);
 
         if (args.length > 0) {
             if (msg.mentions.users.size > 0) {
-                this.display_profile(discord_client, msg, msg.mentions.users.keys().next().value);
+                this.display_profile(discord_client, msg, msg.mentions.users.keys().next().value, options);
                 return;
             }
 
@@ -76,11 +78,11 @@ module.exports = {
             }, { merge: true });
         }
         else {
-            this.display_profile(discord_client, msg, msg.author.id);
+            this.display_profile(discord_client, msg, msg.author.id, options);
             return;
         }
     },
-    async display_profile(discord_client, msg, id) {
+    async display_profile(discord_client, msg, id, options) {
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
         const { Firestore } = require('@google-cloud/firestore');
         const db = new Firestore({
@@ -99,43 +101,116 @@ module.exports = {
         let credits = db_user.credits;
         let owned = (await db.collection('edition_one').where('owner_id', '==', id).orderBy("rank", "asc").get())._docs();
 
-        let ownedText = '';
+        if (options.includes('c')) {
+            owned = owned.sort((a, b) => {
+                return (a._fieldsProto.origin.stringValue < b._fieldsProto.origin.stringValue) ? -1 : (a._fieldsProto.origin.stringValue > b._fieldsProto.origin.stringValue) ? 1 : 0;
+            });
+        }
+
         let pages = [];
-        let i = 0;
-        let page = 1;
-        do {
+        if (options.includes('i')) {
+            for (let character of owned) {
+                character = character._fieldsProto;
+                pages.push(await require('../utility/embeds').make_card_embed(discord_client, msg, character))
+            }
             if (owned.length == 0) {
                 ownedText = '[none]';
-                pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned`, `${ownedText}`, false));
+                pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false)
+                    .addField(`Cards Owned`, `${ownedText}`, false)
+                    .setTitle(`${wrapText(db_user.pref_name ?? user.username, textWrap)}`)
+                    .setThumbnail(db_user.pref_image ?? user.avatarURL())
+                    .setColor(db_user.pref_color ?? `#ADD8E6`));
             }
-            else {
-                if (ownedText.length >= 600) {
-                    pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned - p.${page}`, `${ownedText}`, false));
-                    page++;
-                    ownedText = '';
+            pages.forEach(page => {
+                page.setFooter({ text: `BHP Profile` })
+                    .setTimestamp();
+            });
+        }
+        else {
+            let current_origin = owned[0]._fieldsProto['origin'][owned[0]._fieldsProto['origin'].valueType];
+            let count_origin = 1;
+            let ownedText = '';
+            let i = 0;
+            let page = 0;
+            do {
+                if (options.includes('c')) {
+                    if (owned.length == 0) {
+                        ownedText = '[none]';
+                        pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned`, `${ownedText}`, false));
+                    }
+                    else {
+                        if (count_origin % 5 == 1 && i != 0) {
+                            pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false));
+                            page++;
+                        }
+
+                        if (current_origin != owned[i]._fieldsProto['origin'][owned[i]._fieldsProto['origin'].valueType] && !owned[i]._fieldsProto['origin'][owned[i]._fieldsProto['origin'].valueType].includes(current_origin)) {
+                            pages[page - 1].addField(current_origin, ownedText, false);
+                            ownedText = '';
+                            current_origin = owned[i]._fieldsProto['origin'][owned[i]._fieldsProto['origin'].valueType];
+                            count_origin++;
+                        }
+
+                        let lock = owned[i]._fieldsProto['protected'][owned[i]._fieldsProto['protected'].valueType] ? ' - 🔒' : '';
+                        let sale = owned[i]._fieldsProto['for_sale'][owned[i]._fieldsProto['for_sale'].valueType] ? ' - ✅' : '';
+
+                        ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
+                        if (i == owned.length-1) {
+                            if (count_origin % 5 == 1) {
+                                pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false));
+                                page++;
+                            }
+                            pages[page - 1].addField(current_origin, ownedText, false);
+                        }
+                        i++;
+                    }
                 }
-                let lock = owned[i]._fieldsProto['protected'][owned[i]._fieldsProto['protected'].valueType] ? ' - 🔒' : '';
-                let sale = owned[i]._fieldsProto['for_sale'][owned[i]._fieldsProto['for_sale'].valueType] ? ' - ✅' : '';
+                else {
+                    if (owned.length == 0) {
+                        ownedText = '[none]';
+                        pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned`, `${ownedText}`, false));
+                    }
+                    else {
+                        if (ownedText.length >= 600) {
+                            pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned - p.${page}`, `${ownedText}`, false));
+                            page++;
+                            ownedText = '';
+                        }
 
-                ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
-                if (i == owned.length - 1) {
-                    pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned - p.${page}`, `${ownedText}`, false));
+                        let lock = owned[i]._fieldsProto['protected'][owned[i]._fieldsProto['protected'].valueType] ? ' - 🔒' : '';
+                        let sale = owned[i]._fieldsProto['for_sale'][owned[i]._fieldsProto['for_sale'].valueType] ? ' - ✅' : '';
+
+                        ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
+                        if (i == owned.length - 1) {
+                            pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned - p.${page}`, `${ownedText}`, false));
+                        }
+                        i++;
+                    }
                 }
-                i++;
-            }
-        } while (i < owned.length);
+            } while (i < owned.length);
 
-        pages.forEach(page => {
-            page.setTitle(`${wrapText(db_user.pref_name ?? user.username, textWrap)}`)
-                .setThumbnail(db_user.pref_image ?? user.avatarURL())
-                .setColor(db_user.pref_color ?? `#ADD8E6`)
-                .setFooter({ text: wrapText(`BHP Profile`, textWrap) })
-                .setTimestamp();
+            let pg = '';
+            let j = 1;
+            pages.forEach(page => {
+                if (pages.length == 1) {
+                    pg = '';
+                }
+                else {
+                    pg = ` - p.${j}`;
+                }
+                page.setTitle(`${wrapText(`${db_user.pref_name ?? user.username}${pg}`, textWrap)}`)
+                    .setThumbnail(db_user.pref_image ?? user.avatarURL())
+                    .setColor(db_user.pref_color ?? `#ADD8E6`)
+                    .setFooter({ text: wrapText(`BHP Profile`, textWrap) })
+                    .setTimestamp();
 
-            if (db_user.pref_status != null && db_user.pref_status != '') {
-                page.setDescription(db_user.pref_status)
-            }
-        });
+                if (db_user.pref_status != null && db_user.pref_status != '') {
+                    page.setDescription(db_user.pref_status)
+                }
+                j++;
+            });
+        }
+
         await require('../utility/pagination').paginationEmbed(msg, pages);
     }
 }

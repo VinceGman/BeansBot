@@ -26,7 +26,9 @@ module.exports = {
         if (!characters) return;
 
         let pages = [];
-        characters.forEach(character => { pages.push(require('../utility/embeds').make_card_embed(discord_client, msg, character)) });
+        for (let character of characters) {
+            pages.push(await require('../utility/embeds').make_card_embed(discord_client, msg, character))
+        }
         await require('../utility/pagination').paginationEmbed(msg, pages);
     }
 }

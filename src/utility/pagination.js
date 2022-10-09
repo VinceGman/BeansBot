@@ -14,7 +14,7 @@ module.exports = {
         const curPage = await msg.channel.send({ embeds: [pages[page]] });
         for (const emoji of emojiList) await curPage.react(emoji);
         const reactionCollector = curPage.createReactionCollector(
-            (reaction, user) => emojiList.includes(reaction.emoji.name) && !user.bot && user.id != msg.author.id,
+            (reaction, user) => emojiList.includes(reaction.emoji.name) && !user.bot && user.id == msg.author.id,
             { time: timeout }
         );
         
