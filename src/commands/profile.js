@@ -5,7 +5,7 @@ module.exports = {
     description: "shows your money and collectibles",
     admin: false,
     type: "production",
-    cooldown: 4,
+    cooldown: 10,
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
         let options = require('../utility/parsers').parse_command(msg, this.name, this.alias);
@@ -121,9 +121,18 @@ module.exports = {
                     .setThumbnail(db_user.pref_image ?? user.avatarURL())
                     .setColor(db_user.pref_color ?? `#ADD8E6`));
             }
+            let pg = '';
+            let j = 1;
             pages.forEach(page => {
-                page.setFooter({ text: `BHP Profile` })
+                if (pages.length == 1) {
+                    pg = '';
+                }
+                else {
+                    pg = ` - p.${j}`;
+                }
+                page.setFooter({ text: wrapText(`BHP Profile${pg}`, textWrap) })
                     .setTimestamp();
+                j++;
             });
         }
         else {
@@ -155,7 +164,7 @@ module.exports = {
                         let sale = owned[i]._fieldsProto['for_sale'][owned[i]._fieldsProto['for_sale'].valueType] ? ' - ✅' : '';
 
                         ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
-                        if (i == owned.length-1) {
+                        if (i == owned.length - 1) {
                             if (count_origin % 5 == 1) {
                                 pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false));
                                 page++;
@@ -172,7 +181,7 @@ module.exports = {
                     }
                     else {
                         if (ownedText.length >= 600) {
-                            pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned - p.${page}`, `${ownedText}`, false));
+                            pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned`, `${ownedText}`, false));
                             page++;
                             ownedText = '';
                         }
@@ -182,7 +191,7 @@ module.exports = {
 
                         ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
                         if (i == owned.length - 1) {
-                            pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned - p.${page}`, `${ownedText}`, false));
+                            pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned`, `${ownedText}`, false));
                         }
                         i++;
                     }
@@ -198,10 +207,10 @@ module.exports = {
                 else {
                     pg = ` - p.${j}`;
                 }
-                page.setTitle(`${wrapText(`${db_user.pref_name ?? user.username}${pg}`, textWrap)}`)
+                page.setTitle(`${wrapText(`${db_user.pref_name ?? user.username}`, textWrap)}`)
                     .setThumbnail(db_user.pref_image ?? user.avatarURL())
                     .setColor(db_user.pref_color ?? `#ADD8E6`)
-                    .setFooter({ text: wrapText(`BHP Profile`, textWrap) })
+                    .setFooter({ text: wrapText(`BHP Profile${pg}`, textWrap) })
                     .setTimestamp();
 
                 if (db_user.pref_status != null && db_user.pref_status != '') {

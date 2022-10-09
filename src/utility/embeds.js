@@ -18,8 +18,13 @@ module.exports = {
         msg.channel.send({ embeds: [character_embed] });
     },
     async make_card_embed(discord_client, msg, character) {
-        let owner = await discord_client.users.fetch(character['owner_id'][character['owner_id'].valueType]);
-        owner = owner == null ? '[none]' : `${owner.username}#${owner.discriminator}`;
+        try {
+            var owner = await discord_client.users.fetch(character['owner_id'][character['owner_id'].valueType]);
+            owner = owner ? `${owner.username}#${owner.discriminator}` : '[none]';
+        }
+        catch (err) {
+            owner = '[none]'
+        }
 
         let character_embed = new MessageEmbed()
             .setTitle(`${wrapText(character['name'][character['name'].valueType], textWrap)}`)
