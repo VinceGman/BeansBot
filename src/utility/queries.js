@@ -30,7 +30,7 @@ module.exports = {
         }
         else {
             attribute = 'name_lower';
-            match = args.join(' ').toLowerCase();
+            match = require('../utility/searches').search('name', args.join(' ').toLowerCase());
         }
 
         try {
@@ -61,7 +61,7 @@ module.exports = {
         }
         else {
             attribute = 'name_lower';
-            match = args.join(' ').toLowerCase();
+            match = require('../utility/searches').search('name', args.join(' ').toLowerCase());
         }
 
         try {

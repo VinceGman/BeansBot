@@ -46,7 +46,7 @@ module.exports = {
         }
         else {
             attribute = 'name_lower';
-            match = args.join(' ').toLowerCase();
+            match = require('../utility/searches').search('name', args.join(' ').toLowerCase());
         }
 
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
