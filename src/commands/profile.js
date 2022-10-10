@@ -136,11 +136,17 @@ module.exports = {
             });
         }
         else {
-            let current_origin = owned[0]._fieldsProto['origin'][owned[0]._fieldsProto['origin'].valueType];
+            try {
+                var current_origin = owned[0]._fieldsProto['origin'][owned[0]._fieldsProto['origin'].valueType];
+            }
+            catch (err) {
+                var current_origin = '???@<>';
+            }
             let ownedText = '';
             let i = 0;
             let fields = [];
             let page = 0;
+            let account_value = 0;
             do {
                 if (options.includes('c')) {
                     if (owned.length == 0) {
@@ -159,11 +165,38 @@ module.exports = {
 
                         ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
 
+                        let value = 0;
+                        switch (owned[i]._fieldsProto['rarity'][owned[i]._fieldsProto['rarity'].valueType]) {
+                            case 'Common':
+                                value = 250;
+                                break;
+                            case 'Uncommon':
+                                value = 500;
+                                break;
+                            case 'Rare':
+                                value = 2500;
+                                break;
+                            case 'Epic':
+                                value = 5000;
+                                break;
+                            case 'Legendary':
+                                value = 15000;
+                                break;
+                            case 'Ultimate':
+                                value = 25000;
+                                break;
+                            default:
+                                value = 0;
+                        }
+
+                        account_value += value;
+
                         if (i == owned.length - 1) {
+                            account_value += +credits;
                             fields.push({ current_origin: current_origin, ownedText: ownedText });
                             for (let i = 0; i < fields.length; i++) {
                                 if (i % 5 == 0) {
-                                    pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false));
+                                    pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, true).addField('Account Value', `${account_value} credits`, true));
                                     page++;
                                 }
                                 pages[page-1].addField(fields[i].current_origin, fields[i].ownedText, false);
