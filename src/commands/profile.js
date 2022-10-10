@@ -137,9 +137,9 @@ module.exports = {
         }
         else {
             let current_origin = owned[0]._fieldsProto['origin'][owned[0]._fieldsProto['origin'].valueType];
-            let count_origin = 1;
             let ownedText = '';
             let i = 0;
+            let fields = [];
             let page = 0;
             do {
                 if (options.includes('c')) {
@@ -148,29 +148,28 @@ module.exports = {
                         pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned`, `${ownedText}`, false));
                     }
                     else {
-                        if (count_origin % 5 == 1 && i != 0) {
-                            pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false));
-                            page++;
-                        }
-
                         if (current_origin != owned[i]._fieldsProto['origin'][owned[i]._fieldsProto['origin'].valueType] && !owned[i]._fieldsProto['origin'][owned[i]._fieldsProto['origin'].valueType].includes(current_origin)) {
-                            pages[page - 1].addField(current_origin, ownedText, false);
+                            fields.push({ current_origin: current_origin, ownedText: ownedText });
                             ownedText = '';
                             current_origin = owned[i]._fieldsProto['origin'][owned[i]._fieldsProto['origin'].valueType];
-                            count_origin++;
                         }
 
                         let lock = owned[i]._fieldsProto['protected'][owned[i]._fieldsProto['protected'].valueType] ? ' - 🔒' : '';
                         let sale = owned[i]._fieldsProto['for_sale'][owned[i]._fieldsProto['for_sale'].valueType] ? ' - ✅' : '';
 
                         ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
+
                         if (i == owned.length - 1) {
-                            if (count_origin % 5 == 1) {
-                                pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false));
-                                page++;
+                            fields.push({ current_origin: current_origin, ownedText: ownedText });
+                            for (let i = 0; i < fields.length; i++) {
+                                if (i % 5 == 0) {
+                                    pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false));
+                                    page++;
+                                }
+                                pages[page-1].addField(fields[i].current_origin, fields[i].ownedText, false);
                             }
-                            pages[page - 1].addField(current_origin, ownedText, false);
                         }
+
                         i++;
                     }
                 }
