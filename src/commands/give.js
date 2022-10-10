@@ -45,7 +45,7 @@ module.exports = {
             match = args[0].replace('#', '');
         }
         else {
-            attribute = 'name';
+            attribute = 'name_lower';
             match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0];
         }
 
@@ -57,7 +57,7 @@ module.exports = {
         });
 
         try {
-            var character_ref = (await db.collection(`edition_one`).where('owner_id', '==', msg.author.id).where(attribute, '==', match).limit(1).get())._docs()[0];
+            var character_ref = (await db.collection(`edition_one`).where('owner_id', '==', msg.author.id).where(attribute, '==', match.toLowerCase()).limit(1).get())._docs()[0];
             var character = character_ref._fieldsProto;
             if (character == null) throw 'null character';
         }

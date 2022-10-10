@@ -29,12 +29,12 @@ module.exports = {
             match = args[0].replace('#', '');
         }
         else {
-            attribute = 'name';
+            attribute = 'name_lower';
             match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0];
         }
 
         try {
-            var characters = (await db.collection(`edition_one`).where(attribute, '==', match).orderBy("rank", "asc").limit(limit).get())._docs();
+            var characters = (await db.collection(`edition_one`).where(attribute, '==', match.toLowerCase()).orderBy("rank", "asc").limit(limit).get())._docs();
             if (characters.length == 0) throw 'null character';
             characters.forEach((char, index, characters) => {
                 characters[index] = char._fieldsProto;
@@ -60,12 +60,12 @@ module.exports = {
             match = args[0].replace('#', '');
         }
         else {
-            attribute = 'name';
+            attribute = 'name_lower';
             match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0];
         }
 
         try {
-            var character = (await db.collection(`edition_one`).where('owner_id', '==', msg.author.id).where(attribute, '==', match).orderBy("rank", "asc").limit(1).get())._docs()[0];
+            var character = (await db.collection(`edition_one`).where('owner_id', '==', msg.author.id).where(attribute, '==', match.toLowerCase()).orderBy("rank", "asc").limit(1).get())._docs()[0];
             return character._fieldsProto;
         }
         catch (err) {
