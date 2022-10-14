@@ -29,7 +29,7 @@ module.exports = {
         let character_embed = new MessageEmbed()
             .setTitle(`${wrapText(character['name'][character['name'].valueType], textWrap)}`)
             .setDescription(`${wrapText(character['origin'][character['origin'].valueType], textWrap)}`)
-            .setImage(`${character['pref_image'][character['pref_image'].valueType] ?? character['image'][character['image'].valueType]}`)
+            .setImage(`${character['image'][character['image'].valueType]}`)
             .setColor(character['color'][character['color'].valueType])
             .addField('Rank', `#${character['rank_text'][character['rank_text'].valueType]}`, true)
             .addField('Rarity', `${character['rarity'][character['rarity'].valueType]} - ${character['stars'][character['stars'].valueType]}`, true)
