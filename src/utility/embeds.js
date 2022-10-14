@@ -37,6 +37,10 @@ module.exports = {
             .setFooter({ text: 'BHP - Edition One' })
             .setTimestamp();
 
+        if (character.for_sale.booleanValue) {
+            character_embed.addField('Price', `${character['selling_price'][character['selling_price'].valueType]}`, true)
+        }
+
         return character_embed;
     }
 }

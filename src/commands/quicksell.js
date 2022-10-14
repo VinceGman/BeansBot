@@ -4,7 +4,7 @@ module.exports = {
     description: "sell your cards back to the market",
     admin: false,
     type: "production",
-    cooldown: 6,
+    cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');
 
