@@ -17,7 +17,7 @@ module.exports = {
         if (args.length == 0) {
             let sell_guide = new MessageEmbed()
                 .setTitle(`Sell Guide`)
-                .setDescription('To ensure you sell the product you intend, you now must specify rank at listing.')
+                .setDescription('To ensure you sell the product you intend, use the exact name or rank.')
                 .setColor('#000000')
                 .addField('+sell Nezuko Kamado 10000', `lists card 'Nezuko Kamado' at 10000 credits on the market`, false)
                 .addField('+sell 123 10000', `lists card with rank #123 at 10000 credits on the market`, false)
