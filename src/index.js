@@ -56,6 +56,16 @@ discord_client.on('ready', async () => {
 discord_client.on('messageCreate', async msg => {
   if (msg.author.bot) return;
 
+  if ((msg.content.toLowerCase().includes('the game') || msg.content.toLowerCase().includes('thegame')) && msg.guildId != null) {
+    try {
+      await msg.member.disableCommunicationUntil(Date.now() + (5 * 60 * 1000), 'Sinners must die.');
+      msg.channel.send(`This user has been timed out and will return <t:${Math.trunc((Date.now() + (5 * 60 * 1000)) / 1000)}:R>`);
+    }
+    catch (err) {
+    }
+    return;
+  }
+
   if (msg.guildId === null) {
     msg.channel.send(`Direct message commands aren't supported yet.`);
     return;
