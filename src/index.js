@@ -79,7 +79,7 @@ discord_client.on('messageCreate', async msg => {
     try {
       if (discord_client.commands.get(command).type != run_type) return;
 
-      if (msg.member.roles.cache.some(role => role.name === 'Mods')) {
+      if (msg.member.roles.cache.some(role => role.name.toLowerCase() === 'admins' || role.name.toLowerCase() === 'mods')) {
         discord_client.commands.get(command).execute(discord_client, msg, args, true);
       }
       else {

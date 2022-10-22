@@ -31,8 +31,8 @@ module.exports = {
             next_charge = income + ((charges + 1) * 3600);
         }
 
-        let booster = msg.member.roles.cache.some(role => role.name === 'Booster' || role.name === 'Server Booster') ? 0.25 : 0;
-        let patron = msg.member.roles.cache.some(role => role.name === 'Patron') ? 0.25 : 0;
+        let booster = msg.member.roles.cache.some(role => role.name.toLowerCase() === 'booster' || role.name.toLowerCase() === 'server booster') ? 0.25 : 0;
+        let patron = msg.member.roles.cache.some(role => role.name.toLowerCase() === 'patron') ? 0.25 : 0;
 
         let amount = charges * 2000;
         let pay = amount + booster * amount + patron * amount;
