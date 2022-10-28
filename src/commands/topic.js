@@ -16,7 +16,7 @@ module.exports = {
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
-        if (msg.channel.id != process.env.topic_channel_id) return;
+        if (msg.channel.id != process.env.topic_channel_id && msg.channel.id != process.env.goblin_channel_id) return;
 
         let cooldown_amount = 30;
 
