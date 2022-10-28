@@ -21,7 +21,7 @@ module.exports = {
         let cooldown_amount = 30;
 
         let current_time = Math.floor(Date.now() / 1000);
-        let next_time = +(await db.doc('values/topic').get())._fieldsProto.lastUpdate.stringValue || 0;
+        let next_time = +(await db.doc('values/topic').get())._fieldsProto[msg.channel.id]?.stringValue ?? 0;
 
         let next_available = current_time + (cooldown_amount * 60);
         let time_shown = next_time;
@@ -36,7 +36,7 @@ module.exports = {
         if (current_time >= next_time) {
             if (args.length >= 1) {
                 await db.doc('values/topic').set({
-                    lastUpdate: next_available.toString()
+                    [msg.channel.id]: next_available.toString()
                 }, { merge: true }).then((res, rej) => {
                     if (res) {
                         // time_change = true;
