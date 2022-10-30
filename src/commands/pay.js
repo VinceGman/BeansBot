@@ -37,6 +37,10 @@ module.exports = {
         args = args.filter(a => !a.includes('<@'));
 
         if (args.length == 1 && !isNaN(args[0])) {
+            if (+args[0] < 0) {
+                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Your number must be positive.`);
+                return;
+            }
             if (!(await require('../utility/credits').transaction(msg, +args[0]))) return; // credits manager validates transaction
             await require('../utility/credits').refund(recipient, +args[0]); // credits manager refunds credits
             msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - User paid.`);
