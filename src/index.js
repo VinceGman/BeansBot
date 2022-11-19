@@ -8,6 +8,7 @@ const { Client, Collection, MessageEmbed } = require('discord.js');
 const { options } = require('./commands/collection');
 const discord_client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS', 'DIRECT_MESSAGES', 'GUILD_MESSAGE_REACTIONS'], partials: ['MESSAGE', 'CHANNEL'] });
 
+// let character_chats = ['1035708973606781018', '1035709358832627762', '1035709324351258734', '1035709358832627762', '1036000040159817849'];
 
 discord_client.commands = new Collection();
 
@@ -56,7 +57,18 @@ discord_client.on('ready', async () => {
 discord_client.on('messageCreate', async msg => {
   if (msg.author.bot) return;
 
-  if (((msg.content.toLowerCase().includes('the game') && msg.content.toLowerCase().includes('||')) || (msg.content.toLowerCase().includes('thegame') && msg.content.toLowerCase().includes('||'))) && msg.guildId != null) {
+  // if (character_chats.includes(msg.channel.id)) {
+  //   try {
+  //     if (discord_client.commands.get('character').type != run_type) return;
+  //     discord_client.commands.get('character').execute(discord_client, msg);
+  //   }
+  //   catch (err) {
+  //     // console.log(err);
+  //   }
+  //   return;
+  // }
+
+  if (((msg.content.toLowerCase().includes('the game') && msg.content.toLowerCase().includes('||')) || msg.content.toLowerCase().includes('whore') || (msg.content.toLowerCase().includes('thegame') && msg.content.toLowerCase().includes('||'))) && msg.guildId != null) {
     try {
       await msg.member.disableCommunicationUntil(Date.now() + (5 * 60 * 1000), 'Sinners must die.');
       msg.channel.send(`This user has been timed out and will return <t:${Math.trunc((Date.now() + (5 * 60 * 1000)) / 1000)}:R>`);
