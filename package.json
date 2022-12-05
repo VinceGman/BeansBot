@@ -20,6 +20,7 @@
     "@google-cloud/firestore": "^5.0.2",
     "@shineiichijo/marika": "^2.0.5",
     "coinlore-crypto-prices": "^0.1.1",
+    "colord": "^2.9.3",
     "comma-number": "^2.1.0",
     "cron": "^2.0.0",
     "discord.js": "^13.6.0",
