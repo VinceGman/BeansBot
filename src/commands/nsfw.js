@@ -8,7 +8,7 @@ module.exports = {
     options: ['a'],
     description: "access nsfw chat and content",
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
@@ -134,12 +134,12 @@ module.exports = {
                 reaction.users.remove(user);
                 reaction.users.remove(curMsg.author);
 
-                let db_starred_user = await require('../utility/queries').user(msg.author.id);
+                let db_starred_user = await require('../utility/queries').user(user.id);
 
                 if (!starred) {
                     starred = true;
                     let nsfw_content = new MessageEmbed()
-                        .setColor(db_starred_user.pref_color ?? '#000000')
+                        .setColor(db_starred_user?.pref_color ?? '#000000')
                         .setImage(img)
                         .setFooter({ text: `${user.username}#${user.discriminator} - /${type}/${input} - ⭐` })
                         .setTimestamp();
