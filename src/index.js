@@ -86,7 +86,7 @@ discord_client.on('messageCreate', async msg => {
     const args = msg.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
-    if (msg.channel.name != 'commands' && command != 'topic' && command != 'koth' && msg.author.id != '183019001058689025') return; // owner : (await msg.guild.fetchOwner()).user.id
+    if (msg.channel.name != 'commands' && command != 'topic' && command != 'nsfw' && command != 'koth' && msg.author.id != '183019001058689025') return; // owner : (await msg.guild.fetchOwner()).user.id
 
     try {
       if (discord_client.commands.get(command).type != run_type) return;
