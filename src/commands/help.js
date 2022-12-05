@@ -28,7 +28,7 @@ module.exports = {
                 });
             }
 
-            if (command.hasOwnProperty('active_service') || command.type == 'test' || command.name == 'topic') {
+            if (command.hasOwnProperty('active_service') || command.type == 'test' || command.name == 'topic' || command.name == 'example') {
                 // ignore
             }
             else if (command.admin == false) {

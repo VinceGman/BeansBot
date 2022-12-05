@@ -13,12 +13,10 @@ module.exports = {
         let page = 0;
         const curPage = await msg.channel.send({ embeds: [pages[page]] });
         for (const emoji of emojiList) await curPage.react(emoji);
-        const reactionCollector = curPage.createReactionCollector(
-            (reaction, user) => emojiList.includes(reaction.emoji.name) && !user.bot && user.id == msg.author.id,
-            { time: timeout }
-        );
+        const reactionCollector = curPage.createReactionCollector({ filter: (reaction, user) => emojiList.includes(reaction.emoji.name) && !user.bot && user.id != curPage.author.id, time: timeout });
         
         reactionCollector.on('collect', (reaction, user) => {
+            if (user.id == curPage.author.id) return;
             reaction.users.remove(msg.author);
             switch (reaction.emoji.name) {
                 case emojiList[0]:
@@ -28,7 +26,6 @@ module.exports = {
                     page = page + 1 < pages.length ? ++page : 0;
                     break;
                 default:
-                    break;
             }
             curPage.edit({ embeds: [pages[page]] });
         });

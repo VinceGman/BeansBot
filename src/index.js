@@ -37,7 +37,7 @@ discord_client.on('ready', async () => {
 
   fs.promises.writeFile('service-account.json', process.env.service_account);
 
-  if (process.env.USERDOMAIN == 'DESKTOP-UI1NSUQ') {
+  if (process.env.USERDOMAIN == 'CYBER') {
     run_type = 'test';
   }
   else {

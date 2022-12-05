@@ -27,6 +27,7 @@
     "fast-fuzzy": "^1.11.2",
     "googleapis": "^85.0.0",
     "image-url-validator": "^1.0.4",
+    "images-generator": "^3.3.2",
     "lodash.permutations": "^1.0.0",
     "nodemon": "^2.0.15",
     "validate-color": "^2.2.1",
