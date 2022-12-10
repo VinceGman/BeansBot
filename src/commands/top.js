@@ -50,7 +50,7 @@ module.exports = {
             .setTitle(`Top List - Page: ${page}`)
             .setDescription(ownedText)
             .setColor(`#fc5d65`)
-            .setFooter({ text: `BHP Top List` })
+            .setFooter({ text: `Beans Top List` })
             .setTimestamp();
 
         msg.channel.send({ embeds: [top_embed] });

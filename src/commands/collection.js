@@ -89,7 +89,7 @@ module.exports = {
             pages.forEach(page => {
                 page.setDescription(matches.join('\n'))
                     .setColor(`#fc5d65`)
-                    .setFooter({ text: `BHP Collection` })
+                    .setFooter({ text: `Beans Collection` })
                     .setTimestamp();
             });
 

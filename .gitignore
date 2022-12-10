@@ -52,6 +52,7 @@ $RECYCLE.BIN/
 deprecated
 node_modules
 plans
+assets
 lootbox
 service-account.json
 *.env

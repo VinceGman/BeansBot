@@ -130,7 +130,7 @@ module.exports = {
                 else {
                     pg = ` - p.${j}`;
                 }
-                page.setFooter({ text: wrapText(`BHP Profile${pg}`, textWrap) })
+                page.setFooter({ text: wrapText(`Beans Profile${pg}`, textWrap) })
                     .setTimestamp();
                 j++;
             });
@@ -272,7 +272,7 @@ module.exports = {
                 page.setTitle(`${wrapText(`${db_user.pref_name ?? user.username}`, textWrap)}`)
                     .setThumbnail(db_user.pref_image ?? user.avatarURL())
                     .setColor(db_user.pref_color ?? `#ADD8E6`)
-                    .setFooter({ text: wrapText(`BHP Profile${pg}`, textWrap) })
+                    .setFooter({ text: wrapText(`Beans Profile${pg}`, textWrap) })
                     .setTimestamp();
 
                 if (db_user.pref_status != null && db_user.pref_status != '') {

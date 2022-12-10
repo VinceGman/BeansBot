@@ -12,7 +12,7 @@ module.exports = {
             .addField('Rank', `#${character['rank_text'][character['rank_text'].valueType]}`, true)
             .addField('Rarity', `${character['rarity'][character['rarity'].valueType]} - ${character['stars'][character['stars'].valueType]}`, true)
             .addField('Owner', wrapText(`${msg.author.username}#${msg.author.discriminator}`, textWrap), false)
-            .setFooter({ text: 'BHP - Edition One' })
+            .setFooter({ text: 'Beans - Edition One' })
             .setTimestamp();
 
         msg.channel.send({ embeds: [character_embed] });
@@ -34,7 +34,7 @@ module.exports = {
             .addField('Rank', `#${character['rank_text'][character['rank_text'].valueType]}`, true)
             .addField('Rarity', `${character['rarity'][character['rarity'].valueType]} - ${character['stars'][character['stars'].valueType]}`, true)
             .addField('Owner', wrapText(owner, textWrap), false)
-            .setFooter({ text: 'BHP - Edition One' })
+            .setFooter({ text: 'Beans - Edition One' })
             .setTimestamp();
 
         if (character.for_sale.booleanValue) {
