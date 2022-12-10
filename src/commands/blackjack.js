@@ -14,7 +14,7 @@ module.exports = {
     options: ['b'],
     description: "play blackjack (hit, stand) or use +bjb or +blackjackb for buttons",
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
@@ -29,8 +29,6 @@ module.exports = {
         let options = require('../utility/parsers').parse_command(msg, this.name, this.alias);
         let buttons = options.includes('b') ? true : false;
         let result = await blackjack(msg, { buttons: buttons, split: false, doubledown: false });
-
-        console.log(result);
 
         switch (result.result) {
             case 'WIN':
