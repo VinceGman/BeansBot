@@ -28,7 +28,7 @@ module.exports = {
 
         let role = msg.guild.roles.cache.find(r => r.name.includes(color));
 
-        if (!role) {
+        if (!role || !role.name.includes('color: ')) {
             let color_embed = new MessageEmbed()
                 .setTitle(`Color Not Found`)
                 .setColor(`#000000`)
