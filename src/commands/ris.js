@@ -2,7 +2,8 @@ const fs = require('fs');
 
 module.exports = {
     name: 'ris',
-    description: "reverse image search command",
+    alias: ['image'],
+    description: "reverse image search",
     admin: false,
     type: "production",
     cooldown: 10,
@@ -14,9 +15,9 @@ module.exports = {
                 .setTitle(`Reverse Image Search Guide`)
                 .setDescription(`Find the source of any image, even someone's profile picture.`)
                 .setColor('#000000')
-                .addField('+image <image_link>', `Returns the sources of the image linked.`, false)
-                .addField('+image @person', `Returns the sources of @person's profile picture.`, false)
-                .addField('+image id', `Returns the sources of @person's profile picture using their ID.`, false)
+                .addField('+ris <image_link>', `Returns the sources of the image linked.`, false)
+                .addField('+ris @person', `Returns the sources of @person's profile picture.`, false)
+                .addField('+ris id', `Returns the sources of @person's profile picture using their ID.`, false)
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
                 .setTimestamp();
 
