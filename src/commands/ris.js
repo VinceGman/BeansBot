@@ -1,8 +1,9 @@
 const fs = require('fs');
 
+// https://www.npmjs.com/package/googlethis
 module.exports = {
     name: 'ris',
-    alias: ['image'],
+    alias: ['image', 'rizz'],
     description: "reverse image search",
     admin: false,
     type: "production",
