@@ -4,7 +4,7 @@ module.exports = {
     name: 'ris',
     alias: ['image'],
     description: "reverse image search",
-    admin: true,
+    admin: false,
     type: "production",
     cooldown: 10,
     async execute(discord_client, msg, args, admin) {
