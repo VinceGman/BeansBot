@@ -13,11 +13,10 @@ const db = new Firestore({
 module.exports = {
     name: 'topic',
     description: "topic change in topic chat",
+    scopes: [process.env.topic_channel_id, process.env.goblin_channel_id, process.env.booster_channel_id],
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
-        if (msg.channel.id != process.env.topic_channel_id && msg.channel.id != process.env.goblin_channel_id && msg.channel.id != process.env.booster_channel_id) return;
-
         let cooldown_amount = 30;
 
         let current_time = Math.floor(Date.now() / 1000);
