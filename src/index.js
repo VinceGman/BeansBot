@@ -5,18 +5,14 @@ require('lodash.permutations');
 let _ = require('lodash');
 
 const { Client, Collection, MessageEmbed } = require('discord.js');
-const { options } = require('./commands/collection');
 const discord_client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS', 'DIRECT_MESSAGES', 'GUILD_MESSAGE_REACTIONS'], partials: ['MESSAGE', 'CHANNEL'] });
-
-// let character_chats = ['1035708973606781018', '1035709358832627762', '1035709324351258734', '1035709358832627762', '1036000040159817849'];
-
-discord_client.commands = new Collection();
 
 let prefix = '+';
 let run_type = 'production';
 
-module.exports = { prefix: prefix }
+module.exports = { prefix: prefix, run_type: run_type }
 
+discord_client.commands = new Collection();
 const commandFiles = fs.readdirSync('./src/commands/').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
@@ -57,32 +53,6 @@ discord_client.on('ready', async () => {
 discord_client.on('messageCreate', async msg => {
   if (msg.author.bot) return;
 
-  // if (character_chats.includes(msg.channel.id)) {
-  //   try {
-  //     if (discord_client.commands.get('character').type != run_type) return;
-  //     discord_client.commands.get('character').execute(discord_client, msg);
-  //   }
-  //   catch (err) {
-  //     // console.log(err);
-  //   }
-  //   return;
-  // }
-
-  // if (msg.content.toLowerCase().includes('unwanted phrase') && msg.guildId != null) {
-  //   try {
-  //     await msg.member.disableCommunicationUntil(Date.now() + (5 * 60 * 1000), 'Iimeout for 5 minutes for sating unwanted phrase');
-  //     msg.channel.send(`This user has been timed out and will return <t:${Math.trunc((Date.now() + (5 * 60 * 1000)) / 1000)}:R>`);
-  //   }
-  //   catch (err) {
-  //   }
-  //   return;
-  // }
-
-  // if (msg.channel.id == '1032878832891473950') {
-  //   msg.channel.send('This is the right channel');
-  //   return;
-  // }
-
   if (msg.guildId === null) {
     msg.channel.send(`Direct message commands aren't supported yet.`);
     return;
@@ -91,22 +61,23 @@ discord_client.on('messageCreate', async msg => {
     const args = msg.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
-    if (msg.channel.name != 'commands' && command != 'topic' && command != 'nsfw' && command != 'nsfwa' && command != 'koth' && msg.author.id != '183019001058689025' && msg.author.id != '334139953678385152') return; // owner : (await msg.guild.fetchOwner()).user.id
+    let admin = false;
+    let execute = false;
 
     try {
       if (discord_client.commands.get(command).type != run_type) return;
+      if (msg.member.roles.cache.some(role => role.name.toLowerCase() === 'admins' || role.name.toLowerCase() === 'mods')) admin = true;
 
-      if (msg.member.roles.cache.some(role => role.name.toLowerCase() === 'admins' || role.name.toLowerCase() === 'mods')) {
-        discord_client.commands.get(command).execute(discord_client, msg, args, true);
+      for (let scope of discord_client.commands.get(command).scopes ?? ['commands']) {
+        if (scope == 'commands' && (msg.channel.name == 'commands' || msg.channel.name == 'bot_log')) execute = true;
+        if (scope == 'global') execute = true;
+        if (msg.channel.id == scope) execute = true;
+
+        console.log(scope, execute);
       }
-      else {
-        if (discord_client.commands.get(command).admin) {
-          msg.channel.send("This is an admin command.");
-        }
-        else {
-          discord_client.commands.get(command).execute(discord_client, msg, args, false);
-        }
-      }
+
+      if (!execute) return;
+      discord_client.commands.get(command).execute(discord_client, msg, args, admin);
     }
     catch (err) {
       // console.error(err);
