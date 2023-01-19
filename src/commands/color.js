@@ -2,6 +2,7 @@ const { colord } = require('colord');
 
 module.exports = {
     name: 'color',
+    alias: ['colors'],
     description: "color assignment",
     admin: false,
     type: "production",
