@@ -7,6 +7,7 @@ module.exports = {
     alias: ['sex', 'dirty'],
     options: ['a'],
     description: "access nsfw chat and content",
+    scopes: ['commands', process.env.nsfw_channel_id],
     admin: false,
     type: "production",
     cooldown: 4,
