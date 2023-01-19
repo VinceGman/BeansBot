@@ -72,8 +72,6 @@ discord_client.on('messageCreate', async msg => {
         if (scope == 'commands' && (msg.channel.name == 'commands' || msg.channel.name == 'bot_log')) execute = true;
         if (scope == 'global') execute = true;
         if (msg.channel.id == scope) execute = true;
-
-        console.log(scope, execute);
       }
 
       if (!execute) return;
