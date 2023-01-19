@@ -5,6 +5,7 @@ module.exports = {
     name: 'ris',
     alias: ['image', 'rizz'],
     description: "reverse image search",
+    scopes: ['global'],
     admin: false,
     type: "production",
     cooldown: 10,
