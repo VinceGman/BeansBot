@@ -46,7 +46,7 @@ module.exports = {
                             protected: !character['protected'][character['protected'].valueType],
                         }).catch(err => msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This product wasn't stored properly. Please contact Sore#1414.`));
                     }
-                });
+                };
                 msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - ${count} characters protected.`);
                 return;
             }
@@ -62,7 +62,7 @@ module.exports = {
                             protected: !character['protected'][character['protected'].valueType],
                         }).catch(err => msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This product wasn't stored properly. Please contact Sore#1414.`));
                     }
-                });
+                };
                 msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - ${count} characters unprotected.`);
                 return;
             }
