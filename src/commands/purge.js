@@ -71,7 +71,7 @@ module.exports = {
         let characters = (await db.collection('edition_one').where('owner_id', '==', msg.author.id).where('protected', '==', false).where('stars', 'in', query).get())._docs();
 
         let quicksell_sum = 0;
-        characters.forEach(char => {
+        for (let char of characters) {
             let character = char._fieldsProto;
             let reimburse = 0;
             switch (character['rarity'][character['rarity'].valueType]) {
@@ -99,14 +99,14 @@ module.exports = {
 
             quicksell_sum += reimburse;
 
-            this.return_card(character);
-        });
+            await this.return_card(character, msg);
+        };
 
         await require('../utility/credits').refund(msg.author.id, quicksell_sum); // credits manager refunds
 
         msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Purge: ${quicksell_sum} credits returned.`);
     },
-    async return_card(character) {
+    async return_card(character, msg) {
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
         const { Firestore } = require('@google-cloud/firestore');
         const db = new Firestore({
@@ -120,6 +120,6 @@ module.exports = {
             selling_price: 0,
             protected: false,
             owned: false,
-        }).catch(err => msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This product wasn't stored properly. Please contact Sore#1414.`));
+        }).catch(err => msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This product wasn't stored properly. Please contact Sore#1414. Rank: ${character['rank_text'][character['rank_text'].valueType]}`));
     }
 }

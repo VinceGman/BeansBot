@@ -79,7 +79,7 @@ module.exports = {
                 reimburse = 0;
         }
 
-        await require('../commands/purge').return_card(character);
+        await require('../commands/purge').return_card(character, msg);
         await require('../utility/credits').refund(msg.author.id, reimburse); // credits manager refunds
 
         msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Reimbursed: ${reimburse}`);
