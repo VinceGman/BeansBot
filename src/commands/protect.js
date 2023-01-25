@@ -38,7 +38,7 @@ module.exports = {
                 let count = 0;
                 let characters = (await db.collection(`edition_one`).where('owner_id', '==', msg.author.id).where('protected', '==', false).get())._docs();
                 if (characters.length == 0) throw 'null character';
-                characters.forEach(character => {
+                for (let character of characters) {
                     character = character._fieldsProto ?? {};
                     if (character.hasOwnProperty('rank_text')) {
                         count++;
@@ -54,7 +54,7 @@ module.exports = {
                 let count = 0;
                 let characters = (await db.collection(`edition_one`).where('owner_id', '==', msg.author.id).where('protected', '==', true).get())._docs();
                 if (characters.length == 0) throw 'null character';
-                characters.forEach(character => {
+                for (let character of characters) {
                     character = character._fieldsProto ?? {};
                     if (character.hasOwnProperty('rank_text')) {
                         count++;
