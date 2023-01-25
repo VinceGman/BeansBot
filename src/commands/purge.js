@@ -3,7 +3,7 @@ module.exports = {
     description: "purge your cards",
     admin: false,
     type: "production",
-    cooldown: 4,
+    cooldown: 60,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');
 
