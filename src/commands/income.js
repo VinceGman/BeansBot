@@ -34,15 +34,24 @@ module.exports = {
         let booster = msg.member.roles.cache.some(role => role.name.toLowerCase() === 'booster' || role.name.toLowerCase() === 'server booster') ? 0.25 : 0;
         let patron = msg.member.roles.cache.some(role => role.name.toLowerCase() === 'patron') ? 0.25 : 0;
 
-        let amount = charges * 2000;
-        let pay = amount + booster * amount + patron * amount;
+        let main_bank = await require('../utility/queries').user(discord_client.user.id);
+        let main_money = main_bank.hasOwnProperty('credits') ? +main_bank['credits'] : 0;
 
-        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - You had ${charges}/6 charges saved up. - Credits Earned: ${pay} - Next Charge: <t:${next_charge}:R> - Fully Charged: <t:${new_cooldown + (6 * 3600)}:R>`);
+        let amount = charges * main_money * 0.0001;
+        let total_amount = amount + booster * amount + patron * amount;
+
+        let pay = +((total_amount * 0.75).toFixed(2));
+        let taxes = +((total_amount * 0.25).toFixed(2));
+
+        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - You had ${charges}/6 charges saved up. - Credits Earned: ${pay} - Taxes Paid: ${taxes} - Next Charge: <t:${next_charge}:R> - Fully Charged: <t:${new_cooldown + (6 * 3600)}:R>`);
 
         if (charges == 0) return;
         await db.doc(`members/${msg.author.id}`).set({
             credits: (+user['credits'] + pay).toString(),
             income: new_cooldown.toString(),
+        }, { merge: true });
+        await db.doc(`members/${discord_client.user.id}`).set({
+            credits: (main_money - pay).toString(),
         }, { merge: true });
     }
 }
