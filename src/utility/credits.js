@@ -22,7 +22,7 @@ module.exports = {
         credits -= cost;
 
         await db.doc(`members/${msg.author.id}`).set({
-            credits: credits.toString(),
+            credits: credits.toFixed(2).toString(),
         }, { merge: true });
 
         let main_bank = await require('../utility/queries').user(discord_client.user.id);
@@ -49,7 +49,7 @@ module.exports = {
         credits += cost;
 
         await db.doc(`members/${id}`).set({
-            credits: credits.toString(),
+            credits: credits.toFixed(2).toString(),
         }, { merge: true });
 
         let main_bank = await require('../utility/queries').user(discord_client.user.id);

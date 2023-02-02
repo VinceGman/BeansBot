@@ -47,11 +47,11 @@ module.exports = {
 
         if (charges == 0) return;
         await db.doc(`members/${msg.author.id}`).set({
-            credits: (+user['credits'] + pay).toString(),
+            credits: (+user['credits'] + pay).toFixed(2).toString(),
             income: new_cooldown.toString(),
         }, { merge: true });
         await db.doc(`members/${discord_client.user.id}`).set({
-            credits: (main_money - pay).toString(),
+            credits: (main_money - pay).toFixed(2).toString(),
         }, { merge: true });
     }
 }
