@@ -2,7 +2,7 @@ module.exports = {
     name: 'income',
     description: "basic uninversal income",
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 6,
     async execute(discord_client, msg, args, admin) {
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
