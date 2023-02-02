@@ -80,7 +80,7 @@ module.exports = {
         }
 
         await require('../commands/purge').return_card(character, msg);
-        await require('../utility/credits').refund(msg.author.id, reimburse); // credits manager refunds
+        await require('../utility/credits').refund(discord_client, msg.author.id, reimburse); // credits manager refunds
 
         msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Reimbursed: ${reimburse}`);
     }

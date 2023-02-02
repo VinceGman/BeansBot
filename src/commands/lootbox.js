@@ -16,7 +16,7 @@ module.exports = {
         let card_cost = 1000;
 
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
-        if (!(await require('../utility/credits').transaction(msg, card_cost))) return; // credits manager validates transaction
+        if (!(await require('../utility/credits').transaction(discord_client, msg, card_cost))) return; // credits manager validates transaction
 
         let roll_num = Math.floor(Math.random() * 20000) + 1; // [1, 20000]
         try {
@@ -26,7 +26,7 @@ module.exports = {
         }
         catch (err) {
             msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - System Error: Anime API Failed`);
-            await require('../utility/credits').refund(msg.author.id, card_cost); // credits manager refunds on error
+            await require('../utility/credits').refund(discord_client, msg.author.id, card_cost); // credits manager refunds on error
             return;
         }
 

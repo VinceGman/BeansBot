@@ -45,8 +45,8 @@ module.exports = {
                 msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Your number must be whole.`);
                 return;
             }
-            if (!(await require('../utility/credits').transaction(msg, +args[0]))) return; // credits manager validates transaction
-            await require('../utility/credits').refund(recipient, +args[0]); // credits manager refunds credits
+            if (!(await require('../utility/credits').transaction(discord_client, msg, +args[0]))) return; // credits manager validates transaction
+            await require('../utility/credits').refund(discord_client, recipient, +args[0]); // credits manager refunds credits
             msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - User paid.`);
             return;
         }

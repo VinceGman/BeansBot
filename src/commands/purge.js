@@ -102,7 +102,7 @@ module.exports = {
             await this.return_card(character, msg);
         };
 
-        await require('../utility/credits').refund(msg.author.id, quicksell_sum); // credits manager refunds
+        await require('../utility/credits').refund(discord_client, msg.author.id, quicksell_sum); // credits manager refunds
 
         msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Purge: ${quicksell_sum} credits returned.`);
     },
