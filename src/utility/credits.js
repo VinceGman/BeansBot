@@ -1,7 +1,7 @@
 // give and take credits to a user in the database, validate transactions
 
 module.exports = {
-    async transaction(msg, cost) {
+    async transaction(discord_client, msg, cost) {
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
         const { Firestore } = require('@google-cloud/firestore');
         const db = new Firestore({
@@ -25,9 +25,16 @@ module.exports = {
             credits: credits.toString(),
         }, { merge: true });
 
+        let main_bank = await require('../utility/queries').user(discord_client.user.id);
+        let main_money = main_bank.hasOwnProperty('credits') ? +main_bank['credits'] : 0;
+
+        await db.doc(`members/${discord_client.user.id}`).set({
+            credits: (main_money + cost).toFixed(2).toString(),
+        }, { merge: true });
+
         return true;
     },
-    async refund(id, cost) {
+    async refund(discord_client, id, cost) {
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
         const { Firestore } = require('@google-cloud/firestore');
         const db = new Firestore({
@@ -43,6 +50,13 @@ module.exports = {
 
         await db.doc(`members/${id}`).set({
             credits: credits.toString(),
+        }, { merge: true });
+
+        let main_bank = await require('../utility/queries').user(discord_client.user.id);
+        let main_money = main_bank.hasOwnProperty('credits') ? +main_bank['credits'] : 0;
+
+        await db.doc(`members/${discord_client.user.id}`).set({
+            credits: (main_money - cost).toFixed(2).toString(),
         }, { merge: true });
     },
     async income(msg, name, amount, cooldown_in_seconds) {
