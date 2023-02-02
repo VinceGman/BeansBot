@@ -98,7 +98,7 @@ module.exports = {
         let user = discord_client.users.cache.find(user => user.id === id);
 
         let db_user = await require('../utility/queries').user(id);
-        let credits = db_user.credits;
+        let credits = db_user.credits.toFixed(0);
         let owned = (await db.collection('edition_one').where('owner_id', '==', id).orderBy("rank", "asc").get())._docs();
 
         if (options.includes('c')) {
