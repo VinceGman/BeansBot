@@ -6,7 +6,10 @@ I fixed it here so I could use it as a utility. I also want to expand on it.
 
 module.exports = {
     async paginationEmbed(msg, pages, emojiList = ['⏪', '⏩'], timeout = 120000) {
-        if (pages.length == 1) {
+        if (pages.length == 0) {
+            return;
+        }
+        else if (pages.length == 1) {
             msg.channel.send({ embeds: [pages[0]] });
             return;
         }
