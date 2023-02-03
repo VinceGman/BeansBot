@@ -33,6 +33,10 @@ module.exports = {
             msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - All you do is take and take... **+pay** for more info.`);
             return;
         }
+        if (recipient == discord_client.user.id) {
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This isn't how you pay taxes... **+pay** for more info.`);
+            return;
+        }
 
         args = args.filter(a => !a.includes('<@'));
 
