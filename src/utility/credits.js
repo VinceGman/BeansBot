@@ -27,9 +27,10 @@ module.exports = {
 
         let main_bank = await require('../utility/queries').user(discord_client.user.id);
         let main_money = main_bank.hasOwnProperty('credits') ? +main_bank['credits'] : 0;
+        main_money += cost;
 
         await db.doc(`members/${discord_client.user.id}`).set({
-            credits: (main_money + cost).toFixed(2).toString(),
+            credits: main_money.toFixed(2).toString(),
         }, { merge: true });
 
         return true;
@@ -54,9 +55,10 @@ module.exports = {
 
         let main_bank = await require('../utility/queries').user(discord_client.user.id);
         let main_money = main_bank.hasOwnProperty('credits') ? +main_bank['credits'] : 0;
+        main_money -= cost;
 
         await db.doc(`members/${discord_client.user.id}`).set({
-            credits: (main_money - cost).toFixed(2).toString(),
+            credits: main_money.toFixed(2).toString(),
         }, { merge: true });
     },
     async income(msg, name, amount, cooldown_in_seconds) {
