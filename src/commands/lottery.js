@@ -32,7 +32,7 @@ module.exports = {
             odds = 200;
         }
         else {
-            pot = lottery.odds <= 1 ? lottery.pot + cost : lottery.pot;
+            pot = lottery.odds <= 165 ? lottery.pot + cost : lottery.pot;
             odds = lottery.odds - 1;
         }
 
@@ -53,7 +53,7 @@ module.exports = {
             .setDescription(desc)
             .setColor(color)
             .addField('Your roll', `You rolled **${roll}** on 1:${lottery.odds} odds.`, false)
-            .addField('Pot', `${lottery.pot + cost}`)
+            .addField('Pot', `${lottery.pot}`)
             .addField('+lottery', `pays 10k to play`, false)
             .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
             .setTimestamp();
