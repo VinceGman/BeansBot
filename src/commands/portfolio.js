@@ -54,7 +54,7 @@ module.exports = {
                     let adj_price = +((+price / +stock_db.base_price) * 1000).toFixed(2);
                     let earnings = (adj_price - user_stocks[stock].per) * user_stocks[stock].count;
                     port_earnings += earnings;
-                    portfolio_embed.addField(stock_db.symbol, `Quantity: ${user_stocks[stock].count}\nPercent Change: ${((adj_price - user_stocks[stock].per)/user_stocks[stock].per*100).toFixed(2)}%\nHoldings: ${(adj_price * user_stocks[stock].count).toFixed(2)}\nEarnings: ${earnings.toFixed(2)}`, false);
+                    portfolio_embed.addField(stock_db.symbol, `Quantity: ${user_stocks[stock].count}\nPrice/Unit: ${user_stocks[stock].per}\nPercent Change: ${((adj_price - user_stocks[stock].per)/user_stocks[stock].per*100).toFixed(2)}%\nHoldings: ${(adj_price * user_stocks[stock].count).toFixed(2)}\nEarnings: ${earnings.toFixed(2)}`, false);
                 }
             }
 
