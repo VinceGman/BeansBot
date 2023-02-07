@@ -23,7 +23,7 @@ module.exports = {
         if (args.length == 0) {
             let stocks_embed = new MessageEmbed()
                 .setTitle(`Stocks`)
-                .setDescription(`Active stocks and prices.`)
+                .setDescription(`Active stocks and prices. -> **+buy** or **+sell**`)
                 .setColor('#37914f')
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
                 .setTimestamp();
