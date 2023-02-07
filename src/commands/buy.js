@@ -10,7 +10,7 @@ module.exports = {
     name: 'buy',
     description: "buy stocks",
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');
@@ -96,9 +96,9 @@ module.exports = {
         user_stocks[stock_symbol].count += quantity;
         let new_public = +stock_db.public - quantity;
 
-        await db.doc(`members/${msg.author.id}`).set({
+        await db.doc(`members/${msg.author.id}`).update({
             stocks: user_stocks,
-        }, { merge: true });
+        });
 
         await db.doc(`companies/${stock_ref._ref._path.segments[1]}`).set({
             public: new_public.toString(),

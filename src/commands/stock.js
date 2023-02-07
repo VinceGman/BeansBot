@@ -12,7 +12,7 @@ module.exports = {
     options: ['s'],
     description: "see stocks",
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
@@ -35,7 +35,7 @@ module.exports = {
                 const coinlore_client = new (require('coinlore-crypto-prices'))();
                 let price = (await coinlore_client.getTicker(+stock.id))[0]?.price_usd;
                 if (price) {
-                    stocks_embed.addField(`${stock.symbol}`, `${((+price/+stock.base_price) * 1000).toFixed(2)}`, false);
+                    stocks_embed.addField(`${stock.symbol} - Open Shares: ${stock.public}`, `${((+price/+stock.base_price) * 1000).toFixed(2)}`, false);
                 }
             }
 

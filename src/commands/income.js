@@ -37,7 +37,7 @@ module.exports = {
         let main_bank = await require('../utility/queries').user(discord_client.user.id);
         let main_money = main_bank.hasOwnProperty('credits') ? +main_bank['credits'] : 0;
 
-        let amount = charges * main_money * 0.0001;
+        let amount = charges * main_money * 0.000075;
         let total_amount = amount + booster * amount + patron * amount;
 
         let pay = +((total_amount * 0.75).toFixed(2));
