@@ -19,6 +19,7 @@
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
     "@shineiichijo/marika": "^2.0.5",
+    "alphavantage": "^2.4.1",
     "axios": "^1.2.3",
     "chart.js-image": "^6.1.3",
     "coinlore-crypto-prices": "^0.1.1",
@@ -36,6 +37,8 @@
     "jimp": "^0.16.2",
     "lodash.permutations": "^1.0.0",
     "nodemon": "^2.0.15",
+    "randomcolor": "^0.6.2",
+    "urlencode": "^1.1.0",
     "validate-color": "^2.2.1",
     "wrap-text": "^1.0.9"
   }
