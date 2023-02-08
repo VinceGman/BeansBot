@@ -9,33 +9,24 @@ const db = new Firestore({
 module.exports = {
     name: 'portfolio',
     alias: ['port'],
+    options: ['d'],
     description: "your stock portfolio",
     admin: false,
     type: "production",
     cooldown: 6,
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
+        let options = require('../utility/parsers').parse_command(msg, this.name, this.alias);
 
         const { MessageEmbed } = require('discord.js');
 
-        if (args.length == 0) {
+        if (args.length == 0 && options.includes('d')) {
             let portfolio_embed = new MessageEmbed()
                 .setTitle(`Stock Portfolio`)
                 // .setDescription(`Active portfolio and prices.`)
                 // .setColor('#37914f')
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
                 .setTimestamp();
-
-            // let stocks = (await db.collection(`companies`).where('market', '==', true).get())._docs();
-            // for (let stock of stocks) {
-            //     stock = stock.data();
-
-            //     const coinlore_client = new (require('coinlore-crypto-prices'))();
-            //     let price = (await coinlore_client.getTicker(+stock.id))[0]?.price_usd;
-            //     if (price) {
-            //         portfolio_embed.addField(stock.symbol, `${((+price/+stock.base_price) * 1000).toFixed(2)}`, false);
-            //     }
-            // }
 
             let user = await require('../utility/queries').user(msg.author.id);
             let user_stocks = user.stocks ? user.stocks : { fields: {} };
@@ -65,6 +56,49 @@ module.exports = {
                 portfolio_embed.addField('Current Earnings', `${port_earnings.toFixed(2)}`, false);
             }
 
+
+            msg.channel.send({ embeds: [portfolio_embed] });
+            return;
+        }
+        else if (args.length == 0 && !options.includes('u')) {
+            let portfolio_embed = new MessageEmbed()
+                .setTitle(`Stock Portfolio`)
+                // .setDescription(`Active portfolio and prices.`)
+                // .setColor('#37914f')
+                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setTimestamp();
+
+            let user = await require('../utility/queries').user(msg.author.id);
+            let user_stocks = user.stocks ? user.stocks : { fields: {} };
+
+            for (let entry in user_stocks.fields) {
+                user_stocks[entry] = { 'count': +user_stocks.fields[entry].mapValue.fields.count.integerValue, 'per': +user_stocks.fields[entry].mapValue.fields.per[user_stocks.fields[entry].mapValue.fields.per.valueType] };
+            }
+            delete user_stocks.fields;
+
+            let total_current_price = 0;
+            let total_purchase_price = 0;
+            let stocks_count = '';
+            for (let stock in user_stocks) {
+                let stock_db = (await db.collection(`companies`).where('market', '==', true).where('symbol', '==', stock).limit(1).get())._docs()[0]?.data();
+                const coinlore_client = new (require('coinlore-crypto-prices'))();
+                let price = +(await coinlore_client.getTicker(+stock_db.id))[0]?.price_usd;
+                if (stock_db && price) {
+                    total_current_price += +((+price / +stock_db.base_price) * 1000).toFixed(2) * user_stocks[stock].count;
+                    total_purchase_price += user_stocks[stock].per * user_stocks[stock].count;
+                    stocks_count += `${stock}: ${user_stocks[stock].count}\n`;
+                }
+            }
+
+            if (Object.keys(user_stocks).length === 0) {
+                portfolio_embed.setDescription('[none] -> **+stocks**');
+            }
+            else {
+                portfolio_embed.addField('Stocks', `${stocks_count}`, false);
+                portfolio_embed.addField(`Combined Holdings`, `${(total_current_price).toFixed(2)}`, false);
+                portfolio_embed.addField(`Percent Change`, `${((total_current_price - total_purchase_price) / total_purchase_price * 100).toFixed(2)}%`, false);
+                portfolio_embed.addField(`Earnings`, `${(total_current_price - total_purchase_price).toFixed(2)}`, false);
+            }
 
             msg.channel.send({ embeds: [portfolio_embed] });
             return;
