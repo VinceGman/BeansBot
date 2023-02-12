@@ -9,6 +9,8 @@ module.exports = {
             keyFilename: './service-account.json'
         });
 
+        if (cost == 0) return true;
+
         let db_user = (await db.doc(`members/${msg.author.id}`).get())._fieldsProto ?? {};
         if (!db_user.hasOwnProperty('credits')) db_user['credits'] = { stringValue: '12000', valueType: 'stringValue' };
 
@@ -42,6 +44,8 @@ module.exports = {
             projectId: 'beans-326017',
             keyFilename: './service-account.json'
         });
+
+        if (cost == 0) return;
 
         let db_user = (await db.doc(`members/${id}`).get())._fieldsProto ?? {};
         if (!db_user.hasOwnProperty('credits')) db_user['credits'] = { stringValue: '12000', valueType: 'stringValue' };
