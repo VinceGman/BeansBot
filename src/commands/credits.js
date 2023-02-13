@@ -11,7 +11,7 @@ module.exports = {
     alias: ['creds', 'c', 'value'],
     description: "show me the money",
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');
