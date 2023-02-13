@@ -20,7 +20,7 @@ module.exports = {
 
         const { MessageEmbed } = require('discord.js');
 
-        if (args.length == 0) {
+        if (options.includes('s')) {
             let stocks_embed = new MessageEmbed()
                 .setTitle(`Stocks`)
                 .setDescription(`Active stocks and prices. -> **+buy** or **+sell**`)
@@ -42,20 +42,27 @@ module.exports = {
             msg.channel.send({ embeds: [stocks_embed] });
             return;
         }
+        else if (args.length == 0) {
+            let stocks_embed = new MessageEmbed()
+                .setTitle(`Stock Guide`)
+                .setDescription(`Active stocks and prices. -> **+stocks**`)
+                .setColor('#37914f')
+                .addField('+stock CBC', 'Shows the CBC stock.')
+                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setTimestamp();
 
-        // if (options.includes('s')) {
-        //     await this.stock_chart(msg, [{ symbol: 'ETH' }, { symbol: 'BTC' }]);
-        // }
-        // else {
-        //     if (args.length > 0) {
-        //         let stocks = [];
-        //         for (let stock of args) {
-        //             stocks.push({ symbol: stock });
-        //         }
-        //         await this.stock_chart(msg, stocks);
-        //     }
-        // }
-
+            msg.channel.send({ embeds: [stocks_embed] });
+            return;
+        }
+        else if (args.length == 1) {
+            let stock_ref = (await db.collection(`companies`).where('market', '==', true).where('symbol', '==', args[0].toUpperCase()).limit(1).get())._docs()[0];
+            let stock_db = stock_ref?.data();
+            if (!stock_db) {
+                msg.channel.send('Find supported stocks here -> **+stocks**');
+                return;
+            }
+            await this.stock_info(discord_client, msg, [stock_db]);
+        }
     },
     async stock_chart(msg, stocks) {
         const ChartJSImage = require('chart.js-image');
@@ -73,7 +80,7 @@ module.exports = {
             "options": {
                 "title": {
                     "display": true,
-                    "text": `My Portfolio: ${msg.author.username}#${msg.author.discriminator}`
+                    "text": `Stock Graph`
                 },
                 "scales": {
                     "xAxes": [
@@ -102,32 +109,21 @@ module.exports = {
 
         for (let entry in stocks) {
             const alpha = require('alphavantage')({ key: process.env.alpha_vantage_key });
-            let meta = await alpha.crypto.daily(stocks[entry].symbol, 'usd');
+            let meta = await alpha.crypto.daily(stocks[entry].real_stock.split('-')[0].trim().toLowerCase(), 'usd');
             let hist_data = meta['Time Series (Digital Currency Daily)'];
 
-            let stock_symbol = meta['Meta Data']?.['2. Digital Currency Code'] ?? 'N/A';
-
-            if (stock_symbol == 'N/A') {
-                console.log(Object.keys(meta));
+            const coinlore_client = new (require('coinlore-crypto-prices'))();
+            let price = (await coinlore_client.getTicker(stocks[entry].id))[0]?.price_usd;
+            if (price) {
+                stocks_embed.addField(`${stocks[entry].symbol} - Open Shares: ${stocks[entry].public}`, `${((+price / +stocks[entry].base_price) * 1000).toFixed(2)}`, false);
             }
-
-            const rate = await alpha.forex.rate(stock_symbol, 'usd');
-            let stock_price = +rate['Realtime Currency Exchange Rate']?.['5. Exchange Rate'] ?? 0;
-
-            if (stock_price == 0) {
-                console.log(Object.keys(rate));
-            }
-
-            stock_price = +stock_price < 1 ? `${stock_price}` : `${stock_price.toFixed(2)}`;
-
-            stocks_embed.addField(stock_symbol, stock_price, false);
 
             let labels = [];
             let datasets = [];
 
             for (let date in hist_data) {
                 labels.push(`${date.split('-')[1]}-${date.split('-')[2]}`);
-                datasets.push(((+hist_data[date]['1a. open (USD)'] + +hist_data[date]['4a. close (USD)'] + +hist_data[date]['2a. high (USD)'] + +hist_data[date]['3a. low (USD)']) / 4).toFixed(2));
+                datasets.push((((+hist_data[date]['1a. open (USD)'] + +hist_data[date]['4a. close (USD)'] + +hist_data[date]['2a. high (USD)'] + +hist_data[date]['3a. low (USD)']) / 4) / stocks[entry].base_price * 1000).toFixed(2));
             }
 
             const _ = require("lodash");
@@ -137,7 +133,7 @@ module.exports = {
 
             chart_options.data.labels = labels;
             chart_options.data.datasets.push({
-                "label": stock_symbol,
+                "label": stocks[entry].symbol,
                 "borderColor": colors[entry],
                 "backgroundColor": '#000000',
                 "data": datasets
@@ -146,8 +142,8 @@ module.exports = {
 
         const line_chart = ChartJSImage().chart(chart_options)
             .backgroundColor('black')
-            .width(600)
-            .height(338);
+            .width(960)
+            .height(540);
 
         let file_path = `images/${msg.author.id}_stocks.png`;
         await line_chart.toFile(file_path)
@@ -156,5 +152,43 @@ module.exports = {
         await msg.channel.send({ embeds: [stocks_embed], files: [file_path] });
 
         fs.unlinkSync(file_path);
+    },
+    async stock_info(discord_client, msg, stocks) {
+        const { MessageEmbed } = require('discord.js');
+        const stocks_embed = new MessageEmbed();
+
+        for (let entry in stocks) {
+            const coinlore_client = new (require('coinlore-crypto-prices'))();
+            let stock = (await coinlore_client.getTicker(stocks[entry].id))[0];
+            if (stock) {
+                const members = (await db.collection('members').get())._docs();
+                let majority_holders = '';
+                for (let member_ref of members) {
+                    member = member_ref.data();
+                    if (member.stocks && member.stocks[stocks[entry].symbol] && member.stocks[stocks[entry].symbol].count >= 500) {
+                        let member_id = member_ref._ref._path.segments[1];
+                        let user = await discord_client.users.fetch(member_id);
+                        if (user) {
+                            majority_holders += `${user.username}#${user.discriminator} - Shares: ${member.stocks[stocks[entry].symbol].count}\n`;
+                        }
+                    }
+                }
+
+                stocks_embed.setTitle(`${stocks[entry].symbol}`)
+                    .addField(`Price`, `${((+stock.price_usd / +stocks[entry].base_price) * 1000).toFixed(2)}`, false)
+                    .addField(`Open Shares`, `${stocks[entry].public}`, false)
+                    .addField(`1h`, `${stock.percent_change_1h}%`, true)
+                    .addField(`24h`, `${stock.percent_change_24h}%`, true)
+                    .addField(`7d`, `${stock.percent_change_7d}%`, true)
+                    .addField(`Model`, `${stocks[entry].real_stock}`, false);
+
+                if (majority_holders != '') {
+                    stocks_embed.addField('Majority Holders', majority_holders, false);
+                }
+            }
+        }
+
+        await msg.channel.send({ embeds: [stocks_embed] });
+
     }
 }
