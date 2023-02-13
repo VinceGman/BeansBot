@@ -29,12 +29,7 @@ module.exports = {
                 .setTimestamp();
 
             let user = await require('../utility/queries').user(msg.author.id);
-            let user_stocks = user.stocks ? user.stocks : { fields: {} };
-
-            for (let entry in user_stocks.fields) {
-                user_stocks[entry] = { 'count': +user_stocks.fields[entry].mapValue.fields.count.integerValue, 'per': +user_stocks.fields[entry].mapValue.fields.per[user_stocks.fields[entry].mapValue.fields.per.valueType] };
-            }
-            delete user_stocks.fields;
+            let user_stocks = user.stocks ? user.stocks : {};
 
             let port_earnings = 0;
             for (let stock in user_stocks) {
@@ -69,12 +64,7 @@ module.exports = {
                 .setTimestamp();
 
             let user = await require('../utility/queries').user(msg.author.id);
-            let user_stocks = user.stocks ? user.stocks : { fields: {} };
-
-            for (let entry in user_stocks.fields) {
-                user_stocks[entry] = { 'count': +user_stocks.fields[entry].mapValue.fields.count.integerValue, 'per': +user_stocks.fields[entry].mapValue.fields.per[user_stocks.fields[entry].mapValue.fields.per.valueType] };
-            }
-            delete user_stocks.fields;
+            let user_stocks = user.stocks ? user.stocks : {};
 
             let total_current_price = 0;
             let total_purchase_price = 0;
