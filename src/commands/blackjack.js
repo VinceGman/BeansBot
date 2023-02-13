@@ -212,12 +212,16 @@ module.exports = {
         const filter = m => m.author.id == msg.author.id;
         const collector = msg.channel.createMessageCollector({ filter, time: 15000 });
 
-        if (game.state.ended) {
-            collector.stop();
-        }
-        else {
-            this.print_blackjack(msg, game.print_game());
-        }
+        collector.on('end', collected => {
+            if (!game.state.ended) {
+                game.stand();
+            }
+
+            let winnings = 0;
+            if (game.state.player_multiplier != 0) winnings = (((game.state.player_multiplier * bet) - bet) * 0.75) + bet;
+            require('../utility/credits').refund(discord_client, msg.author.id, winnings); // credits manager refunds on error
+            this.print_blackjack(msg, game.print_game(), winnings);
+        });
 
         collector.on('collect', m => {
             if (m.content.toLowerCase().includes('hit')) {
@@ -230,21 +234,17 @@ module.exports = {
                     this.print_blackjack(msg, game.print_game());
                 }
             }
-            else if (m.content.toLowerCase().includes('stand') || m.content.toLowerCase().includes('stay') || m.content.toLowerCase().includes('hold') || m.content.toLowerCase().includes('pass')) {
+            else if (m.content.toLowerCase().includes('stand') || m.content.toLowerCase().includes('stay') || m.content.toLowerCase().includes('hold') || m.content.toLowerCase().includes('pass') || m.content.toLowerCase().includes('+blackjack') || m.content.toLowerCase().includes('+bj')) {
                 collector.stop();
             }
         });
 
-        collector.on('end', collected => {
-            if (!game.state.ended) {
-                game.stand();
-            }
-
-            let winnings = 0;
-            if (game.state.player_multiplier != 0) winnings = (((game.state.player_multiplier * bet) - bet) * 0.75) + bet;
-            require('../utility/credits').refund(discord_client, msg.author.id, winnings); // credits manager refunds on error
-            this.print_blackjack(msg, game.print_game(), winnings);
-        });
+        if (game.state.ended) {
+            collector.stop();
+        }
+        else {
+            this.print_blackjack(msg, game.print_game());
+        }
     },
     async print_blackjack(msg, game, winnings) {
         const { MessageEmbed } = require('discord.js');
