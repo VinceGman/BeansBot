@@ -35,7 +35,7 @@ module.exports = {
         let patron = msg.member.roles.cache.some(role => role.name.toLowerCase() === 'patron') ? 0.25 : 0;
 
         let main_bank = await require('../utility/queries').user(discord_client.user.id);
-        let main_money = main_bank.hasOwnProperty('credits') ? +main_bank['credits'] : 0;
+        let main_money = +main_bank.credits;
 
         let amount = charges * main_money * 0.000085;
         let total_amount = amount + booster * amount + patron * amount;
