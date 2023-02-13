@@ -45,7 +45,7 @@ module.exports = {
 
         if (cost == 0) return;
 
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(id);
 
         let credits = +db_user.credits;
         credits += cost;
