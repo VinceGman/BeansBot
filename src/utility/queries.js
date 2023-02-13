@@ -7,12 +7,8 @@ module.exports = {
             keyFilename: './service-account.json'
         });
 
-        let user = {};
-
-        let db_user = (await db.doc(`members/${id}`).get())._fieldsProto ?? {};
-        if (db_user.credits == null) db_user.credits = { stringValue: '12000', valueType: 'stringValue' };
-        Object.keys(db_user).forEach(att => user[att] = db_user[att][db_user[att].valueType]);
-
+        let user = (await db.doc(`members/${id}`).get()).data() ?? {};
+        user.credits = user.credits == null ? '0' : user.credits;
         return user;
     },
     async character(msg, args, limit = 15) { // returns one to many characters by id or name
