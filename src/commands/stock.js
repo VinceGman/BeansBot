@@ -35,7 +35,7 @@ module.exports = {
                 const coinlore_client = new (require('coinlore-crypto-prices'))();
                 let price = (await coinlore_client.getTicker(+stock.id))[0]?.price_usd;
                 if (price) {
-                    stocks_embed.addField(`${stock.symbol} - Open Shares: ${stock.public}`, `${((+price/+stock.base_price) * 1000).toFixed(2)}`, false);
+                    stocks_embed.addField(`${stock.symbol} - Open Shares: ${stock.public}`, `${((+price / +stock.base_price) * 1000).toFixed(2)}`, false);
                 }
             }
 
@@ -175,12 +175,15 @@ module.exports = {
                 }
 
                 stocks_embed.setTitle(`${stocks[entry].symbol}`)
+                    .setColor('#37914f')
                     .addField(`Price`, `${((+stock.price_usd / +stocks[entry].base_price) * 1000).toFixed(2)}`, false)
                     .addField(`Open Shares`, `${stocks[entry].public}`, false)
                     .addField(`1h`, `${stock.percent_change_1h}%`, true)
                     .addField(`24h`, `${stock.percent_change_24h}%`, true)
                     .addField(`7d`, `${stock.percent_change_7d}%`, true)
-                    .addField(`Model`, `${stocks[entry].real_stock}`, false);
+                    .addField(`Model`, `${stocks[entry].real_stock}`, false)
+                    .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                    .setTimestamp();
 
                 if (majority_holders != '') {
                     stocks_embed.addField('Majority Holders', majority_holders, false);
