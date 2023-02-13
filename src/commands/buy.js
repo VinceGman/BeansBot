@@ -83,12 +83,7 @@ module.exports = {
         if (!(await require('../utility/credits').transaction(discord_client, msg, cost))) return; // credits manager validates transaction
 
         let user = await require('../utility/queries').user(msg.author.id);
-        let user_stocks = user.stocks ? user.stocks : { fields: {} };
-
-        for (let entry in user_stocks.fields) {
-            user_stocks[entry] = { 'count': +user_stocks.fields[entry].mapValue.fields.count.integerValue, 'per': +user_stocks.fields[entry].mapValue.fields.per[user_stocks.fields[entry].mapValue.fields.per.valueType] };
-        }
-        delete user_stocks.fields;
+        let user_stocks = user.stocks ? user.stocks : {};
 
         if (!user_stocks?.[stock_symbol]) user_stocks[stock_symbol] = { count: 0, per: 0 };
 
@@ -107,3 +102,11 @@ module.exports = {
         msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Order Completed: [Buy] ${quantity} ${stock_symbol} (${(cost / quantity).toFixed(2)}/unit) - Cost: ${cost.toFixed(2)}`);
     }
 }
+// } else if (isNaN(args[0]) && isNaN(args[1])) {
+//     if (args[0].toLowerCase() == 'max') {
+//         stock_symbol = args[1];
+//         quantity = args[0];
+//     } else if (args[1].toLowerCase() == 'max') {
+//         stock_symbol = args[0];
+//         quantity = args[1];
+//     }

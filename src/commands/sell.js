@@ -68,12 +68,7 @@ module.exports = {
         }
 
         let user = await require('../utility/queries').user(msg.author.id);
-        let user_stocks = user.stocks ? user.stocks : { fields: {} };
-
-        for (let entry in user_stocks.fields) {
-            user_stocks[entry] = { 'count': +user_stocks.fields[entry].mapValue.fields.count.integerValue, 'per': +user_stocks.fields[entry].mapValue.fields.per[user_stocks.fields[entry].mapValue.fields.per.valueType] };
-        }
-        delete user_stocks.fields;
+        let user_stocks = user.stocks ? user.stocks : {};
 
         if (!user_stocks?.[stock_symbol]) user_stocks[stock_symbol] = { count: 0, per: 0 };
 
