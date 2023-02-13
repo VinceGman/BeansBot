@@ -11,10 +11,8 @@ module.exports = {
 
         if (cost == 0) return true;
 
-        let db_user = (await db.doc(`members/${msg.author.id}`).get())._fieldsProto ?? {};
-        if (!db_user.hasOwnProperty('credits')) db_user['credits'] = { stringValue: '12000', valueType: 'stringValue' };
-
-        let credits = +db_user['credits'][db_user['credits'].valueType];
+        let db_user = await require('../utility/queries').user(msg.author.id);
+        let credits = +db_user.credits;
 
         if (credits < cost) {
             msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Insufficient Funds.`);
@@ -28,7 +26,7 @@ module.exports = {
         }, { merge: true });
 
         let main_bank = await require('../utility/queries').user(discord_client.user.id);
-        let main_money = main_bank.hasOwnProperty('credits') ? +main_bank['credits'] : 0;
+        let main_money = +main_bank.credits;
         main_money += cost;
 
         await db.doc(`members/${discord_client.user.id}`).set({
@@ -47,10 +45,9 @@ module.exports = {
 
         if (cost == 0) return;
 
-        let db_user = (await db.doc(`members/${id}`).get())._fieldsProto ?? {};
-        if (!db_user.hasOwnProperty('credits')) db_user['credits'] = { stringValue: '12000', valueType: 'stringValue' };
+        let db_user = await require('../utility/queries').user(msg.author.id);
 
-        let credits = +db_user['credits'][db_user['credits'].valueType];
+        let credits = +db_user.credits;
         credits += cost;
 
         await db.doc(`members/${id}`).set({
@@ -58,7 +55,7 @@ module.exports = {
         }, { merge: true });
 
         let main_bank = await require('../utility/queries').user(discord_client.user.id);
-        let main_money = main_bank.hasOwnProperty('credits') ? +main_bank['credits'] : 0;
+        let main_money = +main_bank.credits;
         main_money -= cost;
 
         await db.doc(`members/${discord_client.user.id}`).set({
