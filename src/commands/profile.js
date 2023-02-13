@@ -192,11 +192,10 @@ module.exports = {
                         account_value += value;
 
                         if (i == owned.length - 1) {
-                            account_value += +credits;
                             fields.push({ current_origin: current_origin, ownedText: ownedText });
                             for (let i = 0; i < fields.length; i++) {
                                 if (i % 5 == 0) {
-                                    pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, true).addField('Account Value', `${account_value} credits`, true));
+                                    pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, true).addField('Cards Value', `${account_value} credits`, true));
                                     page++;
                                 }
                                 pages[page-1].addField(fields[i].current_origin, fields[i].ownedText, false);
@@ -249,10 +248,9 @@ module.exports = {
                         account_value += value;
 
                         if (i == owned.length - 1) {
-                            account_value += +credits;
                             fields.push({ ownedText: ownedText });
                             for (let i = 0; i < fields.length; i++) {
-                                pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, true).addField('Account Value', `${account_value} credits`, true).addField('Cards Owned', `${fields[i].ownedText}`, false));
+                                pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, true).addField('Cards Value', `${account_value} credits`, true).addField('Cards Owned', `${fields[i].ownedText}`, false));
                             }
                         }
                         i++;
