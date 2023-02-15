@@ -2,8 +2,9 @@ module.exports = {
     name: 'show',
     alias: ['see', 'look'],
     description: "look at a character",
+    category: 'collectibles',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');
