@@ -11,8 +11,9 @@ module.exports = {
     alias: ['port'],
     options: ['d'],
     description: "your stock portfolio",
+    category: 'stocks',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 6,
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown

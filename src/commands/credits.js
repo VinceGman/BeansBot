@@ -8,10 +8,11 @@ const db = new Firestore({
 
 module.exports = {
     name: 'credits',
-    alias: ['creds', 'c', 'value'],
+    alias: ['creds', 'c', 'value', 'test'],
     description: "show me the money",
+    category: 'credits',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');
@@ -83,9 +84,12 @@ module.exports = {
         for (let entry in user_stocks) {
             let stock_db = (await db.collection(`companies`).where('market', '==', true).where('symbol', '==', entry).limit(1).get())._docs()[0]?.data();
             const coinlore_client = new (require('coinlore-crypto-prices'))();
-            let price = +(await coinlore_client.getTicker(+stock_db.id))[0]?.price_usd;
-
-            total += (price / +stock_db.base_price) * 1000 * user_stocks[entry].count;
+            await coinlore_client.getTicker(+stock_db.id).then((res, rej) => {
+                if (res) {
+                    let price = +(res)[0]?.price_usd;
+                    total += (price / +stock_db.base_price) * 1000 * user_stocks[entry].count;
+                }
+            });
         }
 
         return total;
