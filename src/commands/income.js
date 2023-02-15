@@ -1,6 +1,7 @@
 module.exports = {
     name: 'income',
     description: "basic universal income",
+    category: 'credits',
     admin: false,
     type: "production",
     cooldown: 6,

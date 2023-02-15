@@ -9,6 +9,7 @@ const db = new Firestore({
 module.exports = {
     name: 'protect',
     description: "protect a card",
+    category: 'collectibles',
     admin: false,
     type: "production",
     cooldown: 6,

@@ -2,6 +2,7 @@ module.exports = {
     name: 'color',
     alias: ['colors'],
     description: "color assignment",
+    category: 'utility',
     admin: false,
     type: "production",
     cooldown: 4,

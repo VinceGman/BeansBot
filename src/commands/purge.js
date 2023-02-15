@@ -1,6 +1,7 @@
 module.exports = {
     name: 'purge',
     description: "purge your cards",
+    category: 'collectibles',
     admin: false,
     type: "production",
     cooldown: 60,

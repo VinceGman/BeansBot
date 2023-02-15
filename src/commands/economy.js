@@ -10,6 +10,7 @@ module.exports = {
     name: 'economy',
     alias: ['eco'],
     description: "check the economy",
+    category: 'credits',
     admin: false,
     type: "production",
     cooldown: 6,

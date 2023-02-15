@@ -3,6 +3,7 @@ module.exports = {
     alias: ['p'],
     options: ['i', 'c'],
     description: "shows your money and collectibles",
+    category: 'collectibles',
     admin: false,
     type: "production",
     cooldown: 10,

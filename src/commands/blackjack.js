@@ -185,6 +185,7 @@ module.exports = {
     name: 'blackjack',
     alias: ['bj'],
     description: "play blackjack",
+    category: 'gambling',
     admin: false,
     type: "production",
     cooldown: 4,

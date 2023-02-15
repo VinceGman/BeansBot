@@ -1,6 +1,7 @@
 module.exports = {
     name: 'pay',
     description: "pay someone credits",
+    category: 'credits',
     admin: false,
     type: "production",
     cooldown: 6,

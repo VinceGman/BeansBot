@@ -10,6 +10,7 @@ module.exports = {
     name: 'lottery',
     alias: ['ticket', 'lot'],
     description: "play the lottery for 10k",
+    category: 'credits',
     admin: false,
     type: "production",
     cooldown: 4,

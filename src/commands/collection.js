@@ -3,6 +3,7 @@ module.exports = {
     alias: ['col'],
     options: ['i', 'o'],
     description: "look at a collection",
+    category: 'collectibles',
     admin: false,
     type: "production",
     cooldown: 10,

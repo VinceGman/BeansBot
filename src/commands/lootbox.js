@@ -2,6 +2,7 @@ module.exports = {
     name: 'lootbox',
     alias: ['cook', 'lb', 'roll'],
     description: "rolls for 20000 collectibles",
+    category: 'collectibles',
     admin: false,
     type: "production",
     cooldown: 3,

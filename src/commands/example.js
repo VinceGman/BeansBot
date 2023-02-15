@@ -9,6 +9,7 @@ const db = new Firestore({
 module.exports = {
     name: 'example',
     description: "example command",
+    category: 'example',
     admin: false,
     type: "test",
     cooldown: 6,

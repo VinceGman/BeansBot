@@ -1,6 +1,7 @@
 module.exports = {
     name: 'top',
     description: "see top cards owned",
+    category: 'collectibles',
     admin: false,
     type: "production",
     cooldown: 4,

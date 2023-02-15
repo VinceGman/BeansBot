@@ -13,6 +13,7 @@ const db = new Firestore({
 module.exports = {
     name: 'topic',
     description: "topic change in topic chat",
+    category: 'utility',
     scopes: [process.env.topic_channel_id, process.env.goblin_channel_id, process.env.booster_channel_id],
     admin: false,
     type: "production",

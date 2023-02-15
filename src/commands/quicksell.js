@@ -2,6 +2,7 @@ module.exports = {
     name: 'quicksell',
     alias: ['qs'],
     description: "sell your cards back to the market",
+    category: 'collectibles',
     admin: false,
     type: "production",
     cooldown: 4,

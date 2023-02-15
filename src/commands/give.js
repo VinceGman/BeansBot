@@ -2,6 +2,7 @@ module.exports = {
     name: 'give',
     alias: ['gift'],
     description: "give someone a card",
+    category: 'collectibles',
     admin: false,
     type: "production",
     cooldown: 6,
