@@ -11,7 +11,7 @@ module.exports = {
     description: "sell stocks",
     category: 'stocks',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');

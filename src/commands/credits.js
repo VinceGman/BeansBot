@@ -8,11 +8,11 @@ const db = new Firestore({
 
 module.exports = {
     name: 'credits',
-    alias: ['creds', 'c', 'value', 'test'],
+    alias: ['creds', 'c', 'value'],
     description: "show me the money",
     category: 'credits',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');
