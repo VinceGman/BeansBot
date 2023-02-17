@@ -1,43 +1,56 @@
-const fs = require('fs');
-const { MessageEmbed } = require('discord.js');
-
 module.exports = {
     name: 'help',
     description: "gives relevant bot information",
+    category: 'utility',
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
-        // different based on how many args
-        // check name, desc, admin, type and active_service
+        const fs = require('fs');
 
-        let help_embed = new MessageEmbed()
-            .setTitle(`+help`)
-            .setDescription(`**Beans**: Command Descriptions\n\nMost commands will work or give you more information if you just type it in.`)
-            .setColor(`#000000`)
-            .setFooter({ text: `Beans Staff Message` })
-            .setTimestamp();
-
+        const commands_sorted = {};
         const commandFiles = fs.readdirSync(__dirname).filter(file => file.endsWith('.js'));
         for (const file of commandFiles) {
             const command = require(`./${file}`);
 
-            let aliases = '';
-            if (command.hasOwnProperty('alias')) {
-                command.alias.forEach(alias => {
-                    aliases += ` | +${alias}`
-                });
-            }
-
-            if (command.hasOwnProperty('active_service') || command.type == 'test' || command.name == 'topic' || command.name == 'example') {
+            if (command.type == 'test') {
                 // ignore
             }
-            else if (command.admin == false) {
-                help_embed.addField(`+${command.name}${aliases}`, `${command.description}`, true);
-            }
-            else if (command.admin == true && admin) {
-                help_embed.addField(`+${command.name}${aliases} - Admin Only`, `${command.description}`, true);
+            else if (command.admin == false || (command.admin == true && admin)) {
+                if (!commands_sorted[command.category]) commands_sorted[command.category] = [];
+                commands_sorted[command.category].push(command);
             }
         }
+
+        let pages = [];
+        let page_num = 1;
+        for (let category in commands_sorted) {
+            const { MessageEmbed } = require('discord.js');
+
+            let help_embed = new MessageEmbed()
+                .setTitle(`+help`)
+                .setDescription(`**Beans**: Command Descriptions\n\nCommands work in #commands unless stated.`)
+                .setColor(`#000000`)
+                .setFooter({ text: `${category} - p.${page_num}` })
+                .setTimestamp();
+            for (let command of commands_sorted[category]) {
+
+                let aliases = '';
+                if (command.hasOwnProperty('alias')) {
+                    aliases = ' => Alias: ' + command.alias.map(a => `+${a}`).join(' ');
+                }
+
+                let options = '';
+                if (command.hasOwnProperty('options')) {
+                    options = ' => Options: ' + command.options.map(o => `+${o}`).join(' ');
+                }
+
+                help_embed.addField(`+${command.name}${aliases}${options}`, `${command.description}`, false);
+            }
+
+            pages.push(help_embed);
+            page_num++;
+        }
+
 
         // help_embed.addField('\u200B', '\u200B', false);
 
@@ -51,6 +64,6 @@ module.exports = {
         // }
 
 
-        msg.channel.send({ embeds: [help_embed] });
+        await require('../utility/pagination').paginationEmbed(msg, pages);
     }
 }
