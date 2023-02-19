@@ -50,7 +50,7 @@ module.exports = {
 
             for (let season of JSON.parse(tokens[0].text.replace('window.__INITIAL_STATE__ = ', '')).stats.standardProfiles[0].segments.filter(seg => seg.type == 'season' && seg.attributes.playlist == 'competitive')) {
                 valorant_embed.setThumbnail(season.stats.rank.metadata.iconUrl)
-                    .addField(`Player Rating`, `${season.stats.trnPerformanceScore.displayValue}`, false)
+                    .addField(`Player Rating`, `${season.stats?.trnPerformanceScore?.displayValue ?? 0}`, false)
                     .addField(`Ranked`, `${season.stats.rank.metadata.tierName}         `, true)
                     .addField(`Peak Rank`, `${season.stats.peakRank.metadata.actName} => ${season.stats.peakRank.displayValue}`, true)
                     .addField(`Matches: ${season.stats.matchesPlayed.displayValue} | Time: ${season.stats.timePlayed.displayValue}`, `W/L: ${season.stats.matchesWon.displayValue}/${season.stats.matchesLost.displayValue} | Winrate: ${season.stats.matchesWinPct.displayValue}`, false)
