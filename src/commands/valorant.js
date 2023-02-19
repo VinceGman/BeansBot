@@ -13,7 +13,7 @@ module.exports = {
     category: 'information',
     scopes: ['global'],
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 6,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');
