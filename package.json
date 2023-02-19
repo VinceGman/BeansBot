@@ -30,6 +30,7 @@
     "fast-fuzzy": "^1.11.2",
     "googleapis": "^85.0.0",
     "googlethis": "^1.7.1",
+    "html-tokenizer": "^4.0.1",
     "image-downloader": "^4.3.0",
     "image-url-validator": "^1.0.4",
     "images-generator": "^3.3.2",
