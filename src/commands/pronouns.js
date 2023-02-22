@@ -13,7 +13,7 @@ module.exports = {
             let pronoun_guide = new MessageEmbed()
                 .setTitle(`Pronoun Guide`)
                 .setColor('#000000')
-                .setDescription('Any part of the pronoun you inted will add the right one.')
+                .setDescription('Any part of the pronoun you intend will add the right one.')
                 .addField(`+pronouns he`, `assigns **he/him**`, false)
                 .addField(`+pronoun her`, `assigns **she/her**`, false)
                 .addField(`+pn they/them`, `assigns **they/them**`, false)
