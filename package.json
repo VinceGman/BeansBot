@@ -35,6 +35,7 @@
     "image-url-validator": "^1.0.4",
     "images-generator": "^3.3.2",
     "jimp": "^0.16.2",
+    "linear-equation-system": "^1.1.1",
     "lodash.permutations": "^1.0.0",
     "nodemon": "^2.0.15",
     "randomcolor": "^0.6.2",
