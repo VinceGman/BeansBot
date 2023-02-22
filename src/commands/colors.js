@@ -1,6 +1,6 @@
 module.exports = {
-    name: 'color',
-    alias: ['colors'],
+    name: 'colors',
+    alias: ['color'],
     description: "color assignment",
     category: 'utility',
     admin: false,
