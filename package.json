@@ -28,6 +28,7 @@
     "discord.js": "^13.6.0",
     "dotenv": "^8.6.0",
     "fast-fuzzy": "^1.11.2",
+    "google-trends-api": "^4.9.2",
     "googleapis": "^85.0.0",
     "googlethis": "^1.7.1",
     "html-tokenizer": "^4.0.1",
@@ -38,9 +39,11 @@
     "linear-equation-system": "^1.1.1",
     "lodash.permutations": "^1.0.0",
     "nodemon": "^2.0.15",
+    "random-wiki": "^3.0.0",
     "randomcolor": "^0.6.2",
     "urlencode": "^1.1.0",
     "validate-color": "^2.2.1",
+    "wikipedia": "^2.0.0",
     "wrap-text": "^1.0.9"
   }
 }
