@@ -1,6 +1,6 @@
 module.exports = {
     name: 'pronouns',
-    alias: ['pronoun', 'pn', 'pns'],
+    alias: ['pronoun'],
     description: "pronouns assignment",
     category: 'utility',
     admin: false,
@@ -16,7 +16,7 @@ module.exports = {
                 .setDescription('Any part of the pronoun you intend will add the right one.')
                 .addField(`+pronouns he`, `assigns **he/him**`, false)
                 .addField(`+pronoun her`, `assigns **she/her**`, false)
-                .addField(`+pn they/them`, `assigns **they/them**`, false)
+                .addField(`+pronouns they/them`, `assigns **they/them**`, false)
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
                 .setTimestamp();
 
