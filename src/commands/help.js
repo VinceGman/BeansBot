@@ -3,7 +3,7 @@ module.exports = {
     description: "gives relevant bot information",
     category: 'utility',
     admin: false,
-    type: "production",
+    type: "test",
     async execute(discord_client, msg, args, admin) {
         const fs = require('fs');
 
@@ -44,7 +44,12 @@ module.exports = {
                     options = ' => Options: ' + command.options.map(o => `+${o}`).join(' ');
                 }
 
-                help_embed.addField(`+${command.name}${aliases}${options}`, `${command.description}`, false);
+                let global = '';
+                if (command.hasOwnProperty('scopes') && command.scopes.includes('global')) {
+                    global = ' => [global]';
+                }
+
+                help_embed.addField(`+${command.name}${aliases}${options}${global}`, `${command.description}`, false);
             }
 
             pages.push(help_embed);
