@@ -1,6 +1,6 @@
 module.exports = {
     name: 'members',
-    description: "members command",
+    description: "member information",
     category: 'information',
     scopes: ['global'],
     admin: true,
