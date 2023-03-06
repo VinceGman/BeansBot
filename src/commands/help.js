@@ -3,7 +3,7 @@ module.exports = {
     description: "gives relevant bot information",
     category: 'utility',
     admin: false,
-    type: "test",
+    type: "production",
     async execute(discord_client, msg, args, admin) {
         const fs = require('fs');
 
