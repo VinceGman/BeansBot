@@ -36,8 +36,10 @@ module.exports = {
             return;
         }
 
-        let team = await this.getTeam(msg.author.id);
-        let team2 = await this.getTeam(msg.mentions.members.first().id);
+        let team = await this.getTeam(msg, msg.author.id);
+        let team2 = await this.getTeam(msg, msg.mentions.members.first().id);
+
+        if (!team || !team2) return;
 
         await this.run_game(team, team2, msg);
     },
@@ -324,13 +326,19 @@ module.exports = {
         // await new Promise(resolve => setTimeout(resolve, 1000));
         return new_stack;
     },
-    async getTeam(id) {
+    async getTeam(msg, id) {
         let db_user = await require('../utility/queries').user(id);
 
         let team = db_user?.[`stack_${1}`] ?? {};
         for (let i = 0; i < team.length; i++) {
             team[i] = { name: team[i].name, attack: +team[i].attack, health: +team[i].health, type: +team[i].type };
         }
+
+        if (Object.keys(team).length == 0) {
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - This player has no stack yet -> **+stack**`);
+            return false;
+        }
+
         return team;
     },
     stack_text(stack, backwards) {
