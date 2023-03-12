@@ -8,6 +8,7 @@ const db = new Firestore({
 
 module.exports = {
     name: 'fight',
+    alias: ['duel'],
     description: "Duelyst game mode",
     admin: false,
     type: "production",
