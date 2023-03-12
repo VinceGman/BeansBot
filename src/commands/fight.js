@@ -68,7 +68,7 @@ module.exports = {
         new_stack_left = [...(await this.onspawn(msg, new_stack_left, new_stack_right, "Left", fight_msg))];
 
         // console.table(new_stack_right);
-        new_stack_right = [...(await this.onspawn(msg, new_stack_right, new_stack_left, "Right", fight_msg))];
+        new_stack_right = [...(await this.onspawn(msg, new_stack_left, new_stack_right, "Right", fight_msg))];
 
         let fight_onspawn = new MessageEmbed()
             .setTitle(`${msg.author.username} vs ${msg.mentions.members.first().user.username} - Onspawn`)
@@ -136,7 +136,7 @@ module.exports = {
         new_stack_left = [...(await this.prehit(msg, new_stack_left, new_stack_right, "Left", fight_msg))];
 
         // console.table(new_stack_right);
-        new_stack_right = [...(await this.prehit(msg, new_stack_right, new_stack_left, "Right", fight_msg))];
+        new_stack_right = [...(await this.prehit(msg, new_stack_left, new_stack_right, "Right", fight_msg))];
 
         let next_left = new_stack_left[0];
         let next_right = new_stack_right[0];
@@ -179,7 +179,7 @@ module.exports = {
         }
         if (new_stack_right[0].health > 0) {
             // console.table(new_stack_right);
-            new_stack_right = [...(await this.posthit(msg, new_stack_right, new_stack_left, "Right", fight_msg))];
+            new_stack_right = [...(await this.posthit(msg, new_stack_left, new_stack_right, "Right", fight_msg))];
         }
         else {
             if (new_stack_right[0].type == 13) {
@@ -198,7 +198,13 @@ module.exports = {
         return [[...new_stack_left], [...new_stack_right]];
     },
     async onspawn(msg, stack, other_stack, side, fight_msg) {
-        let new_stack = [...stack];
+        let new_stack;
+        if (side == "Left") {
+            new_stack = [...stack];
+        }
+        else {
+            new_stack = [...other_stack];
+        }
         let i = 0;
         while (i < new_stack.length) {
             switch (new_stack[i].type) { // 3, 8, 12, 16
@@ -244,7 +250,13 @@ module.exports = {
         return new_stack;
     },
     async prehit(msg, stack, other_stack, side, fight_msg) {
-        let new_stack = [...stack];
+        let new_stack;
+        if (side == "Left") {
+            new_stack = [...stack];
+        }
+        else {
+            new_stack = [...other_stack];
+        }
         switch (new_stack[0].type) { // 6, 9, 11, 14
             case 6:
                 // console.log('prehit', '6: if this is your only card left, it receives +2/+2');
@@ -284,7 +296,13 @@ module.exports = {
         return new_stack;
     },
     async posthit(msg, stack, other_stack, side, fight_msg) {
-        let new_stack = [...stack];
+        let new_stack;
+        if (side == "Left") {
+            new_stack = [...stack];
+        }
+        else {
+            new_stack = [...other_stack];
+        }
         switch (new_stack[0].type) { // 4, 7, 10, 15
             case 4:
                 // console.log('posthit', '4: gives the card behind it +2/+2');
