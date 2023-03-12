@@ -11,6 +11,7 @@ module.exports = {
             .setColor(character['color'][character['color'].valueType])
             .addField('Rank', `#${character['rank_text'][character['rank_text'].valueType]}`, true)
             .addField('Rarity', `${character['rarity'][character['rarity'].valueType]} - ${character['stars'][character['stars'].valueType]}`, true)
+            .addField('Stats', `A${character['attack'][character['attack'].valueType]} H${character['health'][character['health'].valueType]} T${character['type'][character['type'].valueType]}`)
             .addField('Owner', wrapText(`${msg.author.username}#${msg.author.discriminator}`, textWrap), false)
             .setFooter({ text: 'Beans - Edition One' })
             .setTimestamp();
@@ -33,6 +34,7 @@ module.exports = {
             .setColor(character['color'][character['color'].valueType])
             .addField('Rank', `#${character['rank_text'][character['rank_text'].valueType]}`, true)
             .addField('Rarity', `${character['rarity'][character['rarity'].valueType]} - ${character['stars'][character['stars'].valueType]}`, true)
+            .addField('Stats', `A${character['attack'][character['attack'].valueType]} H${character['health'][character['health'].valueType]} T${character['type'][character['type'].valueType]}`)
             .addField('Owner', wrapText(owner, textWrap), false)
             .setFooter({ text: 'Beans - Edition One' })
             .setTimestamp();
