@@ -1,7 +1,7 @@
 module.exports = {
     name: 'profile',
     alias: ['p'],
-    options: ['i', 'c'],
+    options: ['i', 'c', 's'],
     description: "shows your money and collectibles",
     category: 'collectibles',
     admin: false,
@@ -136,6 +136,150 @@ module.exports = {
                 j++;
             });
         }
+        else if (options.includes('s')) {
+            try {
+                var current_origin = owned[0]._fieldsProto['origin'][owned[0]._fieldsProto['origin'].valueType];
+            }
+            catch (err) {
+                var current_origin = '???@<>';
+            }
+            let ownedText = '';
+            let i = 0;
+            let fields = [];
+            let page = 0;
+            let account_value = 0;
+            do {
+                if (options.includes('c')) {
+                    if (owned.length == 0) {
+                        ownedText = '[none]';
+                        pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned`, `${ownedText}`, false));
+                    }
+                    else {
+                        if (current_origin != owned[i]._fieldsProto['origin'][owned[i]._fieldsProto['origin'].valueType] && !owned[i]._fieldsProto['origin'][owned[i]._fieldsProto['origin'].valueType].includes(current_origin)) {
+                            fields.push({ current_origin: current_origin, ownedText: ownedText });
+                            ownedText = '';
+                            current_origin = owned[i]._fieldsProto['origin'][owned[i]._fieldsProto['origin'].valueType];
+                        }
+
+                        let lock = owned[i]._fieldsProto['protected'][owned[i]._fieldsProto['protected'].valueType] ? ' - 🔒' : '';
+                        let sale = owned[i]._fieldsProto['for_sale'][owned[i]._fieldsProto['for_sale'].valueType] ? ' - ✅' : '';
+
+                        ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - (A${owned[i]._fieldsProto['attack'][owned[i]._fieldsProto['attack'].valueType]} H${owned[i]._fieldsProto['health'][owned[i]._fieldsProto['health'].valueType]} T${owned[i]._fieldsProto['type'][owned[i]._fieldsProto['type'].valueType]}) - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
+
+                        let value = 0;
+                        switch (owned[i]._fieldsProto['rarity'][owned[i]._fieldsProto['rarity'].valueType]) {
+                            case 'Common':
+                                value = 250;
+                                break;
+                            case 'Uncommon':
+                                value = 500;
+                                break;
+                            case 'Rare':
+                                value = 2500;
+                                break;
+                            case 'Epic':
+                                value = 5000;
+                                break;
+                            case 'Legendary':
+                                value = 15000;
+                                break;
+                            case 'Ultimate':
+                                value = 25000;
+                                break;
+                            default:
+                                value = 0;
+                        }
+
+                        account_value += value;
+
+                        if (i == owned.length - 1) {
+                            fields.push({ current_origin: current_origin, ownedText: ownedText });
+                            for (let i = 0; i < fields.length; i++) {
+                                if (i % 5 == 0) {
+                                    pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, true).addField('Cards Value', `${account_value} credits`, true));
+                                    page++;
+                                }
+                                pages[page - 1].addField(fields[i].current_origin, fields[i].ownedText, false);
+                            }
+                        }
+
+                        i++;
+                    }
+                }
+                else {
+                    if (owned.length == 0) {
+                        ownedText = '[none]';
+                        pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, false).addField(`Cards Owned`, `${ownedText}`, false));
+                    }
+                    else {
+                        if (ownedText.length >= 600) {
+                            fields.push({ ownedText: ownedText });
+                            ownedText = '';
+                        }
+
+                        let lock = owned[i]._fieldsProto['protected'][owned[i]._fieldsProto['protected'].valueType] ? ' - 🔒' : '';
+                        let sale = owned[i]._fieldsProto['for_sale'][owned[i]._fieldsProto['for_sale'].valueType] ? ' - ✅' : '';
+
+                        ownedText += `${owned[i]._fieldsProto['name'][owned[i]._fieldsProto['name'].valueType]}${lock}${sale} - #${owned[i]._fieldsProto['rank'][owned[i]._fieldsProto['rank'].valueType]} - (A${owned[i]._fieldsProto['attack'][owned[i]._fieldsProto['attack'].valueType]} H${owned[i]._fieldsProto['health'][owned[i]._fieldsProto['health'].valueType]} T${owned[i]._fieldsProto['type'][owned[i]._fieldsProto['type'].valueType]}) - ${owned[i]._fieldsProto['stars'][owned[i]._fieldsProto['stars'].valueType]}\n`;
+
+                        let value = 0;
+                        switch (owned[i]._fieldsProto['rarity'][owned[i]._fieldsProto['rarity'].valueType]) {
+                            case 'Common':
+                                value = 250;
+                                break;
+                            case 'Uncommon':
+                                value = 500;
+                                break;
+                            case 'Rare':
+                                value = 2500;
+                                break;
+                            case 'Epic':
+                                value = 5000;
+                                break;
+                            case 'Legendary':
+                                value = 15000;
+                                break;
+                            case 'Ultimate':
+                                value = 25000;
+                                break;
+                            default:
+                                value = 0;
+                        }
+
+                        account_value += value;
+
+                        if (i == owned.length - 1) {
+                            fields.push({ ownedText: ownedText });
+                            for (let i = 0; i < fields.length; i++) {
+                                pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, true).addField('Cards Value', `${account_value} credits`, true).addField('Cards Owned', `${fields[i].ownedText}`, false));
+                            }
+                        }
+                        i++;
+                    }
+                }
+            } while (i < owned.length);
+
+            let pg = '';
+            let j = 1;
+            pages.forEach(page => {
+                if (pages.length == 1) {
+                    pg = '';
+                }
+                else {
+                    pg = ` - p.${j}`;
+                }
+                page.setTitle(`${wrapText(`${db_user.pref_name ?? user.username}`, textWrap)}`)
+                    .setThumbnail(db_user.pref_image ?? user.avatarURL())
+                    .setColor(db_user.pref_color ?? `#ADD8E6`)
+                    .setFooter({ text: wrapText(`Beans Profile${pg}`, textWrap) })
+                    .setTimestamp();
+
+                if (db_user.pref_status != null && db_user.pref_status != '') {
+                    page.setDescription(db_user.pref_status)
+                }
+                j++;
+            });
+        }
         else {
             try {
                 var current_origin = owned[0]._fieldsProto['origin'][owned[0]._fieldsProto['origin'].valueType];
@@ -199,7 +343,7 @@ module.exports = {
                                     pages.push(new MessageEmbed().addField('Currency', `${credits} credits`, true).addField('Cards Value', `${account_value} credits`, true));
                                     page++;
                                 }
-                                pages[page-1].addField(fields[i].current_origin, fields[i].ownedText, false);
+                                pages[page - 1].addField(fields[i].current_origin, fields[i].ownedText, false);
                             }
                         }
 
