@@ -17,10 +17,11 @@ module.exports = {
         const curPage = await msg.channel.send({ embeds: [pages[page]] });
         for (const emoji of emojiList) await curPage.react(emoji);
         const reactionCollector = curPage.createReactionCollector({ filter: (reaction, user) => emojiList.includes(reaction.emoji.name) && !user.bot && user.id != curPage.author.id, time: timeout });
-        
+
         reactionCollector.on('collect', (reaction, user) => {
             if (user.id == curPage.author.id) return;
             reaction.users.remove(msg.author);
+            reactionCollector.resetTimer({ time: timeout });
             switch (reaction.emoji.name) {
                 case emojiList[0]:
                     page = page > 0 ? --page : pages.length - 1;
