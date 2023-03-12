@@ -42,6 +42,12 @@ module.exports = {
             if (!isNaN(arg) && +arg >= 1000 && +arg <= 6000) {
                 delay = +arg;
             }
+            if (arg.toLowerCase() == 'slow') {
+                delay = 6000;
+            }
+            if (arg.toLowerCase() == 'fast') {
+                delay = 1000;
+            }
         }
 
         let team = await this.getTeam(msg, msg.author.id);
