@@ -10,6 +10,7 @@ const { MessageEmbed } = require('discord.js');
 
 module.exports = {
     name: 'stack',
+    alias: ['deck'],
     description: "arrange your stack",
     admin: false,
     type: "production",

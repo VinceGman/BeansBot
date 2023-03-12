@@ -6,6 +6,8 @@ const db = new Firestore({
     keyFilename: './service-account.json'
 });
 
+let delay = 2000;
+
 module.exports = {
     name: 'fight',
     alias: ['duel'],
@@ -36,6 +38,12 @@ module.exports = {
             return;
         }
 
+        for (let arg in args) {
+            if (!isNaN(arg) && arg >= 1000 && arg <= 6000) {
+                delay = arg;
+            }
+        }
+
         let team = await this.getTeam(msg, msg.author.id);
         let team2 = await this.getTeam(msg, msg.mentions.members.first().id);
 
@@ -62,7 +70,7 @@ module.exports = {
 
         let fight_msg = await msg.channel.send({ embeds: [fight_show] });
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, delay));
 
         // console.table(new_stack_left);
         new_stack_left = [...(await this.onspawn(msg, new_stack_left, new_stack_right, "Left", fight_msg))];
@@ -80,7 +88,7 @@ module.exports = {
 
         fight_msg.edit({ embeds: [fight_onspawn] });
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, delay));
 
         while (new_stack_left.length != 0 && new_stack_right.length != 0) {
             let fight_turn = new MessageEmbed()
@@ -98,7 +106,7 @@ module.exports = {
             new_stack_left = stacks[0];
             new_stack_right = stacks[1];
 
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, delay));
         }
 
         let winner = false;
@@ -407,7 +415,7 @@ module.exports = {
         }).catch(err => console.log('Error', err));
     },
     async interaction(msg, new_stack_left, new_stack_right, fight_msg, interaction) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, delay/2));
 
         const { MessageEmbed } = require('discord.js');
 
@@ -454,7 +462,7 @@ X type 1: no passive
 X type 2: invulnerable for first hit
 X type 3: onspawn: creates a 1/1 duplicate of your last card and makes it the first card in your stack
 X type 4: posthit: gives the card behind it +2/+2
-X type 5: this card instantly deletes itself and the enemy card instead of hitting (does not proc prehit or posthit, there's no hit)
+X type 5: this card instantly deletes itself and the enemy card instead of hitting (does not proc prehit or posthit or special character types)
 X type 6: prehit: if this is your only card left, it receives +2/+2
 X type 7: posthit: you spawns a 1/1 version of itself at the back of the stack
 X type 8: onspawn: gives first card +5/+5
