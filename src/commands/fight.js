@@ -62,10 +62,10 @@ module.exports = {
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         // console.table(new_stack_left);
-        new_stack_left = [...(await this.onspawn(new_stack_left))];
+        new_stack_left = [...(await this.onspawn(msg, new_stack_left, new_stack_right, "Left", fight_msg))];
 
         // console.table(new_stack_right);
-        new_stack_right = [...(await this.onspawn(new_stack_right))];
+        new_stack_right = [...(await this.onspawn(msg, new_stack_right, new_stack_left, "Right", fight_msg))];
 
         let fight_onspawn = new MessageEmbed()
             .setTitle(`${msg.author.username} vs ${msg.mentions.members.first().user.username} - Onspawn`)
@@ -91,7 +91,7 @@ module.exports = {
 
             fight_msg.edit({ embeds: [fight_turn] });
 
-            let stacks = await this.turn(new_stack_left, new_stack_right);
+            let stacks = await this.turn(msg, new_stack_left, new_stack_right, fight_msg);
             new_stack_left = stacks[0];
             new_stack_right = stacks[1];
 
@@ -118,9 +118,10 @@ module.exports = {
 
         fight_msg.edit({ embeds: [fight_end] });
     },
-    async turn(new_stack_left, new_stack_right) {
+    async turn(msg, new_stack_left, new_stack_right, fight_msg) {
         if (new_stack_left[0].type == 5 || new_stack_right[0].type == 5) {
             // console.log('special character', '5: this card instantly deletes itself and the enemy card instead of hitting (does not proc prehit or posthit, theres no hit)');
+            await this.interaction(msg, new_stack_left, new_stack_right, fight_msg, "Special Character 5 : Left or Right");
             new_stack_left.shift();
             new_stack_right.shift();
             // console.table(new_stack_left);
@@ -129,10 +130,10 @@ module.exports = {
         }
 
         // console.table(new_stack_left);
-        new_stack_left = [...(await this.prehit(new_stack_left))];
+        new_stack_left = [...(await this.prehit(msg, new_stack_left, new_stack_right, "Left", fight_msg))];
 
         // console.table(new_stack_right);
-        new_stack_right = [...(await this.prehit(new_stack_right))];
+        new_stack_right = [...(await this.prehit(msg, new_stack_right, new_stack_left, "Right", fight_msg))];
 
         let next_left = new_stack_left[0];
         let next_right = new_stack_right[0];
@@ -142,16 +143,18 @@ module.exports = {
         }
         else {
             // console.log('special character', '2: invulnerable for first hit');
+            await this.interaction(msg, new_stack_left, new_stack_right, fight_msg, "Special Character 2 : Left");
             new_stack_left[0].type = 1;
             // console.table(new_stack_left);
         }
         if (new_stack_left[0].health > 0) {
             // console.table(new_stack_left);
-            new_stack_left = [...(await this.posthit(new_stack_left))];
+            new_stack_left = [...(await this.posthit(msg, new_stack_left, new_stack_right, "Left", fight_msg))];
         }
         else {
             if (new_stack_left[0].type == 13) {
                 // console.log('special character', '13: when this dies, it moves to the back of the stack and becomes a 3/3/1');
+                await this.interaction(msg, new_stack_left, new_stack_right, fight_msg, "Special Character 13 : Left");
                 let this_card = { ...new_stack_left[0] };
                 this_card.attack = 3;
                 this_card.health = 3;
@@ -167,16 +170,18 @@ module.exports = {
         }
         else {
             // console.log('special character', '2: invulnerable for first hit');
+            await this.interaction(msg, new_stack_left, new_stack_right, fight_msg, "Special Character 2 : Right");
             new_stack_right[0].type = 1;
             // console.table(new_stack_right);
         }
         if (new_stack_right[0].health > 0) {
             // console.table(new_stack_right);
-            new_stack_right = [...(await this.posthit(new_stack_right))];
+            new_stack_right = [...(await this.posthit(msg, new_stack_right, new_stack_left, "Right", fight_msg))];
         }
         else {
             if (new_stack_right[0].type == 13) {
                 // console.log('special character', '13: when this dies, it moves to the back of the stack and becomes a 3/3/1');
+                await this.interaction(msg, new_stack_left, new_stack_right, fight_msg, "Special Character 13 : Right");
                 let this_card = { ...new_stack_right[0] };
                 this_card.attack = 3;
                 this_card.health = 3;
@@ -189,13 +194,14 @@ module.exports = {
 
         return [[...new_stack_left], [...new_stack_right]];
     },
-    async onspawn(stack) {
+    async onspawn(msg, stack, other_stack, side, fight_msg) {
         let new_stack = [...stack];
         let i = 0;
         while (i < new_stack.length) {
             switch (new_stack[i].type) { // 3, 8, 12, 16
                 case 3:
                     // console.log('onspawn', '3: creates a 1/1 duplicate of your last card and makes it the first card in your stack');
+                    await this.interaction(msg, stack, other_stack, fight_msg, `Onspawn ${new_stack[i].type} : ${side}`);
                     let last_card = { ...new_stack[new_stack.length - 1] };
                     last_card.attack = 1;
                     last_card.health = 1;
@@ -205,17 +211,20 @@ module.exports = {
                     break;
                 case 8:
                     // console.log('onspawn', '8: gives first card +5/+5');
+                    await this.interaction(msg, stack, other_stack, fight_msg, `Onspawn ${new_stack[i].type} : ${side}`);
                     new_stack[0].attack += 5;
                     new_stack[0].health += 5;
                     // console.table(new_stack);
                     break;
                 case 12:
                     // console.log('onspawn', '12: gain 6 health');
+                    await this.interaction(msg, stack, other_stack, fight_msg, `Onspawn ${new_stack[i].type} : ${side}`);
                     new_stack[i].health += 6;
                     // console.table(new_stack);
                     break;
                 case 16:
                     // console.log('onspawn', '16: entire team receives +1/+1/+1');
+                    await this.interaction(msg, stack, other_stack, fight_msg, `Onspawn ${new_stack[i].type} : ${side}`);
                     for (let j = 0; j < new_stack.length; j++) {
                         new_stack[j].attack += 1;
                         new_stack[j].health += 1;
@@ -231,11 +240,12 @@ module.exports = {
         }
         return new_stack;
     },
-    async prehit(stack) {
+    async prehit(msg, stack, other_stack, side, fight_msg) {
         let new_stack = [...stack];
         switch (new_stack[0].type) { // 6, 9, 11, 14
             case 6:
                 // console.log('prehit', '6: if this is your only card left, it receives +2/+2');
+                await this.interaction(msg, stack, other_stack, fight_msg, `Prehit ${new_stack[0].type} : ${side}`);
                 if (new_stack.length == 1) {
                     new_stack[0].attack += 2;
                     new_stack[0].health += 2;
@@ -244,17 +254,20 @@ module.exports = {
                 break;
             case 9:
                 // console.log('prehit', '9: increases type of last card by 1');
+                await this.interaction(msg, stack, other_stack, fight_msg, `Prehit ${new_stack[0].type} : ${side}`);
                 new_stack[new_stack.length - 1].type += 1;
                 new_stack[new_stack.length - 1].type = new_stack[new_stack.length - 1].type > 16 ? 16 : new_stack[new_stack.length - 1].type;
                 // console.table(new_stack);
                 break;
             case 11:
                 // console.log('prehit', '11: gain 2 attack');
+                await this.interaction(msg, stack, other_stack, fight_msg, `Prehit ${new_stack[0].type} : ${side}`);
                 new_stack[0].attack += 2;
                 // console.table(new_stack);
                 break;
             case 14:
                 // console.log('prehit', '14: become a copy of the card right behind it, but keeps its health');
+                await this.interaction(msg, stack, other_stack, fight_msg, `Prehit ${new_stack[0].type} : ${side}`);
                 if (new_stack.length > 1) {
                     new_stack[0].name = new_stack[1].name;
                     new_stack[0].attack = new_stack[1].attack;
@@ -267,11 +280,12 @@ module.exports = {
         // await new Promise(resolve => setTimeout(resolve, 1000));
         return new_stack;
     },
-    async posthit(stack) {
+    async posthit(msg, stack, other_stack, side, fight_msg) {
         let new_stack = [...stack];
         switch (new_stack[0].type) { // 4, 7, 10, 15
             case 4:
                 // console.log('posthit', '4: gives the card behind it +2/+2');
+                await this.interaction(msg, stack, other_stack, fight_msg, `Posthit ${new_stack[0].type} : ${side}`);
                 if (new_stack.length > 1) {
                     new_stack[1].attack += 2;
                     new_stack[1].health += 2;
@@ -280,6 +294,7 @@ module.exports = {
                 break;
             case 7:
                 // console.log('posthit', '7: it spawns a 1/1 version of itself at the back of the stack');
+                await this.interaction(msg, stack, other_stack, fight_msg, `Posthit ${new_stack[0].type} : ${side}`);
                 let this_card = { ...new_stack[0] };
                 this_card.attack = 1;
                 this_card.health = 1;
@@ -288,6 +303,7 @@ module.exports = {
                 break;
             case 10:
                 // console.log('posthit', '10: move to the back of the stack');
+                await this.interaction(msg, stack, other_stack, fight_msg, `Posthit ${new_stack[0].type} : ${side}`);
                 let curr_card = { ...new_stack[0] };
                 new_stack.shift();
                 new_stack.push(curr_card);
@@ -295,6 +311,7 @@ module.exports = {
                 break;
             case 15:
                 // console.log('posthit', '15: flip attack and health');
+                await this.interaction(msg, stack, other_stack, fight_msg, `Posthit ${new_stack[0].type} : ${side}`);
                 let new_health = new_stack[0].attack;
                 let new_attack = new_stack[0].health;
                 new_stack[0].attack = new_attack;
@@ -361,6 +378,23 @@ module.exports = {
             health: Math.floor(Math.random() * (3 + value)) + 1 + Math.floor(value / 4),
             type: type,
         }).catch(err => console.log('Error', err));
+    },
+    async interaction(msg, new_stack_left, new_stack_right, fight_msg, interaction) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const { MessageEmbed } = require('discord.js');
+
+        let fight_interaction = new MessageEmbed()
+            .setTitle(`${msg.author.username} vs ${msg.mentions.members.first().user.username} - Interaction`)
+            .setColor('#000000')
+            .setDescription(interaction)
+            .addField(`Fighting`, `(A${new_stack_left[0].attack} H${new_stack_left[0].health} T${new_stack_left[0].type}) vs (A${new_stack_right[0].attack} H${new_stack_right[0].health} T${new_stack_right[0].type})`)
+            .addField(`${msg.author.username}`, `${this.stack_text(new_stack_left, false)}`, false)
+            .addField(`${msg.mentions.members.first().user.username}`, `${this.stack_text(new_stack_right, false)}`, false)
+            .setFooter({ text: `Duelyst` })
+            .setTimestamp();
+
+        fight_msg.edit({ embeds: [fight_interaction] });
     }
 }
 
