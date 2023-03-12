@@ -9,8 +9,8 @@ const db = new Firestore({
 let delay = 2000;
 
 module.exports = {
-    name: 'fight',
-    alias: ['duel'],
+    name: 'duel',
+    alias: ['fight'],
     description: "Duelyst game mode",
     admin: false,
     type: "production",
@@ -20,10 +20,10 @@ module.exports = {
 
         if (args.length == 0) {
             let fight_guide = new MessageEmbed()
-                .setTitle(`Fight Guide`)
+                .setTitle(`Duel Guide`)
                 .setDescription(`Duelyst Fight, you'll need one of these -> **+stack**`)
                 .setColor('#000000')
-                .addField('+fight @person', `You'll fight @person with your stacks.`, false)
+                .addField('+duel @person', `You'll fight @person with your stacks.`, false)
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
                 .setTimestamp();
 
@@ -38,9 +38,9 @@ module.exports = {
             return;
         }
 
-        for (let arg in args) {
-            if (!isNaN(arg) && arg >= 1000 && arg <= 6000) {
-                delay = arg;
+        for (let arg of args) {
+            if (!isNaN(arg) && +arg >= 1000 && +arg <= 6000) {
+                delay = +arg;
             }
         }
 
@@ -415,7 +415,7 @@ module.exports = {
         }).catch(err => console.log('Error', err));
     },
     async interaction(msg, new_stack_left, new_stack_right, fight_msg, interaction) {
-        await new Promise(resolve => setTimeout(resolve, delay/2));
+        await new Promise(resolve => setTimeout(resolve, delay / 2));
 
         const { MessageEmbed } = require('discord.js');
 
