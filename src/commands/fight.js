@@ -38,6 +38,7 @@ module.exports = {
             return;
         }
 
+        delay = 2000;
         for (let arg of args) {
             if (!isNaN(arg) && +arg >= 1000 && +arg <= 6000) {
                 delay = +arg;
