@@ -106,10 +106,10 @@ module.exports = {
             winner = 'Draw';
         }
         else if (new_stack_left.length == 0) {
-            winner = msg.author.username;
+            winner = msg.mentions.members.first().user.username;
         }
         else if (new_stack_right.length == 0) {
-            winner = msg.mentions.members.first().user.username;
+            winner = msg.author.username;
         }
 
         let fight_end = new MessageEmbed()
