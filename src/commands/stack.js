@@ -52,8 +52,8 @@ module.exports = {
             }
         }
 
-        this.stack_save(team, 1, msg);
-        this.stack_show(discord_client, msg);
+        await this.stack_save(team, 1, msg);
+        await this.stack_show(discord_client, msg);
         return;
     },
     async stack_show(discord_client, msg) {
