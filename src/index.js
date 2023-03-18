@@ -83,7 +83,15 @@ discord_client.on('messageCreate', async msg => {
   }
   else {
     try {
-      if (run_type == 'production' && (msg.content.toLowerCase().startsWith('hey beans') || msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id))) {
+      let reply = false;
+      if (msg.reference) {
+        let ref_msg = await msg.channel.messages.fetch(msg.reference?.messageId);
+        if (ref_msg.author.id == discord_client.user.id) {
+          reply = true;
+        }
+      }
+
+      if (run_type == 'test' && (msg.content.toLowerCase().startsWith('hey beans') || msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id) || reply)) {
         await require('../src/utility/openai').gpt(discord_client, msg);
       }
     }
