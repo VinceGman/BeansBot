@@ -84,7 +84,7 @@ discord_client.on('messageCreate', async msg => {
   else {
     try {
       if (run_type == 'production' && (msg.content.toLowerCase().startsWith('hey beans') || msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id))) {
-        await require('../src/utility/openai').gpt(msg);
+        await require('../src/utility/openai').gpt(discord_client, msg);
       }
     }
     catch (err) {
