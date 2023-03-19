@@ -21,8 +21,7 @@ module.exports = {
             await msg.reply(result.data.choices[0].message.content.trim().substring(0, 2000));
         }
         catch (err) {
-            console.log(err);
-            msg.reply("Request could not be completed due to an error.");
+            msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
         }
     },
     async message_history(msg) {
@@ -36,7 +35,7 @@ module.exports = {
                 msg_col.unshift({ "role": "assistant", "content": ref_msg.content });
             }
             else {
-                msg_col.unshift({ "role": "user", "content": `From ${ref_msg.author.username}: ${ref_msg.content}` });
+                msg_col.unshift({ "role": "user", "content": `${ref_msg.author.username}: ${ref_msg.content}` });
                 if (!users_present.includes(ref_msg.author.id)) users_present.push(ref_msg.author.id);
             }
         } while (ref_msg.reference);
