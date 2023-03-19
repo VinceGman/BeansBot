@@ -2,7 +2,7 @@ module.exports = {
 	async read_msg(discord_client, msg, run_gpt) {
 		try {
 			if (run_gpt) await this.gpt(discord_client, msg);
-			// await this.compile_description(msg);
+			await this.compile_description(msg);
 		}
 		catch (err) {
 			msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
@@ -67,7 +67,7 @@ module.exports = {
 			}
 
 			let msg_col = [
-				{ "role": "system", "content": `Your task is to keep all the information you're given.` },
+				{ "role": "system", "content": `Your task is to keep the most important information you're given.` },
 				{ "role": "user", "content": `${user_info}\n\nWrite information you know about this user from the information given.` },
 			]
 
