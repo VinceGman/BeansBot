@@ -91,9 +91,13 @@ discord_client.on('messageCreate', async msg => {
 				}
 			}
 
+			let run_gpt = false;
 			if (run_type == 'production' && (msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id) || reply)) {
-				await require('../src/utility/openai').gpt(discord_client, msg);
+				run_gpt = true;
 			}
+
+			await require('../src/utility/openai').read_msg(discord_client, msg, run_gpt);
+
 		}
 		catch (err) {
 			// error
