@@ -68,7 +68,7 @@ module.exports = {
 
 			let msg_col = [
 				{ "role": "system", "content": `Write a description about this user. Answer as concisely as possible. ` },
-				{ "role": "user", "content": `Write a description about this user and keep track of their important information. Here is some information about them: ${user_info}` },
+				{ "role": "user", "content": `${user_info}\n\nWrite information you know about this user from the information given.` },
 			]
 
 			// set up the axios client auth
