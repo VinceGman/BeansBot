@@ -67,7 +67,7 @@ module.exports = {
 			}
 
 			let msg_col = [
-				{ "role": "system", "content": `Write a description about this user. Answer as concisely as possible. ` },
+				{ "role": "system", "content": `Your task is to keep all the information you're given.` },
 				{ "role": "user", "content": `${user_info}\n\nWrite information you know about this user from the information given.` },
 			]
 
