@@ -1,11 +1,11 @@
 module.exports = {
-	async read_msg(discord_client, msg, run_gpt) {
+	async read_msg(discord_client, msg) {
 		try {
-			if (run_gpt) await this.gpt(discord_client, msg);
-			await this.compile_description(msg);
+			await this.gpt(discord_client, msg);
+			// await this.compile_description(msg);
 		}
 		catch (err) {
-			msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
+			// msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
 		}
 	},
 	async gpt(discord_client, msg) {
@@ -16,9 +16,9 @@ module.exports = {
 
 			for (let id of users_present) {
 				let db_user = await require('../utility/queries').user(id);
-				let { username, pronouns, level, days_of_membership } = await this.discord_user_information(msg, id);
+				let { username, nickname, pronouns, level, days_of_membership } = await this.discord_user_information(msg, id);
 
-				let user_description = `Here is some relevant information about the user that could assist you in helping them. ${username} goes by ${pronouns}, is level ${level} and joined ${days_of_membership} ago. `;
+				let user_description = `Here is some relevant information about the user that could assist you in helping them. ${username} uses ${pronouns} pronouns, is level ${level} and joined ${days_of_membership} ago. ${nickname}`;
 
 				if (username == 'Beans') user_description = 'This is all your information. Answer as concisely as possible when helping others. '
 
@@ -35,7 +35,7 @@ module.exports = {
 			await msg.reply(result.data.choices[0].message.content.trim().substring(0, 2000));
 		}
 		catch (err) {
-			msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
+			// msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
 		}
 	},
 	async message_history(msg) {
@@ -98,6 +98,7 @@ module.exports = {
 		let discord_user = await msg.guild.members.fetch(id);
 
 		let username = discord_user.user.username;
+		let nickname = discord_user.nickname ? `This user currently goes by ${discord_user.nickname}. ` : '';
 		let days_of_membership = ((date - discord_user.joinedTimestamp) / (seconds_in_a_day * 1000)).toFixed(0);
 		let level = 0;
 		let pronouns = 'they/them';
@@ -111,7 +112,7 @@ module.exports = {
 			}
 		}
 
-		return { username, pronouns, level, days_of_membership };
+		return { username, nickname, pronouns, level, days_of_membership };
 	}
 }
 
