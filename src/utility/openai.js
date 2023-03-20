@@ -2,7 +2,7 @@ module.exports = {
 	async read_msg(discord_client, msg) {
 		try {
 			await this.gpt(discord_client, msg);
-			// await this.compile_description(msg);
+			await this.compile_description(msg);
 		}
 		catch (err) {
 			// msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
