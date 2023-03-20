@@ -12,6 +12,11 @@ module.exports = {
 		try {
 			let { msg_col, users_present } = await this.message_history(msg);
 
+			if (msg_col.length > 16) {
+				msg.reply('This thread has reached maximum size.');
+				return;
+			}
+
 			users_present.push(discord_client.user.id);
 
 			for (let id of users_present) {
