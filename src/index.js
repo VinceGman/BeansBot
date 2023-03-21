@@ -54,7 +54,14 @@ discord_client.on('messageCreate', async msg => {
 	if (msg.author.bot) return;
 
 	if (msg.guildId === null) {
-		msg.channel.send(`Direct message commands aren't supported yet.`);
+		try {
+			if (run_type == 'production') {
+				await require('../src/utility/openai').dm_gpt(discord_client, msg);
+			}
+		}
+		catch (err) {
+			// err
+		}
 		return;
 	}
 	else if (msg.content.startsWith(prefix)) {

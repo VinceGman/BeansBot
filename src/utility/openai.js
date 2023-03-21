@@ -118,6 +118,28 @@ module.exports = {
 		}
 
 		return { username, nickname, pronouns, level, days_of_membership };
+	},
+	async dm_gpt(discord_client, msg) {
+		try {
+			let { msg_col } = await this.message_history(msg);
+
+			if (msg_col.length > 8) {
+				msg.reply('This thread has reached maximum size.');
+				return;
+			}
+
+			msg_col.unshift({ "role": "system", "content": `You're a personal assistant named Beans. Answer as concisely as possible when helping others.` });
+
+			// set up the axios client auth
+			const axios_client = require("axios").create({ headers: { Authorization: "Bearer " + process.env.OPENAI_API_KEY } });
+			// get result from ai engine
+			let result = await axios_client.post("https://api.openai.com/v1/chat/completions", { model: "gpt-3.5-turbo", messages: msg_col });
+			// await reply to discord to verify no errors
+			await msg.reply(result.data.choices[0].message.content.trim().substring(0, 2000));
+		}
+		catch (err) {
+			// msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
+		}
 	}
 }
 
