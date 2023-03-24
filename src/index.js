@@ -98,6 +98,7 @@ discord_client.on('messageCreate', async msg => {
 				}
 			}
 
+			// beep boop
 
 			if (run_type == 'production' && (msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id) || reply) && msg.channel.name == 'commands') {
 				await require('../src/utility/openai').read_msg(discord_client, msg);
