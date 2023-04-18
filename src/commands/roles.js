@@ -10,7 +10,7 @@ module.exports = {
         const { MessageEmbed } = require('discord.js');
 
         if (args.length == 0) {
-            let opt_roles = msg.guild.roles.cache.filter(r => r.name.includes('opt: ')).map(r => r.name.replace('opt: ', '')).sort((a, b) => b - a);
+            let opt_roles = msg.guild.roles.cache.filter(r => r.name.toLowerCase().includes('opt: ')).map(r => r.name.toLowerCase().replace('opt: ', '')).sort((a, b) => b - a);
 
             let role_guide = new MessageEmbed()
                 .setTitle(`Role Guide`)
