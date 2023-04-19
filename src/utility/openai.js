@@ -1,15 +1,34 @@
 module.exports = {
-	async read_msg(discord_client, msg) {
+	async distributor(discord_client, msg) {
 		try {
-			await this.gpt(discord_client, msg);
+			if (msg.content.toLowerCase().startsWith('dahlia')) {
+				await this.dahlia(discord_client, msg);
+				return;
+			}
+			// if (msg.content.toLowerCase().startsWith('beans')) {
+			await this.beans(discord_client, msg);
 			await this.compile_description(msg);
+			return;
+			// }
+			// if (msg.content.toLowerCase().startsWith('luna')) {
+			// 	await this.luna(discord_client, msg);
+			// 	await this.compile_description(msg);
+			// 	return;
+			// }
+			// if (msg.content.toLowerCase().startsWith('niko')) {
+			// 	await this.niko(discord_client, msg);
+			// 	await this.compile_description(msg);
+			// 	return;
+			// }
 		}
 		catch (err) {
 			// msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
 		}
 	},
-	async gpt(discord_client, msg) {
+	async beans(discord_client, msg) {
 		try {
+			if (!(await require('../utility/tokens').verify_tokens(discord_client, msg))) return;
+
 			let { msg_col, users_present } = await this.message_history(msg);
 
 			if (msg_col.length > 16) {
@@ -17,30 +36,118 @@ module.exports = {
 				return;
 			}
 
-			users_present.push(discord_client.user.id);
-
 			for (let id of users_present) {
 				let db_user = await require('../utility/queries').user(id);
 				let { username, nickname, pronouns, level, days_of_membership } = await this.discord_user_information(msg, id);
-
 				let user_description = `Here is some relevant information about the user that could assist you in helping them. ${username} uses ${pronouns} pronouns, is level ${level} and joined ${days_of_membership} ago. ${nickname}`;
-
-				if (username == 'Beans') user_description = 'This is all your information. Answer as concisely as possible when helping others. '
-
 				if (db_user?.description) user_description += `${db_user.description}`;
-
 				msg_col.unshift({ "role": "system", "content": `${user_description}` });
 			}
+
+			// let member_list = await this.get_member_list(msg);
+
+			// adding the bot information to system content
+			let db_beans_bot = await require('../utility/queries').user(discord_client.user.id);
+			let beans_bot_description = db_beans_bot?.description ? `${db_beans_bot.description}` : `Your name is Beans. You're a helpful assistant in a discord server.`;
+			msg_col.unshift({ "role": "system", "content": `${beans_bot_description} Answer as concisely as possible when helping others.` });
+
 
 			// set up the axios client auth
 			const axios_client = require("axios").create({ headers: { Authorization: "Bearer " + process.env.OPENAI_API_KEY } });
 			// get result from ai engine
 			let result = await axios_client.post("https://api.openai.com/v1/chat/completions", { model: "gpt-3.5-turbo", messages: msg_col });
 			// await reply to discord to verify no errors
-			await msg.reply(result.data.choices[0].message.content.trim().substring(0, 2000));
+			await msg.reply(`${result.data.choices[0].message.content.trim().substring(0, 2000)}`); // \n\n${result.data.usage.total_tokens} = ${result.data.usage.prompt_tokens} + ${result.data.usage.completion_tokens}`);
+
+			await require('../utility/tokens').transaction(discord_client, msg, result.data.usage.total_tokens);
 		}
 		catch (err) {
 			// msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
+			console.log(err);
+		}
+	},
+	async niko(discord_client, msg) {
+		try {
+			if (!(await require('../utility/tokens').verify_tokens(discord_client, msg))) return;
+
+			let { msg_col, users_present } = await this.message_history(msg);
+
+			if (msg_col.length > 16) {
+				msg.reply('This thread has reached maximum size.');
+				return;
+			}
+
+			for (let id of users_present) {
+				let db_user = await require('../utility/queries').user(id);
+				let { username, nickname, pronouns, level, days_of_membership } = await this.discord_user_information(msg, id);
+				let user_description = `Here is some relevant information about the user that could assist you in helping them. ${username} uses ${pronouns} pronouns, is level ${level} and joined ${days_of_membership} ago. ${nickname}`;
+				if (db_user?.description) user_description += `${db_user.description}`;
+				msg_col.unshift({ "role": "system", "content": `${user_description}` });
+			}
+
+			// let member_list = await this.get_member_list(msg);
+
+			msg_col.unshift({ "role": "system", "content": `Your name is Niko. You are Niko. All you do is play pretend and be fun. You love to play pretend and make jokes. You're jovial and eccentric. Keep answers within 2000 characters.` });
+
+			// set up the axios client auth
+			const axios_client = require("axios").create({ headers: { Authorization: "Bearer " + process.env.OPENAI_API_KEY } });
+			// get result from ai engine
+			let result = await axios_client.post("https://api.openai.com/v1/chat/completions", { model: "gpt-3.5-turbo", messages: msg_col, temperature: 1.6 });
+			// await reply to discord to verify no errors
+			await msg.reply(`${result.data.choices[0].message.content.trim().substring(0, 2000)}`); // \n\n${result.data.usage.total_tokens} = ${result.data.usage.prompt_tokens} + ${result.data.usage.completion_tokens}`);
+
+			await require('../utility/tokens').transaction(discord_client, msg, result.data.usage.total_tokens);
+		}
+		catch (err) {
+			// msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
+			console.log(err);
+		}
+	},
+	async luna(discord_client, msg) {
+		try {
+			if (!(await require('../utility/tokens').verify_tokens(discord_client, msg))) return;
+
+			let { msg_col, users_present } = await this.message_history(msg);
+
+			if (msg_col.length > 16) {
+				msg.reply('This thread has reached maximum size.');
+				return;
+			}
+
+			msg_col.unshift({ "role": "system", "content": `Your name is Luna. You're a logical and helpful assistant. Answer as concisely as possible when helping others.` });
+
+			console.log(msg_col);
+
+			// set up the axios client auth
+			const axios_client = require("axios").create({ headers: { Authorization: "Bearer " + process.env.OPENAI_API_KEY } });
+			// get result from ai engine
+			let result = await axios_client.post("https://api.openai.com/v1/chat/completions", { model: "gpt-4", messages: msg_col });
+			// await reply to discord to verify no errors
+			await msg.reply(`${result.data.choices[0].message.content.trim().substring(0, 2000)}`); // \n\n${result.data.usage.total_tokens} = ${result.data.usage.prompt_tokens} + ${result.data.usage.completion_tokens}`);
+
+			await require('../utility/tokens').transaction(discord_client, msg, result.data.usage.total_tokens * 30);
+		}
+		catch (err) {
+			// msg.reply(`Request could not be completed due to an error. -> ${err.message}`);
+			console.log(err);
+		}
+	},
+	async dahlia(discord_client, msg) {
+		try {
+			if (!(await require('../utility/tokens').verify_tokens(discord_client, msg))) return;
+			let prompt = msg.content.split(' ').slice(1).join(' ');
+
+			// set up the axios client auth
+			const axios_client = require("axios").create({ headers: { Authorization: "Bearer " + process.env.OPENAI_API_KEY } });
+			// get result from ai engine
+			let result = await axios_client.post("https://api.openai.com/v1/images/generations", { prompt: prompt, n: 1, size: '1024x1024' });
+			// await reply to discord to verify no errors
+			await msg.reply(result.data.data[0].url);
+
+			await require('../utility/tokens').transaction(discord_client, msg, 10000);
+		}
+		catch (err) {
+			msg.reply('This request could not be completed.');
 		}
 	},
 	async message_history(msg) {
@@ -118,6 +225,30 @@ module.exports = {
 		}
 
 		return { username, nickname, pronouns, level, days_of_membership };
+	},
+	async get_member_list(msg) {
+		let members = await msg.guild.members.fetch();
+
+		let date = Date.now();
+		let seconds_in_a_day = 86400;
+
+		let count = 0;
+		let member_list = '';
+		for (let member of members) {
+			member = member[1];
+			if (member.user.bot) continue;
+			count++;
+
+			let days_of_membership = ((date - member.joinedTimestamp) / (seconds_in_a_day * 1000)).toFixed(0);
+			let level = 0;
+			for (let role of member._roles) {
+				role = await msg.guild.roles.fetch(role);
+				if (!role.name.toLowerCase().includes('level')) continue;
+				level = role.name.toLowerCase().replace('level', '').trim();
+			}
+
+			member_list += `${member.user.username}, ${member.nickname ? member.nickname : 'N/A'}, ${pronouns}, ${level}, ${days_of_membership}, [${roles}]`;
+		}
 	},
 	async dm_gpt(discord_client, msg) {
 		try {
