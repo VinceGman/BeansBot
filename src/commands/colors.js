@@ -43,7 +43,7 @@ module.exports = {
         let user = await msg.guild.members.fetch(msg.author.id);
 
         user.roles.cache.forEach(r => {
-            if (r.name.includes('color: ')) {
+            if (r.name.toLowerCase().includes('color: ')) {
                 user.roles.remove(r);
             }
         });
