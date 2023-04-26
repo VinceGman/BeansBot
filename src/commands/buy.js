@@ -11,7 +11,7 @@ module.exports = {
     description: "buy stocks",
     category: 'stocks',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         try {
@@ -90,27 +90,27 @@ module.exports = {
                 stock_count += user_stocks[stk].count;
             }
             if (stock_count + quantity > 1000) {
-                msg.channel.send(`You may only own 1000 stocks. You have ${1000-stock_count-quantity} slots left.`);
-                return
+                msg.channel.send(`You may only own 1000 stocks. You have ${1000 - stock_count} slots left.`);
+                return;
             }
 
-            // if (!(await require('../utility/credits').transaction(discord_client, msg, cost))) return; // credits manager validates transaction
+            if (!(await require('../utility/credits').transaction(discord_client, msg, cost))) return; // credits manager validates transaction
 
-            // if (!user_stocks?.[stock_symbol]) user_stocks[stock_symbol] = { count: 0, per: 0 };
+            if (!user_stocks?.[stock_symbol]) user_stocks[stock_symbol] = { count: 0, per: 0 };
 
-            // user_stocks[stock_symbol].per = +(((user_stocks[stock_symbol].count * user_stocks[stock_symbol].per) + cost) / (user_stocks[stock_symbol].count + quantity)).toFixed(2);
-            // user_stocks[stock_symbol].count += quantity;
-            // let new_public = +stock_db.public - quantity;
+            user_stocks[stock_symbol].per = +(((user_stocks[stock_symbol].count * user_stocks[stock_symbol].per) + cost) / (user_stocks[stock_symbol].count + quantity)).toFixed(2);
+            user_stocks[stock_symbol].count += quantity;
+            let new_public = +stock_db.public - quantity;
 
-            // await db.doc(`members/${msg.author.id}`).update({
-            //     stocks: user_stocks,
-            // });
+            await db.doc(`members/${msg.author.id}`).update({
+                stocks: user_stocks,
+            });
 
-            // await db.doc(`companies/${stock_ref._ref._path.segments[1]}`).set({
-            //     public: new_public.toString(),
-            // }, { merge: true });
+            await db.doc(`companies/${stock_ref._ref._path.segments[1]}`).set({
+                public: new_public.toString(),
+            }, { merge: true });
 
-            // msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Order Completed: [Buy] ${quantity} ${stock_symbol} (${(cost / quantity).toFixed(2)}/unit) - Cost: ${cost.toFixed(2)}`);
+            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Order Completed: [Buy] ${quantity} ${stock_symbol} (${(cost / quantity).toFixed(2)}/unit) - Cost: ${cost.toFixed(2)}`);
         }
         catch (err) {
             msg.channel.send('Something went wrong.');
