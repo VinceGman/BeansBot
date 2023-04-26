@@ -5,7 +5,7 @@ module.exports = {
     description: "look at a collection",
     category: 'collectibles',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 10,
     async execute(discord_client, msg, args, admin) {
         const { MessageEmbed } = require('discord.js');
