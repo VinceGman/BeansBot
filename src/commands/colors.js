@@ -5,6 +5,8 @@ const db = new Firestore({
     keyFilename: './service-account.json'
 });
 
+const { MessageEmbed } = require('discord.js');
+
 module.exports = {
     name: 'colors',
     alias: ['color'],
@@ -12,19 +14,24 @@ module.exports = {
     description: "color creation and assignment",
     category: 'utility',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         try {
-
-            const { MessageEmbed } = require('discord.js');
-
             if (args.length == 0) {
                 let color_guide = new MessageEmbed()
                     .setTitle(`Color Guide`)
-                    .setDescription(`Colors -> http://www.coffeebeansclub.com/`)
+                    .setDescription(`Create your own color.`)
                     .setColor('#000000')
-                    .addField('+color snow', `assigns **color: snow**`, false)
+                    .addField('\u200B', '\u200B', false)
+                    .addField('+color neptune', `assigns -> **Color: Neptune**`, false)
+                    .addField('\u200B', '\u200B', false)
+                    .addField('+color <hex> <name> | +color #4885e8 Blue', `creates -> **Color: Blue**\n**Anyone** can use it.\nCosts **200k** credits.`, false)
+                    .addField('\u200B', '\u200B', false)
+                    .addField('+coloru <hex> <name> | +coloru #c4375f rose petals', `creates -> **Color: rose petals**\n**Only you** can use it.\nCosts **500k** credits.`, false)
+                    .addField('\u200B', '\u200B', false)
+                    .addField('+color delete', 'Deletes your current color so you can make another.')
+                    .addField('\u200B', '\u200B', false)
                     .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
                     .setTimestamp();
 
@@ -34,8 +41,13 @@ module.exports = {
 
             if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
+            if (args.length == 1 && args[0].toLowerCase() == 'delete') {
+                await this.delete(msg);
+                return;
+            }
+
             const { validateHTMLColorHex } = require("validate-color");
-            if (!validateHTMLColorHex(color_hex)) {
+            if (!validateHTMLColorHex(args[0])) {
                 await this.assign(msg, args);
                 return;
             }
@@ -48,6 +60,20 @@ module.exports = {
             let color_hex = args[0];
             args.shift();
             let name = args.join(' ');
+
+            let banned_words = ['admin', 'mod', 'booster', 'patron', 'level', 'color', 'opt', '/', 'undefined', 'null'];
+            let banned = false;
+
+            for (let word of banned_words) {
+                if (name.toLowerCase().includes(word)) {
+                    banned = true;
+                }
+            }
+
+            if (banned) {
+                msg.channel.send('A banned word was present in this name. Try a different one.');
+                return;
+            }
 
             const Color = require('color');
             let color = Color(color_hex).hsv().color;
@@ -85,10 +111,10 @@ module.exports = {
             await this.create_role(msg, color_hex, name);
 
             let color_embed = new MessageEmbed()
-                .setTitle(name)
-                .setDescription(`Created By: ${msg.author.username}#${msg.author.discriminator}`)
+                .setTitle(color_text)
+                .setDescription(`Assign with -> **+color ${name}**`)
                 .setColor(color_hex)
-                .setFooter({ text: `${color_text}` })
+                .setFooter({ text: `Created By: ${msg.author.username}#${msg.author.discriminator}` })
                 .setTimestamp();
 
             msg.channel.send({ embeds: [color_embed] });
@@ -122,8 +148,9 @@ module.exports = {
             let color = args.join(' ');
 
             let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().includes('color: ') && r.name.toLowerCase().includes(color.toLowerCase()));
+            let role_db = (await db.collection(`colors`).where('name', '==', role?.name?.replace('color: ', '').replace('Color: ', '')).get())?._docs()?.[0]?.data();
 
-            if (!role) {
+            if (!role_db || !role) {
                 let color_embed = new MessageEmbed()
                     .setTitle(`Color Not Found`)
                     .setDescription(`N/A: ${color}`)
@@ -134,6 +161,12 @@ module.exports = {
 
                 msg.channel.send({ embeds: [color_embed] });
                 return;
+            }
+            else {
+                if (role_db.owner != msg.author.id && role_db.shareable != true) {
+                    msg.channel.send('This color is not shareable.');
+                    return;
+                }
             }
 
             let user = await msg.guild.members.fetch(msg.author.id);
@@ -157,7 +190,22 @@ module.exports = {
             return;
         }
         catch (err) {
-            msg.channel.send('Something went wrong with color creation.');
+            msg.channel.send('Something went wrong with color assignment.');
+            return;
+        }
+    },
+    async delete(msg) {
+        try {
+            let role_db_ref = (await db.collection(`colors`).where('owner', '==', msg.author.id).get())?._docs()?.[0]
+            let role_db = role_db_ref?.data();
+            let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().includes('color: ') && r.name.toLowerCase().includes(role_db?.name?.toLowerCase()));
+
+            await db.doc(`colors/${role_db_ref._ref._path.segments[1]}`).delete();
+            await msg.guild.roles.delete(role);
+        }
+        catch (err) {
+            msg.channel.send('Something went wrong with color deletion.');
+            console.log(err);
             return;
         }
     }
