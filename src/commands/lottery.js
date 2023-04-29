@@ -12,7 +12,7 @@ module.exports = {
     description: "play the lottery for 10k",
     category: 'credits',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
