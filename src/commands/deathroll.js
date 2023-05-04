@@ -12,7 +12,7 @@ module.exports = {
     description: "deathroll for money",
     category: 'gambling',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
 
@@ -20,13 +20,22 @@ module.exports = {
 
         if (args.length == 0) {
             let deathroll_guide = new MessageEmbed()
-                .setTitle(`Deathroll Guide`)
+                .setTitle(`Deathroll Guide & Dashboard`)
                 .setDescription(`Deathroll 1v1`)
                 .setColor('#000000')
                 .addField('+deathroll @Sore', `Starts a deathroll game with Sore with an auto 10k bet.`, false)
                 .addField('+deathroll @Sore 20000', `Starts a deathroll game with Sore with a 20k bet.`, false)
+                .addField('\u200B', '\u200B', false)
+                .addField('Dashboard', `Here's all your deathroll data.`, false)
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
                 .setTimestamp();
+
+            let user = await require('../utility/queries').user(msg.author.id);
+            let deathroll_net = user?.deathroll_net ? +user.deathroll_net : 0;
+            let wins = user?.wins ? +user.wins : 0;
+            let losses = user?.losses ? +user.losses : 0;
+
+            console.log(deathroll_net, wins, losses);
 
             msg.channel.send({ embeds: [deathroll_guide] });
             return;
@@ -89,7 +98,47 @@ module.exports = {
                 winner = current_turn == recipient ? msg.author.id : recipient;
             }
 
-            require('../utility/credits').refund(discord_client, winner, cost * 2); // credits manager refunds on error
+            let loser = winner == recipient ? msg.author.id : recipient;
+            let multiple = 1;
+
+            if (recipient_payment) {
+                let winner_db = await require('../utility/queries').user(winner);
+                let deathroll_stats_winner = winner_db?.deathroll_stats ? winner_db.deathroll_stats : {};
+                if (!deathroll_stats_winner?.[loser]) deathroll_stats_winner[loser] = { wins: 0, losses: 0, credit_net: 0 };
+                deathroll_stats_winner[loser].wins += 1;
+                deathroll_stats_winner[loser].credit_net += cost;
+                await db.doc(`members/${winner}`).update({
+                    deathroll_stats: deathroll_stats_winner,
+                });
+
+                let loser_db = await require('../utility/queries').user(loser);
+                let deathroll_stats_loser = loser_db?.deathroll_stats ? loser_db.deathroll_stats : {};
+                if (!deathroll_stats_loser?.[winner]) deathroll_stats_loser[winner] = { wins: 0, losses: 0, credit_net: 0 };
+                deathroll_stats_loser[winner].losses += 1;
+                deathroll_stats_loser[winner].credit_net -= cost;
+                await db.doc(`members/${loser}`).update({
+                    deathroll_stats: deathroll_stats_loser,
+                });
+
+                // highest turn skip        (+)     check if one of the skips was bigger than the current, replace
+                // average skip per turn    (-)     skips count / turns count
+                // be challenged count      (+)     increment when challenger
+                // give challenged count    (+)     increment when challenged
+                // lowest turn kill         (+)     check if the turns of the game are lower than the one in the system
+                // highest turn kill        (+)     check if the turns of the game are higher than the one in the system
+                // lowest turn death        (+)     check if the turns of the game are lower than the one in the system
+                // highest turn death       (+)     check if the turns of the game are higher than the one in the system
+                // average turns            (-)     turns count / (wins + losses)
+                // wins                     (+)
+                // losses                   (+)
+                // credit_net               (+)
+                // turns count              (+)
+                // skips count              (+)
+
+                multiple = 2;
+            }
+
+            require('../utility/credits').refund(discord_client, winner, cost * multiple); // credits manager refunds on error
             let user = await msg.guild.members.fetch(winner);
             msg.channel.send(`Winner: ${user.user.username} - Payout: ${cost}`);
         });
