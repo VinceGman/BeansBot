@@ -12,7 +12,7 @@ module.exports = {
     description: "deathroll for money",
     category: 'gambling',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
 
