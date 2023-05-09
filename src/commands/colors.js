@@ -77,7 +77,7 @@ module.exports = {
 
             const Color = require('color');
             let color = Color(color_hex).hsv().color;
-            if (color[2] < 40) {
+            if (color[2] < 40 && msg.author.id != msg.guild.ownerId) {
                 msg.channel.send('This color is too dark.');
                 return;
             }
