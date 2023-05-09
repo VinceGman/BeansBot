@@ -83,7 +83,7 @@ module.exports = {
             }
 
             let color_count = (await db.collection(`colors`).where('owner', '==', msg.author.id).get())?._docs()?.length ?? 0;
-            if (color_count > 1) {
+            if (color_count > 1 && msg.author.id != msg.guild.ownerId) {
                 msg.channel.send(`You've already created a color.`);
                 return;
             }
