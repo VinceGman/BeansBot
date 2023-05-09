@@ -76,7 +76,7 @@ discord_client.on('messageCreate', async msg => {
 			if (msg.member.roles.cache.some(role => role.name.toLowerCase() === 'admins' || role.name.toLowerCase() === 'mods')) admin = true;
 
 			for (let scope of discord_client.commands.get(command).scopes ?? ['commands']) {
-				if (scope == 'commands' && (msg.channel.name == 'commands' || msg.channel.name == 'bot_log')) execute = true;
+				if (scope == 'commands' && msg.channel.name.includes('command')) execute = true;
 				if (scope == 'global') execute = true;
 				if (msg.channel.id == scope) execute = true;
 			}
@@ -98,7 +98,7 @@ discord_client.on('messageCreate', async msg => {
 				}
 			}
 
-			if (run_type == 'production' && msg.channel.name == 'commands' && (msg.content.toLowerCase().startsWith('dahlia') || msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id) || reply)) {
+			if (run_type == 'production' && msg.channel.name.includes('command') && (msg.content.toLowerCase().startsWith('dahlia') || msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id) || reply)) {
 				await require('../src/utility/openai').distributor(discord_client, msg);
 			}
 		}
