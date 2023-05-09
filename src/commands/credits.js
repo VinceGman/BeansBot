@@ -17,14 +17,18 @@ module.exports = {
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
-        if (args.length == 0) {
+        try {
+            if (msg.mentions.users.size == 1) {
+                await this.output_value(msg, msg.mentions.users.keys().next().value);
+                return;
+            }
+
             await this.output_value(msg, msg.author.id);
         }
-        else if (msg.mentions.users.size == 1) {
-            await this.output_value(msg, msg.mentions.users.keys().next().value);
+        catch (err) {
+            msg.channel.send('Something went wrong with retrieving credits.');
+            return;
         }
-
-        return;
     },
     async output_value(msg, id) {
         const { MessageEmbed } = require('discord.js');
