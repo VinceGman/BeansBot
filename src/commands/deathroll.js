@@ -12,7 +12,7 @@ module.exports = {
     description: "deathroll for money",
     category: 'gambling',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
 
@@ -31,11 +31,23 @@ module.exports = {
                 .setTimestamp();
 
             let user = await require('../utility/queries').user(msg.author.id);
-            let deathroll_net = user?.deathroll_net ? +user.deathroll_net : 0;
-            let wins = user?.wins ? +user.wins : 0;
-            let losses = user?.losses ? +user.losses : 0;
+            if (user?.deathroll_stats) {
 
-            console.log(deathroll_net, wins, losses);
+                let wins = 0;
+                let games = 0;
+                let top_death = 0;
+                for (let stats in user.deathroll_stats) {
+                    wins += +user.deathroll_stats[stats].wins;
+                    games += +user.deathroll_stats[stats].wins + +user.deathroll_stats[stats].losses;
+                    top_death = top_death < +user.deathroll_stats[stats].top_death ? +user.deathroll_stats[stats].top_death : top_death;
+                }
+
+                deathroll_guide.addField('Winrate', `Has won ${(wins/games*100).toFixed(2)}% of ${games} games.`, false);
+                deathroll_guide.addField('Top Death', `You've died from ${top_death} odds.`, false);
+            }
+            else {
+                deathroll_guide.addField('No Games', 'Play games to see stats.');
+            }
 
             msg.channel.send({ embeds: [deathroll_guide] });
             return;
@@ -87,6 +99,8 @@ module.exports = {
         let current_turn = recipient;
         let recipient_payment = false;
 
+        let turns = { [`${msg.author.id}_turns`]: 0, [`${recipient}_turns`]: 0, [`${msg.author.id}_skips`]: [], [`${recipient}_skips`]: [] };
+
         const filter = m => m.author.id == msg.author.id || m.author.id == recipient;
         const collector = msg.channel.createMessageCollector({ filter, time: 30000 });
 
@@ -102,38 +116,8 @@ module.exports = {
             let multiple = 1;
 
             if (recipient_payment) {
-                let winner_db = await require('../utility/queries').user(winner);
-                let deathroll_stats_winner = winner_db?.deathroll_stats ? winner_db.deathroll_stats : {};
-                if (!deathroll_stats_winner?.[loser]) deathroll_stats_winner[loser] = { wins: 0, losses: 0, credit_net: 0 };
-                deathroll_stats_winner[loser].wins += 1;
-                deathroll_stats_winner[loser].credit_net += cost;
-                await db.doc(`members/${winner}`).update({
-                    deathroll_stats: deathroll_stats_winner,
-                });
-
-                let loser_db = await require('../utility/queries').user(loser);
-                let deathroll_stats_loser = loser_db?.deathroll_stats ? loser_db.deathroll_stats : {};
-                if (!deathroll_stats_loser?.[winner]) deathroll_stats_loser[winner] = { wins: 0, losses: 0, credit_net: 0 };
-                deathroll_stats_loser[winner].losses += 1;
-                deathroll_stats_loser[winner].credit_net -= cost;
-                await db.doc(`members/${loser}`).update({
-                    deathroll_stats: deathroll_stats_loser,
-                });
-
-                // highest turn skip        (+)     check if one of the skips was bigger than the current, replace
-                // average skip per turn    (-)     skips count / turns count
-                // be challenged count      (+)     increment when challenger
-                // give challenged count    (+)     increment when challenged
-                // lowest turn kill         (+)     check if the turns of the game are lower than the one in the system
-                // highest turn kill        (+)     check if the turns of the game are higher than the one in the system
-                // lowest turn death        (+)     check if the turns of the game are lower than the one in the system
-                // highest turn death       (+)     check if the turns of the game are higher than the one in the system
-                // average turns            (-)     turns count / (wins + losses)
-                // wins                     (+)
-                // losses                   (+)
-                // credit_net               (+)
-                // turns count              (+)
-                // skips count              (+)
+                await this.set_stats(msg.author.id, recipient, msg.author.id, winner, turns, cost);
+                await this.set_stats(recipient, msg.author.id, msg.author.id, winner, turns, cost);
 
                 multiple = 2;
             }
@@ -163,6 +147,9 @@ module.exports = {
                 roll_odds = odds;
                 odds = Math.floor(Math.random() * odds) + 1; // [1, odds]
 
+                turns[`${m.author.id}_turns`] += 1;
+                turns[`${m.author.id}_skips`].push(roll_odds - odds);
+
                 msg.channel.send(`${m.author.username} - rolled \`d${roll_odds}\`: **${odds}**`);
 
                 if (odds == 1) {
@@ -170,38 +157,85 @@ module.exports = {
                 }
             }
         });
+    },
+    async set_stats(target, opponent, challenger, winner, turns, cost) {
+        let target_db = await require('../utility/queries').user(target);
+        let deathroll_stats = target_db?.deathroll_stats ? target_db.deathroll_stats : {};
+        if (!deathroll_stats?.[opponent]) deathroll_stats[opponent] = {
+            wins: 0,
+            losses: 0,
+            credit_net: 0,
+            turns: 0,
+            skips: 0,
+            top_skip: 0,
+            top_death: 0,
+            challenge_out: 0,
+            challenge_in: 0,
+            low_turn_kill: 0,
+            high_turn_kill: 0,
+            low_turn_death: 0,
+            high_turn_death: 0,
+        }
+        else {
+            for (const property in deathroll_stats[opponent]) {
+                deathroll_stats[opponent][property] = +deathroll_stats[opponent][property];
+            }
+        }
 
+        if (target == winner) {
+            deathroll_stats[opponent].wins += 1;
+            deathroll_stats[opponent].credit_net += cost;
+            if (deathroll_stats[opponent].low_turn_kill == 0) {
+                deathroll_stats[opponent].low_turn_kill = turns[`${target}_turns`];
+            }
+            else {
+                deathroll_stats[opponent].low_turn_kill = deathroll_stats[opponent].low_turn_kill > turns[`${target}_turns`] ? turns[`${target}_turns`] : deathroll_stats[opponent].low_turn_kill;
+            }
+            deathroll_stats[opponent].high_turn_kill = deathroll_stats[opponent].high_turn_kill < turns[`${target}_turns`] ? turns[`${target}_turns`] : deathroll_stats[opponent].high_turn_kill;
+        }
+        else {
+            deathroll_stats[opponent].losses += 1;
+            deathroll_stats[opponent].credit_net -= cost;
+            deathroll_stats[opponent].top_death = deathroll_stats[opponent].top_death < (turns[`${target}_skips`][turns[`${target}_skips`].length - 1] + 1) ? (turns[`${target}_skips`][turns[`${target}_skips`].length - 1] + 1) : deathroll_stats[opponent].top_death;
 
+            if (deathroll_stats[opponent].low_turn_death == 0) {
+                deathroll_stats[opponent].low_turn_death = turns[`${target}_turns`];
+            }
+            else {
+                deathroll_stats[opponent].low_turn_death = deathroll_stats[opponent].low_turn_death > turns[`${target}_turns`] ? turns[`${target}_turns`] : deathroll_stats[opponent].low_turn_death;
+            }
+            deathroll_stats[opponent].high_turn_death = deathroll_stats[opponent].high_turn_death < turns[`${target}_turns`] ? turns[`${target}_turns`] : deathroll_stats[opponent].high_turn_death;
+        }
+        if (target == challenger) {
+            deathroll_stats[opponent].challenge_out += 1;
+        }
+        else {
+            deathroll_stats[opponent].challenge_in += 1;
+        }
 
-        // let pot, odds;
-        // if (roll == 1) {
-        //     pot = 0;
-        //     odds = 1000;
-        // }
-        // else {
-        //     pot = deathroll.pot + cost;
-        //     odds = roll;
-        // }
+        deathroll_stats[opponent].turns += turns[`${target}_turns`];
+        deathroll_stats[opponent].skips += turns[`${target}_skips`].reduce((sum, a) => sum + a, 0);
 
+        deathroll_stats[opponent].top_skip = deathroll_stats[opponent].top_skip < Math.max(...turns[`${target}_skips`]) ? Math.max(...turns[`${target}_skips`]) : deathroll_stats[opponent].top_skip;
 
-        // if (roll == 1) await require('../utility/credits').refund(discord_client, msg.author.id, deathroll.pot + cost); // credits manager refunds on error
+        for (const property in deathroll_stats[opponent]) {
+            deathroll_stats[opponent][property] = `${deathroll_stats[opponent][property]}`;
+        }
 
-        // const { MessageEmbed } = require('discord.js');
-
-        // let color = roll == 1 ? '#42b0f5' : '#FFFFFF';
-        // let desc = roll == 1 ? `You've Won!` : 'Roll a 1 to win.';
-
-        // let deathroll_guide = new MessageEmbed()
-        //     .setTitle(`Deathroll`)
-        //     .setDescription(desc)
-        //     .setColor(color)
-        //     .addField('Your roll', `You rolled **${roll}** on 1:${deathroll.odds} odds.`, false)
-        //     .addField('Pot', `${deathroll.pot + cost}`)
-        //     .addField('+deathroll', `deathrolls 3k to play`, false)
-        //     .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
-        //     .setTimestamp();
-
-        // msg.channel.send({ embeds: [deathroll_guide] });
-        // return;
+        await db.doc(`members/${target}`).update({
+            deathroll_stats: deathroll_stats,
+        });
     }
 }
+
+                // highest turn skip        (+)     check if one of the skips was bigger than the current, replace
+                // average skip per turn    (-)     skips count / turns count
+                // be challenged count      (+)     increment when challenger
+                // give challenged count    (+)     increment when challenged
+                // lowest turn kill         (+)     check if the turns of the game are lower than the one in the system
+                // highest turn kill        (+)     check if the turns of the game are higher than the one in the system
+                // lowest turn death        (+)     check if the turns of the game are lower than the one in the system
+                // highest turn death       (+)     check if the turns of the game are higher than the one in the system
+                // average turns            (-)     turns count / (wins + losses)
+                // turns count              (+)
+                // skips count              (+)
