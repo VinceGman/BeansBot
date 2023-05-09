@@ -15,34 +15,46 @@ module.exports = {
     type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
-        const { MessageEmbed } = require('discord.js');
-
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
-        let user = await require('../utility/queries').user(msg.author.id);
+        if (args.length == 0) {
+            await this.output_value(msg, msg.author.id);
+        }
+        else if (msg.mentions.users.size == 1) {
+            await this.output_value(msg, msg.mentions.users.keys().next().value);
+        }
 
-        let lootbox_value = await this.get_lootbox_value(msg);
-        let stocks_value = await this.get_stocks_value(msg);
+        return;
+    },
+    async output_value(msg, id) {
+        const { MessageEmbed } = require('discord.js');
+
+        let user = await require('../utility/queries').user(id);
+        let user_discord = await msg.guild.members.fetch(id);
+
+        let lootbox_value = await this.get_lootbox_value(id);
+        let stocks_value = await this.get_stocks_value(id);
 
         let cumulative_value = +user.credits + +lootbox_value + +stocks_value;
 
         let currency_embed = new MessageEmbed()
             .addField('Currency', `${user.credits} credits`, false)
-            .addField('Lootbox Value', `${lootbox_value.toFixed(2)} credits`, false)
-            .addField('Stocks Value', `${stocks_value.toFixed(2)} credits`, false)
-            .addField('Cumulative Value', `${cumulative_value.toFixed(2)}`, false)
-            .setTitle(`${user.pref_name ?? msg.author.username}`)
-            .setThumbnail(user.pref_image ?? msg.author.avatarURL())
+            .setTitle(`${user.pref_name ?? user_discord.author.username}`)
+            .setThumbnail(user.pref_image ?? user_discord.author.avatarURL())
             .setColor(user.pref_color ?? `#ADD8E6`)
             .setFooter({ text: `Credits` })
             .setTimestamp();
 
+        if (lootbox_value > 0) currency_embed.addField('Lootbox Value', `${lootbox_value.toFixed(2)} credits`, false)
+        if (stocks_value > 0) currency_embed.addField('Stocks Value', `${stocks_value.toFixed(2)} credits`, false)
+        if (cumulative_value > +user.credits) currency_embed.addField('Cumulative Value', `${cumulative_value.toFixed(2)}`, false)
+
         msg.channel.send({ embeds: [currency_embed] });
     },
-    async get_lootbox_value(msg) {
+    async get_lootbox_value(id) {
         let total = 0;
 
-        let characters = (await db.collection(`edition_one`).where('owner_id', '==', msg.author.id).get())._docs();
+        let characters = (await db.collection(`edition_one`).where('owner_id', '==', id).get())._docs();
         for (let character of characters) {
             character = character.data();
 
@@ -75,10 +87,10 @@ module.exports = {
 
         return total;
     },
-    async get_stocks_value(msg) {
+    async get_stocks_value(id) {
         let total = 0;
 
-        let user = await require('../utility/queries').user(msg.author.id);
+        let user = await require('../utility/queries').user(id);
         let user_stocks = user.stocks ? user.stocks : {};
 
         for (let entry in user_stocks) {
