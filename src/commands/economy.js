@@ -19,10 +19,8 @@ module.exports = {
         let global = 0;
         let main_money = 0;
         members.forEach(doc => {
-            if (doc.id == discord_client.user.id) {
-                main_money = +doc.data().credits;
-            }
-            global += +doc.data().credits;
+            if (doc.id == discord_client.user.id) main_money = +doc.data().credits;
+            if (!isNaN(+doc.data().credits)) global += +doc.data().credits;
         });
 
         let fractional = 0.000085;
