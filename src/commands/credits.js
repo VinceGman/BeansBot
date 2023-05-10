@@ -19,22 +19,22 @@ module.exports = {
 
         try {
             if (msg.mentions.users.size == 1) {
-                await this.output_value(msg, msg.mentions.users.keys().next().value);
+                await this.output_value(discord_client, msg, msg.mentions.users.keys().next().value);
                 return;
             }
 
-            await this.output_value(msg, msg.author.id);
+            await this.output_value(discord_client, msg, msg.author.id);
         }
         catch (err) {
             msg.channel.send('Something went wrong with retrieving credits.');
             return;
         }
     },
-    async output_value(msg, id) {
+    async output_value(discord_client, msg, id) {
         const { MessageEmbed } = require('discord.js');
 
         let user = await require('../utility/queries').user(id);
-        let user_discord = await msg.guild.members.fetch(id);
+        let user_discord = discord_client.users.cache.find(user => user.id === id);
 
         let lootbox_value = await this.get_lootbox_value(id);
         let stocks_value = await this.get_stocks_value(id);
@@ -43,8 +43,8 @@ module.exports = {
 
         let currency_embed = new MessageEmbed()
             .addField('Currency', `${user.credits} credits`, false)
-            .setTitle(`${user.pref_name ?? user_discord.author.username}`)
-            .setThumbnail(user.pref_image ?? user_discord.author.avatarURL())
+            .setTitle(`${user.pref_name ?? user_discord.username}`)
+            // .setThumbnail(user.pref_image ?? user_discord.author.avatarURL())
             .setColor(user.pref_color ?? `#ADD8E6`)
             .setFooter({ text: `Credits` })
             .setTimestamp();
