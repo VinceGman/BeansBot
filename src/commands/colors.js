@@ -77,13 +77,13 @@ module.exports = {
 
             const Color = require('color');
             let color = Color(color_hex).hsv().color;
-            if (color[2] < 40 && msg.author.id != msg.guild.ownerId) {
+            if (color[2] < 40 && (msg.author.id != msg.guild.ownerId || !admin)) {
                 msg.channel.send('This color is too dark.');
                 return;
             }
 
             let color_count = (await db.collection(`colors`).where('owner', '==', msg.author.id).get())?._docs()?.length ?? 0;
-            if (color_count > 1 && msg.author.id != msg.guild.ownerId) {
+            if (color_count > 1 && (msg.author.id != msg.guild.ownerId || !admin)) {
                 msg.channel.send(`You've already created a color.`);
                 return;
             }
@@ -103,6 +103,10 @@ module.exports = {
                 price = 500000;
                 shareable = false;
                 color_text = 'New Unique Color';
+            }
+
+            if (admin) {
+                price = 0;
             }
 
             if (!(await require('../utility/credits').transaction(discord_client, msg, price))) return; // credits manager validates transaction
