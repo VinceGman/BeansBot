@@ -19,6 +19,7 @@ module.exports = {
     async execute(discord_client, msg, args, admin) {
         try {
             if (args.length == 0) {
+                console.log(admin);
                 let color_guide = new MessageEmbed()
                     .setTitle(`Color Guide`)
                     .setDescription(`Create your own color.`)
@@ -77,13 +78,13 @@ module.exports = {
 
             const Color = require('color');
             let color = Color(color_hex).hsv().color;
-            if (color[2] < 40 && (msg.author.id != msg.guild.ownerId || !admin)) {
+            if (color[2] < 40 && msg.author.id != msg.guild.ownerId && !admin) {
                 msg.channel.send('This color is too dark.');
                 return;
             }
 
             let color_count = (await db.collection(`colors`).where('owner', '==', msg.author.id).get())?._docs()?.length ?? 0;
-            if (color_count > 1 && (msg.author.id != msg.guild.ownerId || !admin)) {
+            if (color_count >= 1 && msg.author.id != msg.guild.ownerId && !admin) {
                 msg.channel.send(`You've already created a color.`);
                 return;
             }
