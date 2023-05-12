@@ -19,7 +19,6 @@ module.exports = {
     async execute(discord_client, msg, args, admin) {
         try {
             if (args.length == 0) {
-                console.log(admin);
                 let color_guide = new MessageEmbed()
                     .setTitle(`Color Guide`)
                     .setDescription(`Create your own color.`)
@@ -62,7 +61,7 @@ module.exports = {
             args.shift();
             let name = args.join(' ');
 
-            let banned_words = ['admin', 'mod', 'booster', 'patron', 'level', 'color', 'opt', '/', 'undefined', 'null'];
+            let banned_words = ['admin', 'mod', 'pilot', 'booster', 'patron', 'level', 'color', 'opt', '/', 'undefined', 'null'];
             let banned = false;
 
             for (let word of banned_words) {
