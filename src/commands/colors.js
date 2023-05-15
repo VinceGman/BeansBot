@@ -110,7 +110,7 @@ module.exports = {
                 color_text = 'New Unique Color';
             }
 
-            if (admin) {
+            if (admin || msg.author.id == msg.guild.ownerId) {
                 price = 0;
             }
 
