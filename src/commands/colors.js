@@ -19,9 +19,14 @@ module.exports = {
     async execute(discord_client, msg, args, admin) {
         try {
             if (args.length == 0) {
+                let url = 'beans';
+                if (msg.guild.name.toLowerCase().includes('spaceship')) {
+                    url = 'spaceships';
+                }
+
                 let color_guide = new MessageEmbed()
                     .setTitle(`Color Guide`)
-                    .setDescription(`Create your own color.`)
+                    .setDescription(`Create your own color! \n\nOr assign these -> http://www.coffeebeansclub.com/${url}`)
                     .setColor('#000000')
                     .addField('\u200B', '\u200B', false)
                     .addField('+color neptune', `assigns -> **Color: Neptune**`, false)
