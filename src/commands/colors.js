@@ -191,12 +191,14 @@ module.exports = {
                 }
             });
 
+            let assign_or_remove = 'Removed';
             if (!removing) {
                 user.roles.add(role);
+                assign_or_remove = 'Assigned';
             }
 
             let color_embed = new MessageEmbed()
-                .setTitle(`Color Assigned`)
+                .setTitle(`Color ${assign_or_remove}`)
                 .setColor(`#${role.color.toString(16).padStart(6, '0').toUpperCase()}`)
                 .setDescription(`${role.name}`)
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
