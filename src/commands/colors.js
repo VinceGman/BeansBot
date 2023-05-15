@@ -181,13 +181,19 @@ module.exports = {
 
             let user = await msg.guild.members.fetch(msg.author.id);
 
+            let removing = false;
             user.roles.cache.forEach(r => {
                 if (r.name.toLowerCase().includes('color: ')) {
+                    if (r.name.toLowerCase().includes(color.toLowerCase())) {
+                        removing = true;
+                    }
                     user.roles.remove(r);
                 }
             });
 
-            user.roles.add(role);
+            if (!removing) {
+                user.roles.add(role);
+            }
 
             let color_embed = new MessageEmbed()
                 .setTitle(`Color Assigned`)
