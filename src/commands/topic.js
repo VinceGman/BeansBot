@@ -14,11 +14,11 @@ module.exports = {
     name: 'topic',
     description: "topic change in topic chat",
     category: 'utility',
-    scopes: [process.env.topic_channel_id, process.env.goblin_channel_id, process.env.booster_channel_id],
+    scopes: [process.env.topic_channel_id],
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
-        let cooldown_amount = 30;
+        let cooldown_amount = 15;
 
         let current_time = Math.floor(Date.now() / 1000);
         let next_time = +(await db.doc('values/topic').get())._fieldsProto[msg.channel.id]?.stringValue ?? 0;
@@ -28,7 +28,7 @@ module.exports = {
 
         let topic_embed = new MessageEmbed()
             .setTitle(`Topic Change`)
-            .setDescription(`+topic (name) -> +topic pokemon`)
+            .setDescription(`+topic (name) -> +topic planets`)
             .setColor(`#000000`)
             .setFooter({ text: `requested by ${msg.author.username}#${msg.author.discriminator}` })
             .setTimestamp();
