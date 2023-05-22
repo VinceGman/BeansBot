@@ -38,8 +38,8 @@ module.exports = {
 
 			for (let id of users_present) {
 				let db_user = await require('../utility/queries').user(id);
-				let { username, nickname, pronouns, level, days_of_membership } = await this.discord_user_information(msg, id);
-				let user_description = `Here is some relevant information about the user that could assist you in helping them. ${username} uses ${pronouns} pronouns, is level ${level} and joined ${days_of_membership} ago. ${nickname}`;
+				let { username, nickname, pronouns, days_of_membership } = await this.discord_user_information(msg, id);
+				let user_description = `Here is some relevant information about the user that could assist you in helping them. ${username} uses ${pronouns} pronouns and joined ${days_of_membership} days ago. ${nickname}`;
 				if (db_user?.description) user_description += `${db_user.description}`;
 				msg_col.unshift({ "role": "system", "content": `${user_description}` });
 			}
@@ -251,14 +251,8 @@ module.exports = {
 			count++;
 
 			let days_of_membership = ((date - member.joinedTimestamp) / (seconds_in_a_day * 1000)).toFixed(0);
-			let level = 0;
-			for (let role of member._roles) {
-				role = await msg.guild.roles.fetch(role);
-				if (!role.name.toLowerCase().includes('level')) continue;
-				level = role.name.toLowerCase().replace('level', '').trim();
-			}
 
-			member_list += `${member.user.username}, ${member.nickname ? member.nickname : 'N/A'}, ${pronouns}, ${level}, ${days_of_membership}, [${roles}]`;
+			member_list += `${member.user.username}, ${member.nickname ? member.nickname : 'N/A'}, ${pronouns}, ${days_of_membership}, [${roles}]`;
 		}
 	},
 	async dm_gpt(discord_client, msg) {
