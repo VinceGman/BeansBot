@@ -79,8 +79,8 @@ module.exports = {
 
 			for (let id of users_present) {
 				let db_user = await require('../utility/queries').user(id);
-				let { username, nickname, pronouns, level, days_of_membership } = await this.discord_user_information(msg, id);
-				let user_description = `Here is some relevant information about the user that could assist you in helping them. ${username} uses ${pronouns} pronouns, is level ${level} and joined ${days_of_membership} ago. ${nickname}`;
+				let { username, nickname, pronouns, days_of_membership } = await this.discord_user_information(msg, id);
+				let user_description = `Here is some relevant information about the user that could assist you in helping them. ${username} uses ${pronouns} pronouns and joined ${days_of_membership} days ago. ${nickname}`;
 				if (db_user?.description) user_description += `${db_user.description}`;
 				msg_col.unshift({ "role": "system", "content": `${user_description}` });
 			}
@@ -227,19 +227,15 @@ module.exports = {
 		let username = discord_user.user.username;
 		let nickname = discord_user.nickname ? `This user currently goes by ${discord_user.nickname}. ` : '';
 		let days_of_membership = ((date - discord_user.joinedTimestamp) / (seconds_in_a_day * 1000)).toFixed(0);
-		let level = 0;
 		let pronouns = 'they/them';
 		for (let role of discord_user._roles) {
 			role = await msg.guild.roles.fetch(role);
-			if (role.name.toLowerCase().includes('level')) {
-				level = role.name.toLowerCase().replace('level', '').trim();
-			}
 			if (role.name.toLowerCase().includes('/')) {
 				pronouns = role.name;
 			}
 		}
 
-		return { username, nickname, pronouns, level, days_of_membership };
+		return { username, nickname, pronouns, days_of_membership };
 	},
 	async get_member_list(msg) {
 		let members = await msg.guild.members.fetch();
