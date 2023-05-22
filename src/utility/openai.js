@@ -157,14 +157,20 @@ module.exports = {
 			ref_msg = initial ? msg : await msg.channel.messages.fetch(ref_msg.reference?.messageId);
 			initial = false;
 
-			let msg_content = ref_msg.content;
+			let msg_content = ref_msg.content.split(' ');
 			if (ref_msg.mentions.users.size > 0) {
-				for (let arg of ref_msg.content.split(' ')) {
-					if (arg.startsWith('<@') && arg.endsWith('>')) {
-						if (!users_present.includes(ref_msg.author.id)) users_present.push(arg.replace('<@', '').replace('>', ''));
+				for (let arg in msg_content) {
+					if (msg_content[arg].startsWith('<@') && msg_content[arg].endsWith('>')) {
+						if (!users_present.includes(ref_msg.author.id)) users_present.push(msg_content[arg].replace('<@', '').replace('>', ''));
+					
+						let user = await msg.guild.members.fetch(msg_content[arg].replace('<@', '').replace('>', ''))
+						msg_content[arg] = user.user.username;
+						
 					}
 				}
 			}
+
+			msg_content = msg_content.join(' ');
 
 			if (ref_msg.author.username == "Beans") {
 				msg_col.unshift({ "role": "assistant", "content": msg_content });
