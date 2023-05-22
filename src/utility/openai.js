@@ -157,11 +157,20 @@ module.exports = {
 			ref_msg = initial ? msg : await msg.channel.messages.fetch(ref_msg.reference?.messageId);
 			initial = false;
 
+			let msg_content = ref_msg.content;
+			if (ref_msg.mentions.users.size > 0) {
+				for (let arg of ref_msg.content.split(' ')) {
+					if (arg.startsWith('<@') && arg.endsWith('>')) {
+						if (!users_present.includes(ref_msg.author.id)) users_present.push(arg.replace('<@', '').replace('>', ''));
+					}
+				}
+			}
+
 			if (ref_msg.author.username == "Beans") {
-				msg_col.unshift({ "role": "assistant", "content": ref_msg.content });
+				msg_col.unshift({ "role": "assistant", "content": msg_content });
 			}
 			else {
-				msg_col.unshift({ "role": "user", "content": `${ref_msg.author.username}: ${ref_msg.content}` });
+				msg_col.unshift({ "role": "user", "content": `${ref_msg.author.username}: ${msg_content}` });
 				if (!users_present.includes(ref_msg.author.id)) users_present.push(ref_msg.author.id);
 			}
 		} while (ref_msg.reference);
