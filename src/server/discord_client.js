@@ -15,7 +15,7 @@ module.exports = { prefix: prefix, run_type: run_type }
 discord_client.commands = new Collection();
 const commandFiles = fs.readdirSync('./src/commands/').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
+	const command = require(`../commands/${file}`);
 
 	let poss_cmd_names = command.hasOwnProperty('alias') ? [command.name, ...command.alias] : [command.name];
 	let poss_cmd_options = command.hasOwnProperty('options') ? [[], ..._.flatMap(command.options, (v, i, a) => _.permutations(a, i + 1))] : [[]];
@@ -28,7 +28,6 @@ for (const file of commandFiles) {
 }
 
 discord_client.on('ready', async () => {
-	console.log(`----------------------${discord_client.user.username} Online----------------------`);
 	discord_client.user.setActivity("with Code", { type: 'PLAYING' });
 
 	fs.promises.writeFile('service-account.json', process.env.service_account);
@@ -56,7 +55,7 @@ discord_client.on('messageCreate', async msg => {
 	if (msg.guildId === null) {
 		try {
 			if (run_type == 'production') {
-				await require('../src/utility/openai').dm_gpt(discord_client, msg);
+				await require('../utility/openai').dm_gpt(discord_client, msg);
 			}
 		}
 		catch (err) {
@@ -98,8 +97,8 @@ discord_client.on('messageCreate', async msg => {
 				}
 			}
 
-			if (run_type == 'production' && msg.channel.name.includes('command') && (msg.content.toLowerCase().startsWith('dahlia') || msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id) || reply)) {
-				await require('../src/utility/openai').distributor(discord_client, msg);
+			if (run_type == 'test' && msg.channel.name.includes('command') && (msg.content.toLowerCase().startsWith('dahlia') || msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id) || reply)) {
+				await require('../utility/openai').distributor(discord_client, msg);
 			}
 		}
 		catch (err) {
@@ -109,3 +108,5 @@ discord_client.on('messageCreate', async msg => {
 });
 
 discord_client.login(process.env.discord_token);
+
+module.exports = discord_client;
