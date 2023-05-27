@@ -1,5 +1,6 @@
 assets
 deprecated
 node_modules
-service-account.json
+src/commands/example.js
 *.env
+service-account.json
