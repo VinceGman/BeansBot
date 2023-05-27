@@ -10,10 +10,8 @@ const discord_client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD
 let prefix = '+';
 let run_type = 'production';
 
-module.exports = { prefix: prefix, run_type: run_type }
-
 discord_client.commands = new Collection();
-const commandFiles = fs.readdirSync('./src/commands/').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
 	const command = require(`../commands/${file}`);
 
@@ -29,8 +27,6 @@ for (const file of commandFiles) {
 
 discord_client.on('ready', async () => {
 	discord_client.user.setActivity("with Code", { type: 'PLAYING' });
-
-	fs.promises.writeFile('service-account.json', process.env.service_account);
 
 	if (process.env.USERDOMAIN == 'CYBER') {
 		run_type = 'test';
