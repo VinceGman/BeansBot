@@ -1,21 +1,22 @@
 {
-  "name": "twitchbot",
+  "name": "beansbot",
   "version": "1.0.0",
-  "description": "Twitch Chat Bot",
+  "description": "Beans Chat Bot",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/VinceGman/TwitchBot.git"
+    "url": "git+https://github.com/VinceGman/BeansBot.git"
   },
   "author": "Vince Gonzalez",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/VinceGman/TwitchBot/issues"
+    "url": "https://github.com/VinceGman/BeansBot/issues"
   },
-  "homepage": "https://github.com/VinceGman/TwitchBot#readme",
+  "homepage": "https://github.com/VinceGman/BeansBot#readme",
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
     "@shineiichijo/marika": "^2.0.5",

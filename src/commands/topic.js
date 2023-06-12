@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 require('dotenv').config(); // .env values
 
 // https://console.cloud.google.com/apis/dashboard?project=beans-326017&show=all
@@ -26,11 +26,11 @@ module.exports = {
         let next_available = current_time + (cooldown_amount * 60);
         let time_shown = next_time;
 
-        let topic_embed = new MessageEmbed()
+        let topic_embed = new EmbedBuilder()
             .setTitle(`Topic Change`)
             .setDescription(`+topic (name) -> +topic planets`)
             .setColor(`#000000`)
-            .setFooter({ text: `requested by ${msg.author.username}#${msg.author.discriminator}` })
+            .setFooter({ text: `requested by ${msg.author.username}` })
             .setTimestamp();
 
         if (current_time >= next_time) {
@@ -45,10 +45,10 @@ module.exports = {
 
                 await msg.channel.setName(args.join('-')).then((res, rej) => {
                     if (rej) {
-                        topic_embed.addField("Discord API Failed", "The channel name change could not be completed.", false);
+                        topic_embed.addFields({ name: "Discord API Failed", value: "The channel name change could not be completed.", inline: false });
                     }
                     else {
-                        topic_embed.addField(`Name Changed`, `#${msg.channel.name}`, true);
+                        topic_embed.addFields({ name: `Name Changed`, value: `#${msg.channel.name}`, inline: true });
                     }
                 });
 
@@ -56,7 +56,7 @@ module.exports = {
             }
         }
 
-        topic_embed.addField('Cooldown', `Available <t:${time_shown}:R>.`);
+        topic_embed.addFields({ name: 'Cooldown', value: `Available <t:${time_shown}:R>.`, inline: true });
         msg.channel.send({ embeds: [topic_embed] });
     }
 }

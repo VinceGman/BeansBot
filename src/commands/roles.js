@@ -7,19 +7,19 @@ module.exports = {
     type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
-        const { MessageEmbed } = require('discord.js');
+        const { EmbedBuilder } = require('discord.js');
 
         if (args.length == 0) {
             let opt_roles = msg.guild.roles.cache.filter(r => r.name.toLowerCase().includes('opt: ')).map(r => r.name.toLowerCase().replace('opt: ', '')).sort((a, b) => b - a);
 
-            let role_guide = new MessageEmbed()
+            let role_guide = new EmbedBuilder()
                 .setTitle(`Role Guide`)
                 .setColor('#000000')
-                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
 
             for (let role of opt_roles) {
-                role_guide.addField(`+role ${role}`, `assigns **opt: ${role}**`, false);
+                role_guide.addFields({ name: `+role ${role}`, value: `assigns **opt: ${role}**`, inline: false });
             }
 
             msg.channel.send({ embeds: [role_guide] });
@@ -33,11 +33,11 @@ module.exports = {
         let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().includes('opt: ') && r.name.toLowerCase().includes(input));
 
         if (!role) {
-            let role_embed = new MessageEmbed()
+            let role_embed = new EmbedBuilder()
                 .setTitle(`Role Not Found`)
                 .setColor(`#000000`)
                 .setDescription(`See -> **+roles**`)
-                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
 
             msg.channel.send({ embeds: [role_embed] });
@@ -60,11 +60,11 @@ module.exports = {
             role_status = 'Assigned';
         }
 
-        let role_embed = new MessageEmbed()
+        let role_embed = new EmbedBuilder()
             .setTitle(`Role ${role_status}`)
             .setColor(`#${role.color.toString(16).padStart(6, '0').toUpperCase()}`)
             .setDescription(`${role.name}`)
-            .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+            .setFooter({ text: `${msg.author.username}` })
             .setTimestamp();
 
         msg.channel.send({ embeds: [role_embed] });

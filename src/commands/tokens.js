@@ -15,23 +15,23 @@ module.exports = {
     type: "production",
     cooldown: 6,
     async execute(discord_client, msg, args, admin) {
-        const { MessageEmbed } = require('discord.js');
+        const { EmbedBuilder } = require('discord.js');
 
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
         if (args.length == 0) {
             let user = await require('../utility/queries').user(msg.author.id);
 
-            let tokens_guide = new MessageEmbed()
+            let tokens_guide = new EmbedBuilder()
                 .setTitle(`Tokens Guide & Dashboard`)
                 .setDescription(`You're able to buy Tokens with **Credits** and **USD**.`)
                 .setColor('#000000')
-                .addField('+tokens <number>', `Buys Tokens using **Credits** at 10c -> 1t.`, false)
-                .addField('+tokens 1000', `Transfers 1000 Credits to 100 Tokens.`, false)
-                .addField('USD', 'Ask Sore -> $1:250k | $2:500k | $3:1M | $4:1.5M | $5:2M')
-                .addField('\u200B', '\u200B', false)
-                .addField('Dashboard', `Here's all your token data.`, false)
-                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .addFields({ name: '+tokens <number>', value: `Buys Tokens using **Credits** at 10c -> 1t.`, inline: false })
+                .addFields({ name: '+tokens 1000', value: `Transfers 1000 Credits to 100 Tokens.`, inline: false })
+                .addFields({ name: 'USD', value: 'Ask Sore -> $1:250k | $2:500k | $3:1M | $4:1.5M | $5:2M', inline: false })
+                .addFields({ name: '\u200B', value: '\u200B', inline: false })
+                .addFields({ name: 'Dashboard', value: `Here's all your token data.`, inline: false })
+                .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
 
             if (user.daily_tokens_used) {
@@ -44,17 +44,17 @@ module.exports = {
 
                 let daily_token_limit = base_allowance + booster + level;
 
-                tokens_guide.addField(`Token Limit`, `${user.daily_tokens_used}/${daily_token_limit}`, true);
+                tokens_guide.addFields({ name: `Token Limit`, value: `${user.daily_tokens_used}/${daily_token_limit}`, inline: true });
             }
             if (user.daily_token_reset) {
                 let time_left = 'Available';
                 if ((+user.daily_token_reset + 86400) > (Math.floor(Date.now() / 1000))) {
                     time_left = `<t:${+user.daily_token_reset + 86400}:R>`;
                 }
-                tokens_guide.addField('Next Reset', time_left, true);
+                tokens_guide.addFields({ name: 'Next Reset', value: time_left, inline: true });
             }
             if (user.extra_token_pool) {
-                tokens_guide.addField('Extra Token Pool', `${user.extra_token_pool}`, false);
+                tokens_guide.addFields({ name: 'Extra Token Pool', value: `${user.extra_token_pool}`, inline: false });
             }
 
             msg.channel.send({ embeds: [tokens_guide] });
@@ -66,11 +66,11 @@ module.exports = {
                 return;
             }
             if (+args[0] < 1000) {
-                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Your number must be greater than 1000.`);
+                msg.channel.send(`${msg.author.username} - Your number must be greater than 1000.`);
                 return;
             }
             if (args[0].includes('.')) {
-                msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Your number must be whole.`);
+                msg.channel.send(`${msg.author.username} - Your number must be whole.`);
                 return;
             }
 

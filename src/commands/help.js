@@ -24,9 +24,9 @@ module.exports = {
         let pages = [];
         let page_num = 1;
         for (let category in commands_sorted) {
-            const { MessageEmbed } = require('discord.js');
+            const { EmbedBuilder } = require('discord.js');
 
-            let help_embed = new MessageEmbed()
+            let help_embed = new EmbedBuilder()
                 .setTitle(`+help`)
                 .setDescription(`**Beans**: Command Descriptions\n\nCommands work in #commands unless stated.`)
                 .setColor(`#000000`)
@@ -49,7 +49,7 @@ module.exports = {
                     global = ' => [global]';
                 }
 
-                help_embed.addField(`+${command.name}${aliases}${options}${global}`, `${command.description}`, false);
+                help_embed.addFields({ name: `+${command.name}${aliases}${options}${global}`, value: `${command.description}`, inline: false });
             }
 
             pages.push(help_embed);

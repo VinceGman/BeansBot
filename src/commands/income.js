@@ -22,7 +22,7 @@ module.exports = {
 
         let charges = Math.floor(((current_time_in_seconds - income) / 3600));
         let new_cooldown, next_charge;
-        if (charges > 6) {
+        if (charges >= 6) {
             charges = 6;
             new_cooldown = current_time_in_seconds;
             next_charge = new_cooldown + 3600;
@@ -32,27 +32,52 @@ module.exports = {
             next_charge = income + ((charges + 1) * 3600);
         }
 
-        let booster = msg.member.roles.cache.some(role => role.name.toLowerCase() === 'booster' || role.name.toLowerCase() === 'server booster') ? 0.25 : 0;
-        let patron = msg.member.roles.cache.some(role => role.name.toLowerCase() === 'patron') ? 0.25 : 0;
+        let booster = msg.member.roles.cache.some(role => role.name.toLowerCase().includes('booster')) ? 0.25 : 0;
 
-        let main_bank = await require('../utility/queries').user(discord_client.user.id);
-        let main_money = +main_bank.credits;
+        let amount = charges * 2000;
+        let total_amount = amount + booster * amount;
 
-        let amount = charges * main_money * 0.000085;
-        let total_amount = amount + booster * amount + patron * amount;
+        let pay = +(total_amount.toFixed(2));
 
-        let pay = +((total_amount * 0.75).toFixed(2));
-        let taxes = +((total_amount * 0.25).toFixed(2));
-
-        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - You had ${charges}/6 charges saved up. - Credits Earned: ${pay} - Taxes Paid: ${taxes} - Next Charge: <t:${next_charge}:R> - Fully Charged: <t:${new_cooldown + (6 * 3600)}:R>`);
+        await this.income_embed(msg, charges, pay, next_charge, new_cooldown, booster);
 
         if (charges == 0) return;
         await db.doc(`members/${msg.author.id}`).set({
             credits: (+user['credits'] + pay).toFixed(2).toString(),
             income: new_cooldown.toString(),
         }, { merge: true });
-        await db.doc(`members/${discord_client.user.id}`).set({
-            credits: (main_money - pay).toFixed(2).toString(),
-        }, { merge: true });
+    },
+    async income_embed(msg, charges, pay, next_charge, new_cooldown, booster) {
+        let color = '#607d8b';
+        let booster_income = '';
+        let fields = [];
+        // if (charges != 0) {
+        //     fields.push({ name: 'Charges', value: `${charges}`, inline: false });
+        // }
+        if (pay != 0) {
+            fields.push({ name: 'Paid', value: `${pay} credits`, inline: false });
+        }
+
+        if (booster) {
+            color = '#f47fff';
+            booster_income = 'Booster ';
+        }
+
+        const { EmbedBuilder } = require('discord.js');
+        let embed = new EmbedBuilder()
+            .setTitle(`${booster_income}Income`)
+            .setColor(color)
+            .addFields([
+                ...fields,
+                {
+                    name: 'Payment Available',
+                    value: `<t:${next_charge}:R>`,
+                    inline: false,
+                }
+            ])
+            .setFooter({ text: `${msg.author.username}` })
+            .setTimestamp();
+
+        msg.channel.send({ embeds: [embed] });
     }
 }

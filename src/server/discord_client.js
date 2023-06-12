@@ -4,8 +4,8 @@ require('dotenv').config(); // .env values
 require('lodash.permutations');
 let _ = require('lodash');
 
-const { Client, Collection, MessageEmbed } = require('discord.js');
-const discord_client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS', 'DIRECT_MESSAGES', 'GUILD_MESSAGE_REACTIONS'], partials: ['MESSAGE', 'CHANNEL'] });
+const { Client, Collection, EmbedBuilder } = require('discord.js');
+const discord_client = new Client({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'DirectMessages', 'GuildMessageReactions', 'MessageContent'], partials: ['Message', 'Channel'] });
 
 let prefix = '+';
 let run_type = 'production';
@@ -35,7 +35,7 @@ discord_client.on('ready', async () => {
 		const bot_log = discord_client.channels.cache.get(process.env.discord_bot_log_id);
 		bot_log.send({
 			embeds:
-				[new MessageEmbed()
+				[new EmbedBuilder()
 					.setColor(`#000000`)
 					.setTitle(`System Restart`)
 					.setDescription(`run_env: **${run_type}**`)

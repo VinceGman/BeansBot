@@ -15,7 +15,7 @@ module.exports = {
         let credits = +db_user.credits;
 
         if (credits < cost) {
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Insufficient Funds.`);
+            msg.channel.send(`${msg.author.username} - Insufficient Funds.`);
             return false;
         }
 
@@ -89,10 +89,10 @@ module.exports = {
                 [name]: last_update.toString(),
             }, { merge: true });
 
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Credits Earned: ${pay} - ${name.charAt(0).toUpperCase() + name.slice(1)} Cooldown: <t:${last_update + cooldown_in_seconds}:R>`);
+            msg.channel.send(`${msg.author.username} - Credits Earned: ${pay} - ${name.charAt(0).toUpperCase() + name.slice(1)} Cooldown: <t:${last_update + cooldown_in_seconds}:R>`);
         }
         else {
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - ${name.charAt(0).toUpperCase() + name.slice(1)} Cooldown: <t:${last_update + cooldown_in_seconds}:R>`);
+            msg.channel.send(`${msg.author.username} - ${name.charAt(0).toUpperCase() + name.slice(1)} Cooldown: <t:${last_update + cooldown_in_seconds}:R>`);
         }
     }
 }

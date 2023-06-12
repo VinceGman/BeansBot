@@ -31,7 +31,7 @@ module.exports = {
         }
     },
     async output_value(discord_client, msg, id) {
-        const { MessageEmbed } = require('discord.js');
+        const { EmbedBuilder } = require('discord.js');
 
         let user = await require('../utility/queries').user(id);
         let user_discord = discord_client.users.cache.find(user => user.id === id);
@@ -41,17 +41,17 @@ module.exports = {
 
         let cumulative_value = +user.credits + +lootbox_value + +stocks_value;
 
-        let currency_embed = new MessageEmbed()
-            .addField('Currency', `${user.credits} credits`, false)
+        let currency_embed = new EmbedBuilder()
+            .addFields({ name: 'Currency', value: `${user.credits} credits`, inline: false })
             .setTitle(`${user.pref_name ?? user_discord.username}`)
             // .setThumbnail(user.pref_image ?? user_discord.author.avatarURL())
             .setColor(user.pref_color ?? `#ADD8E6`)
             .setFooter({ text: `Credits` })
             .setTimestamp();
 
-        if (lootbox_value > 0) currency_embed.addField('Lootbox Value', `${lootbox_value.toFixed(2)} credits`, false)
-        if (stocks_value > 0) currency_embed.addField('Stocks Value', `${stocks_value.toFixed(2)} credits`, false)
-        if (cumulative_value > +user.credits) currency_embed.addField('Cumulative Value', `${cumulative_value.toFixed(2)}`, false)
+        if (lootbox_value > 0) currency_embed.addFields({ name: 'Lootbox Value', value: `${lootbox_value.toFixed(2)} credits`, inline: false })
+        if (stocks_value > 0) currency_embed.addFields({ name: 'Stocks Value', value: `${stocks_value.toFixed(2)} credits`, inline: false })
+        if (cumulative_value > +user.credits) currency_embed.addFields({ name: 'Cumulative Value', value: `${cumulative_value.toFixed(2)}`, inline: false })
 
         msg.channel.send({ embeds: [currency_embed] });
     },

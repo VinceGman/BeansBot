@@ -1,10 +1,10 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const wrapText = require("wrap-text");
 let textWrap = 31;
 
 module.exports = {
     print_lootbox(msg, character) {
-        let character_embed = new MessageEmbed()
+        let character_embed = new EmbedBuilder()
             .setTitle(`${wrapText(character['name'][character['name'].valueType], textWrap)}`)
             .setDescription(`${wrapText(character['origin'][character['origin'].valueType], textWrap)}`)
             .setImage(`${character['image'][character['image'].valueType]}`)
@@ -12,7 +12,7 @@ module.exports = {
             .addField('Rank', `#${character['rank_text'][character['rank_text'].valueType]}`, true)
             .addField('Rarity', `${character['rarity'][character['rarity'].valueType]} - ${character['stars'][character['stars'].valueType]}`, true)
             .addField('Stats', `A${character['attack'][character['attack'].valueType]} H${character['health'][character['health'].valueType]} T${character['type'][character['type'].valueType]}`)
-            .addField('Owner', wrapText(`${msg.author.username}#${msg.author.discriminator}`, textWrap), false)
+            .addField('Owner', wrapText(`${msg.author.username}`, textWrap), false)
             .setFooter({ text: 'Beans - Edition One' })
             .setTimestamp();
 
@@ -27,7 +27,7 @@ module.exports = {
             owner = '[none]'
         }
 
-        let character_embed = new MessageEmbed()
+        let character_embed = new EmbedBuilder()
             .setTitle(`${wrapText(character['name'][character['name'].valueType], textWrap)}`)
             .setDescription(`${wrapText(character['origin'][character['origin'].valueType], textWrap)}`)
             .setImage(`${character['image'][character['image'].valueType]}`)

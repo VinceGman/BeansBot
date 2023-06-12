@@ -26,7 +26,7 @@ module.exports = {
         }
         else {
             attribute = 'name_lower';
-            match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0];
+            match = require('../../deprecated/searches').search('name', args.join(' ').toLowerCase())[0];
         }
 
         try {
@@ -38,7 +38,7 @@ module.exports = {
             return characters;
         }
         catch (err) {
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - No character found.`);
+            msg.channel.send(`${msg.author.username} - No character found.`);
             return false;
         }
     },
@@ -57,7 +57,7 @@ module.exports = {
         }
         else {
             attribute = 'name_lower';
-            match = require('../utility/searches').search('name', args.join(' ').toLowerCase())[0];
+            match = require('../../deprecated/searches').search('name', args.join(' ').toLowerCase())[0];
         }
 
         try {
@@ -65,7 +65,7 @@ module.exports = {
             return character._fieldsProto;
         }
         catch (err) {
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - No character found.`);
+            msg.channel.send(`${msg.author.username} - No character found.`);
             return false;
         }
     },
@@ -78,7 +78,7 @@ module.exports = {
         });
 
         let attribute = 'origin_lower';
-        let matches = require('../utility/searches').compound_search('collection', args.join(' ').toLowerCase());
+        let matches = require('../../deprecated/searches').compound_search('collection', args.join(' ').toLowerCase());
 
         let characters = [];
         for (let match of matches) {
@@ -99,7 +99,7 @@ module.exports = {
         });
 
         let attribute = 'origin_lower';
-        let matches = require('../utility/searches').compound_search('collection', args.join(' ').toLowerCase());
+        let matches = require('../../deprecated/searches').compound_search('collection', args.join(' ').toLowerCase());
 
         let characters = [];
         for (let match of matches) {

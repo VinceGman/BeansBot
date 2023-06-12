@@ -5,7 +5,7 @@ const db = new Firestore({
     keyFilename: './service-account.json'
 });
 
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'colors',
@@ -19,25 +19,22 @@ module.exports = {
     async execute(discord_client, msg, args, admin) {
         try {
             if (args.length == 0) {
-                let url = 'beans';
-                if (msg.guild.name.toLowerCase().includes('spaceship')) {
-                    url = 'spaceships';
-                }
+                let url = 'spaceships';
 
-                let color_guide = new MessageEmbed()
+                let color_guide = new EmbedBuilder()
                     .setTitle(`Color Guide`)
                     .setDescription(`Create your own color! \n\nOr assign these -> http://www.coffeebeansclub.com/${url}`)
                     .setColor('#000000')
-                    .addField('\u200B', '\u200B', false)
-                    .addField('+color neptune', `assigns -> **Color: Neptune**`, false)
-                    .addField('\u200B', '\u200B', false)
-                    .addField('+color <hex> <name> | +color #4885e8 Blue', `creates -> **Color: Blue**\n**Anyone** can use it.\nCosts **200k** credits.`, false)
-                    .addField('\u200B', '\u200B', false)
-                    .addField('+coloru <hex> <name> | +coloru #c4375f rose petals', `creates -> **Color: rose petals**\n**Only you** can use it.\nCosts **500k** credits.`, false)
-                    .addField('\u200B', '\u200B', false)
-                    .addField('+color delete', 'Deletes your current color so you can make another.')
-                    .addField('\u200B', '\u200B', false)
-                    .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                    .addFields({ name: '\u200B', value: '\u200B', inline: false })
+                    .addFields({ name: '+color neptune', value: `assigns -> **Color: Neptune**`, inline: false })
+                    .addFields({ name: '\u200B', value: '\u200B', inline: false })
+                    .addFields({ name: '+color <hex> <name> | +color #4885e8 Blue', value: `creates -> **Color: Blue**\n**Anyone** can use it.\nCosts **200k** credits.`, inline: false })
+                    .addFields({ name: '\u200B', value: '\u200B', inline: false })
+                    .addFields({ name: '+coloru <hex> <name> | +coloru #c4375f rose petals', value: `creates -> **Color: rose petals**\n**Only you** can use it.\nCosts **500k** credits.`, inline: false })
+                    .addFields({ name: '\u200B', value: '\u200B', inline: false })
+                    .addFields({ name: '+color delete', value: 'Deletes your current color so you can make another.', inline: false })
+                    .addFields({ name: '\u200B', value: '\u200B', inline: false })
+                    .setFooter({ text: `${msg.author.username}` })
                     .setTimestamp();
 
                 msg.channel.send({ embeds: [color_guide] });
@@ -119,11 +116,11 @@ module.exports = {
             await this.create_doc(msg, color_hex, name, shareable);
             await this.create_role(msg, color_hex, name);
 
-            let color_embed = new MessageEmbed()
+            let color_embed = new EmbedBuilder()
                 .setTitle(color_text)
                 .setDescription(`Assign with -> **+color ${name}**`)
                 .setColor(color_hex)
-                .setFooter({ text: `Created By: ${msg.author.username}#${msg.author.discriminator}` })
+                .setFooter({ text: `Created By: ${msg.author.username}` })
                 .setTimestamp();
 
             msg.channel.send({ embeds: [color_embed] });
@@ -161,12 +158,12 @@ module.exports = {
             let role_db = (await db.collection(`colors`).where('name', '==', role?.name?.replace('color: ', '').replace('Color: ', '')).get())?._docs()?.[0]?.data();
 
             if (!role_db || !role) {
-                let color_embed = new MessageEmbed()
+                let color_embed = new EmbedBuilder()
                     .setTitle(`Color Not Found`)
                     .setDescription(`N/A: ${color}`)
                     .setColor(`#000000`)
                     .setDescription(`For correct format, See -> **+colors**`)
-                    .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                    .setFooter({ text: `${msg.author.username}` })
                     .setTimestamp();
 
                 msg.channel.send({ embeds: [color_embed] });
@@ -197,11 +194,11 @@ module.exports = {
                 assign_or_remove = 'Assigned';
             }
 
-            let color_embed = new MessageEmbed()
+            let color_embed = new EmbedBuilder()
                 .setTitle(`Color ${assign_or_remove}`)
                 .setColor(`#${role.color.toString(16).padStart(6, '0').toUpperCase()}`)
                 .setDescription(`${role.name}`)
-                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
 
             msg.channel.send({ embeds: [color_embed] });
