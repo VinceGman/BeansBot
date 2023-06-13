@@ -25,14 +25,6 @@ module.exports = {
             credits: credits.toFixed(2).toString(),
         }, { merge: true });
 
-        let main_bank = await require('../utility/queries').user(discord_client.user.id);
-        let main_money = +main_bank.credits;
-        main_money += cost;
-
-        await db.doc(`members/${discord_client.user.id}`).set({
-            credits: main_money.toFixed(2).toString(),
-        }, { merge: true });
-
         return true;
     },
     async refund(discord_client, id, cost) {
@@ -46,20 +38,12 @@ module.exports = {
         if (cost == 0) return;
 
         let db_user = await require('../utility/queries').user(id);
-
         let credits = +db_user.credits;
+        
         credits += cost;
 
         await db.doc(`members/${id}`).set({
             credits: credits.toFixed(2).toString(),
-        }, { merge: true });
-
-        let main_bank = await require('../utility/queries').user(discord_client.user.id);
-        let main_money = +main_bank.credits;
-        main_money -= cost;
-
-        await db.doc(`members/${discord_client.user.id}`).set({
-            credits: main_money.toFixed(2).toString(),
         }, { merge: true });
     },
     async income(msg, name, amount, cooldown_in_seconds) {
