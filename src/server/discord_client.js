@@ -93,7 +93,7 @@ discord_client.on('messageCreate', async msg => {
 				}
 			}
 
-			if (run_type == 'production' && msg.channel.name.includes('command') && (msg.content.toLowerCase().startsWith('dahlia') || msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id) || reply)) {
+			if (run_type == 'production' && (msg.content.toLowerCase().startsWith('dahlia') || msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id) || reply)) {
 				await require('../utility/openai').distributor(discord_client, msg);
 			}
 		}
