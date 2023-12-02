@@ -49,14 +49,6 @@ discord_client.on('messageCreate', async msg => {
 	if (msg.author.bot) return;
 
 	if (msg.guildId === null) {
-		try {
-			if (run_type == 'production') {
-				await require('../utility/openai').dm_gpt(discord_client, msg);
-			}
-		}
-		catch (err) {
-			// err
-		}
 		return;
 	}
 	else if (msg.content.startsWith(prefix)) {
@@ -93,7 +85,7 @@ discord_client.on('messageCreate', async msg => {
 				}
 			}
 
-			if (run_type == 'production' && (msg.channel.name.includes('commands') || msg.content.toLowerCase().includes('translate')) && (msg.content.toLowerCase().startsWith('dahlia') || msg.content.toLowerCase().startsWith('beans') || msg.mentions.users.has(discord_client.user.id) || reply)) {
+			if (run_type == 'production' && (msg.channel.name.includes('commands') || msg.content.toLowerCase().includes('translate') || msg.guildId == '822225233913184336') && (msg.content.toLowerCase().startsWith('dahlia') || msg.content.toLowerCase().startsWith('beans') || msg.content.toLowerCase().startsWith('buttercup') || msg.mentions.users.has(discord_client.user.id) || reply)) {
 				await require('../utility/openai').distributor(discord_client, msg);
 			}
 		}
