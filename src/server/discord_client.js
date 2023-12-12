@@ -60,7 +60,7 @@ discord_client.on('messageCreate', async msg => {
 
 		try {
 			if (discord_client.commands.get(command).type != run_type) return;
-			if (msg.member.roles.cache.some(role => role.name.toLowerCase() === 'admins' || role.name.toLowerCase() === 'mods' || role.name.toLowerCase() === 'pilot')) admin = true;
+			if (msg.member.roles.cache.some(role => role.name.toLowerCase() === 'admins' || role.name.toLowerCase() === 'mods')) admin = true;
 
 			for (let scope of discord_client.commands.get(command).scopes ?? ['commands']) {
 				if (scope == 'commands' && msg.channel.name.includes('command')) execute = true;
