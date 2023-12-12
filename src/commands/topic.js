@@ -14,11 +14,11 @@ module.exports = {
     name: 'topic',
     description: "topic change in topic chat",
     category: 'utility',
-    scopes: [process.env.topic_channel_id],
+    scopes: ['1164800357533220907'],
     admin: false,
     type: "production",
     async execute(discord_client, msg, args, admin) {
-        let cooldown_amount = 15;
+        let cooldown_amount = 30;
 
         let current_time = Math.floor(Date.now() / 1000);
         let next_time = +(await db.doc('values/topic').get())._fieldsProto[msg.channel.id]?.stringValue ?? 0;
@@ -28,7 +28,7 @@ module.exports = {
 
         let topic_embed = new EmbedBuilder()
             .setTitle(`Topic Change`)
-            .setDescription(`+topic (name) -> +topic planets`)
+            .setDescription(`+topic (name) -> +topic pokemon`)
             .setColor(`#000000`)
             .setFooter({ text: `requested by ${msg.author.username}` })
             .setTimestamp();
