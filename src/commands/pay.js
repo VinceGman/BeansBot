@@ -52,7 +52,18 @@ module.exports = {
             }
             if (!(await require('../utility/credits').transaction(discord_client, msg, +args[0]))) return; // credits manager validates transaction
             await require('../utility/credits').refund(discord_client, recipient, +args[0]); // credits manager refunds credits
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - User paid.`);
+            // msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - User paid.`);
+            
+            let pay_result = new EmbedBuilder()
+                .setTitle(`Payment Details`)
+                .setColor('#37914f')
+                // .setDescription(`Paid: ${+args[0]}`)
+                // .addFields({ name: 'From', value: `${msg.author.username}`, inline: true })
+                .addFields({ name: `Recipient`, value: `${(await msg.guild.members.fetch(recipient)).user.username}`, inline: true })
+                .addFields({ name: `Amount`, value: `+${+args[0]}`, inline: true })
+                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setTimestamp();
+            msg.channel.send({ embeds: [pay_result] });
             return;
         }
     }
