@@ -1,8 +1,9 @@
 module.exports = {
     async palette(discord_client, server_id) {
         try {
-            let colors = { count: 0, colors: [] };
-            let roles = (await (await discord_client.guilds.fetch(server_id)).roles.fetch());
+            let server = (await discord_client.guilds.fetch(server_id))
+            let colors = { name: server.name, count: 0, colors: [] };
+            let roles = (await server.roles.fetch());
 
             for (let role of roles) {
                 if (role[1].name.toLowerCase().includes('color: ')) {
