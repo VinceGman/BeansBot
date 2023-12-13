@@ -1,12 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+  <meta charset="utf-8" />
+  <!-- <link rel="icon" href="%PUBLIC_URL%/favicon.ico" /> -->
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1" /> -->
+  <!-- <meta name="description" content="Official Beans Website" /> -->
+  <!-- <meta property="og:title" content="Welcome to Season 6" /> -->
+  <!-- <meta property="og:site_name" content="Coffee Beans Club" /> -->
+  <!-- <meta property="og:description" content="Season 6" /> -->
+  <!-- <meta property="og:image" content="./image.jpg" /> -->
+  <!-- <meta name="theme-color" content="#55bbee" /> -->
+  <!-- <meta name="twitter:card" content="summary_large_image" /> -->
+  <!-- <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" /> TODO: replace png -->
+  <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+  <title>Coffee Beans Club</title>
 </head>
-<body>
-    There's nothing here yet. Come back soon.
+
+<body bgcolor="#D3D3D3">
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </div>
+
+  <div id="content">
+    <h1><%= name %></h1>
+    <p>A palette of <%= count %> colors with names and HEX code.</p>
+
+    <div id="rtop">
+
+      <table cellpadding="10" cellspacing="0" align="center" bgcolor="#FFFFFF" width="98%"
+        style="font-size:14px; font-family:Geneva, Arial, Helvetica, sans-serif; border:1px solid #000000; padding:2px;">
+        <tbody>
+          <tr>
+            <td>Color Name</td>
+            <td>HEX</td>
+          </tr>
+          <ul>
+            <% colors.forEach(function(color) { %>
+              <%- include('../partials/color', { color: color }); %>
+                <% }); %>
+          </ul>
+        </tbody>
+      </table>
+
+      <div id="rbottom">
+      </div>
+
+    </div>
+  </div>
+
+
 </body>
+
 </html>
