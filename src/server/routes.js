@@ -7,8 +7,8 @@ router.use(function timeLog(req, res, next) {
     next();
 });
 
-router.get('/', function (req, res) {
-    res.render('pages/home');
+router.get('/', async function (req, res) {
+    res.render('pages/home', { ...(await require('../utility/palette').palette(require('../server/discord_client'), '1126661700867854366')) });
 });
 
 router.get('/sleepyheads', async function (req, res) {
