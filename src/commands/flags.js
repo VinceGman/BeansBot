@@ -13,7 +13,7 @@ module.exports = {
     description: "remove your flags",
     category: 'utility',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         try {
