@@ -84,7 +84,7 @@ module.exports = {
                 r = r[1];
                 if (r.name.toLowerCase().includes('flag: ')) {
                     if (r.name.toLowerCase().replace('flag: ', '') == flag_name.toLowerCase()) {
-                        price = max_penalty ? 500000 : 1000;
+                        price = max_penalty ? 500000 : 100000;
 
                         if (!(await require('../utility/credits').transaction(discord_client, msg, price))) return; // credits manager validates transaction
 
