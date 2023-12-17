@@ -24,7 +24,7 @@ module.exports = {
                 .addFields({ name: '+sell CBC', value: `Sells 1 unit of Coffee Beans Coins (CBC) stock.`, inline: false })
                 .addFields({ name: '+sell 5 CBC', value: `Sells 5 units of Coffee Beans Coins (CBC) stock.`, inline: false })
                 .addFields({ name: '+sell CBC 12', value: `Sells 12 units of Coffee Beans Coins (CBC) stock.`, inline: false })
-                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
 
             msg.channel.send({ embeds: [sell_guide] });
@@ -86,13 +86,13 @@ module.exports = {
         }
 
         let cost_per_unit = (price / +stock_db.base_price) * 1000;
-        let cost;
-        if (cost_per_unit > user_stocks[stock_symbol].per) {
-            cost = (((cost_per_unit - user_stocks[stock_symbol].per) * 0.75) + user_stocks[stock_symbol].per) * quantity;
-        }
-        else {
-            cost = cost_per_unit * quantity;
-        }
+        let cost = cost_per_unit * quantity;
+        // if (cost_per_unit > user_stocks[stock_symbol].per) {
+        //     cost = (((cost_per_unit - user_stocks[stock_symbol].per) * 0.75) + user_stocks[stock_symbol].per) * quantity;
+        // }
+        // else {
+        //     cost = cost_per_unit * quantity;
+        // }
 
         user_stocks[stock_symbol].count -= quantity;
         if (user_stocks[stock_symbol].count == 0) {
@@ -111,6 +111,7 @@ module.exports = {
             public: new_public.toString(),
         }, { merge: true });
 
-        msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Order Completed: [Sell] ${quantity} ${stock_symbol} (${cost_per_unit.toFixed(2)}/unit) - Earned: ${(cost_per_unit * quantity).toFixed(2)} - After Taxes: ${cost.toFixed(2)}`);
+        // msg.channel.send(`${msg.author.username} - Order Completed: [Sell] ${quantity} ${stock_symbol} (${cost_per_unit.toFixed(2)}/unit) - Earned: ${(cost_per_unit * quantity).toFixed(2)} - After Taxes: ${cost.toFixed(2)}`);
+        msg.channel.send(`${msg.author.username} - Order Completed: [Sell] ${quantity} ${stock_symbol} (${cost_per_unit.toFixed(2)}/unit) - Earned: ${cost.toFixed(2)}`);
     }
 }
