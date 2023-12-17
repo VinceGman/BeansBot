@@ -25,7 +25,7 @@ module.exports = {
                     .addFields({ name: '+buy CBC', value: `Buys 1 unit of Coffee Beans Coins (CBC) stock.`, inline: false })
                     .addFields({ name: '+buy 5 CBC', value: `Buys 5 units of Coffee Beans Coins (CBC) stock.`, inline: false })
                     .addFields({ name: '+buy CBC 12', value: `Buys 12 units of Coffee Beans Coins (CBC) stock.`, inline: false })
-                    .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                    .setFooter({ text: `${msg.author.username}` })
                     .setTimestamp();
 
                 msg.channel.send({ embeds: [buy_guide] });
@@ -110,7 +110,7 @@ module.exports = {
                 public: new_public.toString(),
             }, { merge: true });
 
-            msg.channel.send(`${msg.author.username}#${msg.author.discriminator} - Order Completed: [Buy] ${quantity} ${stock_symbol} (${(cost / quantity).toFixed(2)}/unit) - Cost: ${cost.toFixed(2)}`);
+            msg.channel.send(`${msg.author.username} - Order Completed: [Buy] ${quantity} ${stock_symbol} (${(cost / quantity).toFixed(2)}/unit) - Cost: ${cost.toFixed(2)}`);
         }
         catch (err) {
             msg.channel.send('Something went wrong.');
