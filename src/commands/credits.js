@@ -36,10 +36,11 @@ module.exports = {
         let user = await require('../utility/queries').user(id);
         let user_discord = discord_client.users.cache.find(user => user.id === id);
 
-        let lootbox_value = await this.get_lootbox_value(id);
+        // let lootbox_value = await this.get_lootbox_value(id);
         let stocks_value = await this.get_stocks_value(id);
 
-        let cumulative_value = +user.credits + +lootbox_value + +stocks_value;
+        // let cumulative_value = +user.credits + +lootbox_value + +stocks_value;
+        let cumulative_value = +user.credits + +stocks_value;
 
         let currency_embed = new EmbedBuilder()
             .addFields({ name: 'Currency', value: `${user.credits} credits`, inline: false })
@@ -49,7 +50,7 @@ module.exports = {
             .setFooter({ text: `Credits` })
             .setTimestamp();
 
-        if (lootbox_value > 0) currency_embed.addFields({ name: 'Lootbox Value', value: `${lootbox_value.toFixed(2)} credits`, inline: false })
+        // if (lootbox_value > 0) currency_embed.addFields({ name: 'Lootbox Value', value: `${lootbox_value.toFixed(2)} credits`, inline: false })
         if (stocks_value > 0) currency_embed.addFields({ name: 'Stocks Value', value: `${stocks_value.toFixed(2)} credits`, inline: false })
         if (cumulative_value > +user.credits) currency_embed.addFields({ name: 'Cumulative Value', value: `${cumulative_value.toFixed(2)}`, inline: false })
 
