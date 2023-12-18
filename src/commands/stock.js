@@ -76,7 +76,7 @@ module.exports = {
                 const members = (await db.collection('members').get())._docs();
                 let majority_holders = '';
                 for (let member_ref of members) {
-                    member = member_ref.data();
+                    let member = member_ref.data();
                     if (member.stocks && member.stocks[stocks[entry].symbol] && member.stocks[stocks[entry].symbol].count >= 500) {
                         let member_id = member_ref._ref._path.segments[1];
                         let user = await discord_client.users.fetch(member_id);
