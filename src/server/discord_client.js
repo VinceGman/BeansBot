@@ -85,7 +85,7 @@ discord_client.on('messageCreate', async msg => {
 				}
 			}
 
-			if (run_type == 'production' && (msg.channel.name.includes('commands') || msg.content.toLowerCase().includes('translate') || msg.guildId == '1186359571749548113') && (msg.content.toLowerCase().startsWith('dahlia') || msg.content.toLowerCase().startsWith('beans') || msg.content.toLowerCase().startsWith('buttercup') || msg.mentions.users.has(discord_client.user.id) || reply)) {
+			if (run_type == 'production' && (msg.channel.name.includes('commands') || msg.content.toLowerCase().includes('translate') || msg.guildId == '1023285041847087226') && (msg.content.toLowerCase().startsWith('dahlia') || msg.content.toLowerCase().startsWith('beans') || msg.content.toLowerCase().startsWith('buttercup') || msg.mentions.users.has(discord_client.user.id) || reply)) {
 				await require('../utility/openai').distributor(discord_client, msg);
 			}
 		}

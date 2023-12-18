@@ -1,6 +1,6 @@
 module.exports = {
 	async distributor(discord_client, msg) {
-		if (msg.guildId == '1186359571749548113') {
+		if (msg.guildId == '1023285041847087226') {
 			try {
 				if (msg.content.toLowerCase().startsWith('dahlia')) {
 					await this.dahlia(discord_client, msg);
