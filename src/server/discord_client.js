@@ -26,7 +26,7 @@ for (const file of commandFiles) {
 }
 
 discord_client.on('ready', async () => {
-	discord_client.user.setActivity("with Code", { type: 'PLAYING' });
+	// discord_client.user.setActivity('+income', { type: 'CUSTOM' });
 
 	if (process.env.USERDOMAIN == 'CYBER') {
 		run_type = 'test';
@@ -45,11 +45,15 @@ discord_client.on('ready', async () => {
 	}
 });
 
+let channel_utilities = require('../utility/channels');
+
 discord_client.on('messageCreate', async msg => {
 	if (msg.author.bot) return;
+	if (msg.guildId === null) return;
 
-	if (msg.guildId === null) {
-		return;
+
+	if (channel_utilities.channels.includes(msg.channel.id)) {
+		channel_utilities.channel_function(discord_client, msg, run_type);
 	}
 	else if (msg.content.startsWith(prefix)) {
 		const args = msg.content.slice(prefix.length).split(/ +/);
