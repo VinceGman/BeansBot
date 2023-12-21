@@ -4,7 +4,7 @@ module.exports = {
     description: "role assignment",
     category: 'utility',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         const { EmbedBuilder } = require('discord.js');
