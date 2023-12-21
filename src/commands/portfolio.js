@@ -6,6 +6,8 @@ const db = new Firestore({
     keyFilename: './service-account.json'
 });
 
+const { EmbedBuilder } = require('discord.js');
+
 module.exports = {
     name: 'portfolio',
     alias: ['port'],
@@ -19,19 +21,33 @@ module.exports = {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
         let options = require('../utility/parsers').parse_command(msg, this.name, this.alias);
 
-        const { EmbedBuilder } = require('discord.js');
+        try {
+            if (msg.mentions.users.size == 1) {
+                await this.port(msg, options, msg.mentions.users.keys().next().value);
+                return;
+            }
 
-        if (args.length == 0 && options.includes('d')) {
-            let portfolio_embed = new EmbedBuilder()
-                .setTitle(`Stock Portfolio`)
-                // .setDescription(`Active portfolio and prices.`)
-                // .setColor('#37914f')
-                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
-                .setTimestamp();
+            await this.port(msg, options, msg.author.id);
+        }
+        catch (err) {
+            msg.channel.send('Something went wrong with retrieving portfolio.');
+            return;
+        }
+    },
+    async port(msg, options, id) {
+        let discord_user = await msg.guild.members.fetch(id);
 
-            let user = await require('../utility/queries').user(msg.author.id);
-            let user_stocks = user.stocks ? user.stocks : {};
+        let user = await require('../utility/queries').user(id);
+        let user_stocks = user.stocks ? user.stocks : {};
 
+        let portfolio_embed = new EmbedBuilder()
+            .setTitle(`Stock Portfolio`)
+            // .setDescription(`Active portfolio and prices.`)
+            // .setColor('#37914f')
+            .setFooter({ text: `${discord_user.user.username}` })
+            .setTimestamp();
+
+        if (options.includes('d')) {
             let port_earnings = 0;
             for (let stock in user_stocks) {
                 let stock_db = (await db.collection(`companies`).where('market', '==', true).where('symbol', '==', stock).limit(1).get())._docs()[0]?.data();
@@ -56,17 +72,7 @@ module.exports = {
             msg.channel.send({ embeds: [portfolio_embed] });
             return;
         }
-        else if (args.length == 0 && !options.includes('u')) {
-            let portfolio_embed = new EmbedBuilder()
-                .setTitle(`Stock Portfolio`)
-                // .setDescription(`Active portfolio and prices.`)
-                // .setColor('#37914f')
-                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
-                .setTimestamp();
-
-            let user = await require('../utility/queries').user(msg.author.id);
-            let user_stocks = user.stocks ? user.stocks : {};
-
+        else {
             let total_current_price = 0;
             let total_purchase_price = 0;
             let stocks_count = '';
