@@ -27,7 +27,7 @@ module.exports = {
                     .setTimestamp();
 
                 let flags = (await msg.guild.members.fetch(msg.author.id)).roles.cache.reduce(function (flags, role) {
-                    if (role.name.toLowerCase().includes('flag: ')) {
+                    if (role.name.toLowerCase().startsWith('flag: ')) {
                         if (role.name.toLowerCase().replace('flag: ', '') == max_penalty_role_name.toLowerCase()) {
                             max_penalty = true;
                         }
@@ -82,7 +82,7 @@ module.exports = {
             let user = await msg.guild.members.fetch(msg.author.id);
             for (let r of user.roles.cache) {
                 r = r[1];
-                if (r.name.toLowerCase().includes('flag: ')) {
+                if (r.name.toLowerCase().startsWith('flag: ')) {
                     if (r.name.toLowerCase().replace('flag: ', '') == flag_name.toLowerCase()) {
                         price = max_penalty ? 500000 : 100000;
 

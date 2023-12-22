@@ -10,7 +10,7 @@ module.exports = {
         const { EmbedBuilder } = require('discord.js');
 
         if (args.length == 0) {
-            let opt_roles = msg.guild.roles.cache.filter(r => r.name.toLowerCase().includes('opt: ')).map(r => r.name.toLowerCase().replace('opt: ', '')).sort((a, b) => b - a);
+            let opt_roles = msg.guild.roles.cache.filter(r => r.name.toLowerCase().startsWith('opt: ')).map(r => r.name.toLowerCase().replace('opt: ', '')).sort((a, b) => b - a);
 
             let role_guide = new EmbedBuilder()
                 .setTitle(`Role Guide`)
@@ -30,7 +30,7 @@ module.exports = {
 
         let input = args.join(' ').toLowerCase();
 
-        let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().includes('opt: ') && r.name.toLowerCase().includes(input));
+        let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().startsWith('opt: ') && r.name.toLowerCase().includes(input));
 
         if (!role) {
             let role_embed = new EmbedBuilder()
