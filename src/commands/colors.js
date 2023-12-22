@@ -9,31 +9,32 @@ const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'colors',
-    alias: ['color'],
-    options: ['u'],
-    description: "color creation and assignment",
+    alias: ['color', 'color:'],
+    description: "color assignment and creation",
     category: 'utility',
     admin: false,
     type: "production",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         try {
+            let color_count;
+            let price;
+            let create_price_text;
+
             if (args.length == 0) {
-                let url = 'spaceships';
+                color_count = (await db.collection(`colors`).where('owner_id', '==', msg.author.id).where('server_id', '==', msg.guild.id).get())?._docs()?.length ?? 0;
+                price = color_count == 0 ? 0 : 200000;
+                create_price_text = color_count == 0 ? '**Free** (First Color)' : '200,000 credits';
 
                 let color_guide = new EmbedBuilder()
-                    .setTitle(`Color Guide`)
-                    .setDescription(`Create your own color! \n\nOr assign these -> http://www.coffeebeansclub.com/${url}`)
                     .setColor('#000000')
+                    .addFields({ name: '> Assign Color', value: `> see available: http://www.coffeebeansclub.com/`, inline: false })
+                    .addFields({ name: 'Example', value: `use -> **+color red**`, inline: true })
+                    .addFields({ name: 'Cost', value: '10,000 credits', inline: true })
                     .addFields({ name: '\u200B', value: '\u200B', inline: false })
-                    .addFields({ name: '+color neptune', value: `assigns -> **Color: Neptune**`, inline: false })
-                    .addFields({ name: '\u200B', value: '\u200B', inline: false })
-                    .addFields({ name: '+color <hex> <name> | +color #4885e8 Blue', value: `creates -> **Color: Blue**\n**Anyone** can use it.\nCosts **200k** credits.`, inline: false })
-                    .addFields({ name: '\u200B', value: '\u200B', inline: false })
-                    .addFields({ name: '+coloru <hex> <name> | +coloru #c4375f rose petals', value: `creates -> **Color: rose petals**\n**Only you** can use it.\nCosts **500k** credits.`, inline: false })
-                    .addFields({ name: '\u200B', value: '\u200B', inline: false })
-                    .addFields({ name: '+color delete', value: 'Deletes your current color so you can make another.', inline: false })
-                    .addFields({ name: '\u200B', value: '\u200B', inline: false })
+                    .addFields({ name: '> Create Color', value: `> pick hex code: https://colorpicker.me/`, inline: false })
+                    .addFields({ name: 'Example', value: `use -> **+color #4885e8 Blue**`, inline: true })
+                    .addFields({ name: 'Cost', value: `${create_price_text}`, inline: true })
                     .setFooter({ text: `${msg.author.username}` })
                     .setTimestamp();
 
@@ -43,14 +44,9 @@ module.exports = {
 
             if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
-            if (args.length == 1 && args[0].toLowerCase() == 'delete') {
-                await this.delete(msg);
-                return;
-            }
-
             const { validateHTMLColorHex } = require("validate-color");
             if (!validateHTMLColorHex(args[0])) {
-                await this.assign(msg, args);
+                await this.assign(discord_client, msg, args);
                 return;
             }
 
@@ -63,7 +59,7 @@ module.exports = {
             args.shift();
             let name = args.join(' ');
 
-            let banned_words = ['admin', 'mod', 'pilot', 'booster', 'patron', 'level', 'color', 'opt', '/', 'undefined', 'null'];
+            let banned_words = ['admin', 'mod', 'booster', 'patron', 'level', 'color', 'opt', '/', 'undefined', 'null', 'flag'];
             let banned = false;
 
             for (let word of banned_words) {
@@ -78,53 +74,44 @@ module.exports = {
             }
 
             const Color = require('color');
+            color_hex = Color(color_hex).hex();
             let color = Color(color_hex).hsv().color;
-            if (color[2] < 40 && msg.author.id != msg.guild.ownerId && !admin) {
+            if (color[2] < 40) {
                 msg.channel.send('This color is too dark.');
                 return;
             }
 
-            let color_count = (await db.collection(`colors`).where('owner', '==', msg.author.id).get())?._docs()?.length ?? 0;
-            if (color_count >= 1 && msg.author.id != msg.guild.ownerId && !admin) {
-                msg.channel.send(`You've already created a color.`);
-                return;
-            }
 
-            let role = await msg.guild.roles.cache.some(role => role.name.toLowerCase().includes(name.toLowerCase()))
+            let role = await msg.guild.roles.cache.some(role => role.name.toLowerCase().startsWith('color: ') && role.name.toLowerCase().replace('color: ', '') == name.toLowerCase())
             if (role) {
                 msg.channel.send('This role name is already being used.');
                 return;
             }
 
-            let price = 200000;
-            let shareable = true;
-            let color_text = 'New Public Color';
+            color_count = (await db.collection(`colors`).where('owner_id', '==', msg.author.id).where('server_id', '==', msg.guild.id).get())?._docs()?.length ?? 0;
+            price = color_count == 0 ? 0 : 200000;
+            create_price_text = color_count == 0 ? '**Free** (First Color)' : '200,000 credits';
 
-            let options = require('../utility/parsers').parse_command(msg, this.name, this.alias);
-            if (options.includes('u')) {
-                price = 500000;
-                shareable = false;
-                color_text = 'New Unique Color';
-            }
-
-            if (admin || msg.author.id == msg.guild.ownerId) {
+            if (msg.author.id == '427677302608887810' || msg.author.id == '183019001058689025') {
                 price = 0;
+                create_price_text = '**Free** (Admin)';
             }
 
             if (!(await require('../utility/credits').transaction(discord_client, msg, price))) return; // credits manager validates transaction
 
-            await this.create_doc(msg, color_hex, name, shareable);
+            await this.create_doc(msg, color_hex, name);
             await this.create_role(msg, color_hex, name);
 
             let color_embed = new EmbedBuilder()
-                .setTitle(color_text)
+                .setTitle('New Color')
                 .setDescription(`Assign with -> **+color ${name}**`)
                 .setColor(color_hex)
+                .addFields({ name: `Cost`, value: `${create_price_text}` })
                 .setFooter({ text: `Created By: ${msg.author.username}` })
                 .setTimestamp();
 
             msg.channel.send({ embeds: [color_embed] });
-
+            return;
         }
         catch (err) {
             msg.channel.send('Something went wrong with color creation.');
@@ -132,17 +119,17 @@ module.exports = {
         }
 
     },
-    async create_doc(msg, color_hex, name, shareable) {
+    async create_doc(msg, color_hex, name) {
         const res = await db.collection('colors').add({
             hex: color_hex,
             name: name,
-            owner: msg.author.id.toString(),
-            shareable: shareable,
+            owner_id: msg.author.id.toString(),
+            server_id: msg.guild.id.toString(),
         });
 
     },
     async create_role(msg, color_hex, name) {
-        let role_count = (await msg.guild.roles.fetch()).size - 2;
+        let role_count = (await msg.guild.roles.fetch()).size - 6;
         await msg.guild.roles.create({
             color: color_hex,
             name: `Color: ${name}`,
@@ -150,11 +137,11 @@ module.exports = {
             permissions: '0',
         });
     },
-    async assign(msg, args) {
+    async assign(discord_client, msg, args) {
         try {
             let color = args.join(' ');
 
-            let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().includes('color: ') && r.name.toLowerCase().includes(color.toLowerCase()));
+            let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().startsWith('color: ') && r.name.toLowerCase().includes(color.toLowerCase()));
             let role_db = (await db.collection(`colors`).where('name', '==', role?.name?.replace('color: ', '').replace('Color: ', '')).get())?._docs()?.[0]?.data();
 
             if (!role_db || !role) {
@@ -169,18 +156,12 @@ module.exports = {
                 msg.channel.send({ embeds: [color_embed] });
                 return;
             }
-            else {
-                if (role_db.owner != msg.author.id && role_db.shareable != true) {
-                    msg.channel.send('This color is not shareable.');
-                    return;
-                }
-            }
 
             let user = await msg.guild.members.fetch(msg.author.id);
 
             let removing = false;
             user.roles.cache.forEach(r => {
-                if (r.name.toLowerCase().includes('color: ')) {
+                if (r.name.toLowerCase().startsWith('color: ')) {
                     if (r.name.toLowerCase().includes(color.toLowerCase())) {
                         removing = true;
                     }
@@ -188,18 +169,31 @@ module.exports = {
                 }
             });
 
+            let color_embed = new EmbedBuilder()
+
             let assign_or_remove = 'Removed';
             if (!removing) {
+                if (msg.author.id != role_db.owner_id) {
+                    if (!(await require('../utility/credits').transaction(discord_client, msg, 10000))) return; // credits manager validates transaction
+                    await require('../utility/credits').refund(discord_client, role_db.owner_id, 10000); // credits manager refunds creditsFF
+                }
                 user.roles.add(role);
                 assign_or_remove = 'Assigned';
             }
 
-            let color_embed = new EmbedBuilder()
-                .setTitle(`Color ${assign_or_remove}`)
-                .setColor(`#${role.color.toString(16).padStart(6, '0').toUpperCase()}`)
-                .setDescription(`${role.name}`)
+            color_embed.setColor(`#${role.color.toString(16).padStart(6, '0').toUpperCase()}`)
+                .addFields({ name: `${assign_or_remove}`, value: `${role.name}`, inline: true })
                 .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
+
+            if (!removing) {
+                if (msg.author.id != role_db.owner_id) {
+                    color_embed.addFields({ name: 'Cost', value: '10000', inline: true });
+                }
+                else {
+                    color_embed.addFields({ name: 'Cost', value: 'Free', inline: true });
+                }
+            }
 
             msg.channel.send({ embeds: [color_embed] });
             return;
@@ -209,27 +203,30 @@ module.exports = {
             return;
         }
     },
-    async delete(msg) {
-        try {
-            let role_db_ref = (await db.collection(`colors`).where('owner', '==', msg.author.id).get())?._docs()?.[0]
-            let role_db = role_db_ref?.data();
-            let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().includes('color: ') && r.name.toLowerCase().includes(role_db?.name?.toLowerCase()));
+    // async delete(msg) {
+    //     try {
+    //         let role_db_ref = (await db.collection(`colors`).where('owner', '==', msg.author.id).get())?._docs()?.[0]
+    //         let role_db = role_db_ref?.data();
+    //         let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().startsWith('color: ') && r.name.toLowerCase().includes(role_db?.name?.toLowerCase()));
 
-            await db.doc(`colors/${role_db_ref._ref._path.segments[1]}`).delete();
-            await msg.guild.roles.delete(role);
-        }
-        catch (err) {
-            msg.channel.send('Something went wrong with color deletion.');
-            console.log(err);
-            return;
-        }
-    }
+    //         await db.doc(`colors/${role_db_ref._ref._path.segments[1]}`).delete();
+    //         await msg.guild.roles.delete(role);
+    //     }
+    //     catch (err) {
+    //         msg.channel.send('Something went wrong with color deletion.');
+    //         console.log(err);
+    //         return;
+    //     }
+    // }
 }
 
 // for (let i = 54; i <= 64; i++) {
-        //     await msg.guild.roles.create({
-        //         name: `Color: `,
-        //         position: i + 1,
-        //         permissions: '0',
-        //     });
-        // }
+//     await msg.guild.roles.create({
+//         name: `Color: `,
+//         position: i + 1,
+//         permissions: '0',
+//     });
+// }
+
+
+// make the person know they lost money
