@@ -56,7 +56,7 @@ class Blackjack {
                 this.state = { ended: true, player_multiplier: 1 };
             }
             else {
-                this.state = { ended: true, player_multiplier: 2.5 };
+                this.state = { ended: true, player_multiplier: 2 };
             }
         }
         else if (this.player_score < 21) {
