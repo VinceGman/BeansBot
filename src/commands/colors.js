@@ -76,8 +76,8 @@ module.exports = {
             const Color = require('color');
             color_hex = Color(color_hex).hex();
             let color = Color(color_hex).hsv().color;
-            if (color[2] < 40) {
-                msg.channel.send('This color is too dark.');
+            if (color[1] < 20 || color[1] > 80 || color[2] < 60) {
+                msg.channel.send('The restrictions for HSV: S must be between 20-80 and V must be 60 or over.');
                 return;
             }
 
