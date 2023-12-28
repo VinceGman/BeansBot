@@ -69,7 +69,7 @@ module.exports = {
                     else {
                         for (let bank_acc of db_bank_accounts) {
                             bank_acc = bank_acc.data();
-                            show_bank_embed.addFields({ name: `${bank_acc.name}`, value: `${bank_acc.balance}`, inline: false });
+                            show_bank_embed.addFields({ name: `${bank_acc.name} - ${bank_acc.account_number}`, value: `${bank_acc.balance}`, inline: false });
                         }
                     }
 
@@ -294,6 +294,7 @@ module.exports = {
                                 name: name,
                                 owner_id: msg.author.id.toString(),
                                 joint: [],
+                                account_number: bank_account_number.toString(),
                             });
                             this.bank_embeds(discord_client, msg, `created bank account: ${name} `);
                             concluded = true;
