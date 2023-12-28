@@ -69,7 +69,8 @@ module.exports = {
                     else {
                         for (let bank_acc of db_bank_accounts) {
                             bank_acc = bank_acc.data();
-                            show_bank_embed.addFields({ name: `${bank_acc.name} - ${bank_acc.account_number}`, value: `${bank_acc.balance}`, inline: false });
+                            let owned_or_joint = bank_acc.owner_id == msg.author.id ? '(Owned)' : '(Joint)';
+                            show_bank_embed.addFields({ name: `${bank_acc.name}${owned_or_joint}: ${bank_acc.account_number}`, value: `${bank_acc.balance}`, inline: false });
                         }
                     }
 
