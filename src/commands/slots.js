@@ -14,7 +14,7 @@ module.exports = {
     category: 'gambling',
     admin: false,
     type: "production",
-    cooldown: 3,
+    cooldown: 2,
     async execute(discord_client, msg, args, admin) {
         try {
             if (msg.guild.id != '1126661700867854366') {
