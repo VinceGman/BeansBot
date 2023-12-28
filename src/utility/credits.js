@@ -39,12 +39,57 @@ module.exports = {
 
         let db_user = await require('../utility/queries').user(id);
         let credits = +db_user.credits;
-        
+
         credits += cost;
 
         await db.doc(`members/${id}`).set({
             credits: credits.toFixed(2).toString(),
         }, { merge: true });
+    },
+    async bank_deposit(discord_client, msg, amount, account_number) {
+        // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
+        const { Firestore } = require('@google-cloud/firestore');
+        const db = new Firestore({
+            projectId: 'beans-326017',
+            keyFilename: './service-account.json'
+        });
+
+        if (amount == 0) return;
+
+        let db_bank = (await db.doc(`bank_accounts/${account_number}`).get()).data();
+        let credits = +db_bank.balance;
+
+        credits += amount;
+
+        await db.doc(`bank_accounts/${account_number}`).set({
+            balance: credits.toFixed(2).toString(),
+        }, { merge: true });
+    },
+    async bank_withdraw(discord_client, msg, amount, account_number) {
+        // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
+        const { Firestore } = require('@google-cloud/firestore');
+        const db = new Firestore({
+            projectId: 'beans-326017',
+            keyFilename: './service-account.json'
+        });
+
+        if (amount == 0) return true;
+
+        let db_bank = (await db.doc(`bank_accounts/${account_number}`).get()).data();
+        let credits = +db_bank.balance;
+
+        if (credits < amount) {
+            msg.channel.send(`${msg.author.username} - Insufficient Funds.`);
+            return false;
+        }
+
+        credits -= amount;
+
+        await db.doc(`bank_accounts/${account_number}`).set({
+            balance: credits.toFixed(2).toString(),
+        }, { merge: true });
+
+        return true;
     },
     async income(msg, name, amount, cooldown_in_seconds) {
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
