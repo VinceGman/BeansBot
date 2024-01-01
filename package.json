@@ -31,7 +31,7 @@
     "googlethis": "^1.7.1",
     "image-downloader": "^4.3.0",
     "image-url-validator": "^1.0.4",
-    "jimp": "^0.22.8",
+    "jimp": "^0.22.10",
     "lodash.permutations": "^1.0.0",
     "nasa-apod": "^0.2.0",
     "nodemon": "^2.0.15",
