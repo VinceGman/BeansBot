@@ -10,6 +10,7 @@ const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'leaderboard',
+    alias: ['top'],
     description: "see the top credits",
     category: 'utility',
     admin: false,
