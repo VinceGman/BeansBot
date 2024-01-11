@@ -14,7 +14,7 @@ module.exports = {
     description: "see the top credits",
     category: 'utility',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 6,
     async execute(discord_client, msg, args, admin) {
         try {
