@@ -102,13 +102,13 @@ module.exports = {
             keyFilename: './service-account.json'
         });
 
-        let user = discord_client.users.cache.find(user => user.id === id);
+        let user = msg.guild.members.cache.find(user => user.id === id);
 
         let db_user = await require('../utility/queries').user(id);
         let credits = (+db_user.credits).toFixed(0);
 
         let profile_embed = new EmbedBuilder()
-            .setTitle(`${wrapText(`${db_user.pref_name ?? user.username}`, textWrap)}`)
+            .setTitle(`${wrapText(`${db_user.pref_name ?? user.user.username}`, textWrap)}`)
             .setThumbnail(db_user.pref_image ?? user.avatarURL())
             .setColor(db_user.pref_color ?? `#ADD8E6`)
             .addFields({ name: 'Currency', value: `${credits} credits`, inline: false })
