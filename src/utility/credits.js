@@ -15,7 +15,7 @@ module.exports = {
         let credits = +db_user.credits;
 
         if (credits < cost) {
-            msg.channel.send(`${msg.author.username} - Insufficient Funds.`);
+            await require('../utility/embeds').notice_embed(discord_client, msg, "Insufficient Funds.", '#fe3939');
             return false;
         }
 
@@ -79,7 +79,7 @@ module.exports = {
         let credits = +db_bank.balance;
 
         if (credits < amount) {
-            msg.channel.send(`${msg.author.username} - Insufficient Funds.`);
+            await require('../utility/embeds').notice_embed(discord_client, msg, "Insufficient Funds.", '#fe3939');
             return false;
         }
 
