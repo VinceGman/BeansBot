@@ -34,7 +34,7 @@ module.exports = {
         const { EmbedBuilder } = require('discord.js');
 
         let user = await require('../utility/queries').user(id);
-        let user_discord = discord_client.users.cache.find(user => user.id === id);
+        let user_discord = msg.guild.members.cache.find(user => user.id === id);
 
         // let lootbox_value = await this.get_lootbox_value(id);
         let stocks_value = await this.get_stocks_value(id);
@@ -44,8 +44,8 @@ module.exports = {
 
         let currency_embed = new EmbedBuilder()
             .addFields({ name: 'Currency', value: `${user.credits} credits`, inline: false })
-            .setTitle(`${user.pref_name ?? user_discord.username}`)
-            .setThumbnail(user.pref_image ?? user.avatarURL())
+            .setTitle(`${user.pref_name ?? user_discord.user.username}`)
+            .setThumbnail(user.pref_image ?? user_discord.avatarURL())
             .setColor(user.pref_color ?? `#ADD8E6`)
             .setFooter({ text: `Credits` })
             .setTimestamp();
