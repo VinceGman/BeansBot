@@ -8,7 +8,7 @@ const db = new Firestore({
 
 module.exports = {
     name: 'credits',
-    alias: ['creds', 'c', 'value', 'credit'],
+    alias: ['creds', 'c', 'value', 'credit', 'bal', 'balance'],
     description: "show me the money",
     category: 'credits',
     admin: false,
