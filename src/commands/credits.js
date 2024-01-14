@@ -45,10 +45,14 @@ module.exports = {
         let currency_embed = new EmbedBuilder()
             .addFields({ name: 'Currency', value: `${user.credits} credits`, inline: false })
             .setTitle(`${user.pref_name ?? user_discord.username}`)
-            // .setThumbnail(user.pref_image ?? user_discord.author.avatarURL())
+            .setThumbnail(user.pref_image ?? user.avatarURL())
             .setColor(user.pref_color ?? `#ADD8E6`)
             .setFooter({ text: `Credits` })
             .setTimestamp();
+
+        if (user.pref_status != null && user.pref_status != '') {
+            currency_embed.setDescription(user.pref_status)
+        }
 
         // if (lootbox_value > 0) currency_embed.addFields({ name: 'Lootbox Value', value: `${lootbox_value.toFixed(2)} credits`, inline: false })
         if (stocks_value > 0) currency_embed.addFields({ name: 'Stocks Value', value: `${stocks_value.toFixed(2)} credits`, inline: false })
