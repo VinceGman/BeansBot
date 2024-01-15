@@ -108,9 +108,9 @@ module.exports = {
         let credits = (+db_user.credits).toFixed(0);
 
         let profile_embed = new EmbedBuilder()
-            .setTitle(`${wrapText(`${db_user.pref_name ?? user.user.username}`, textWrap)}`)
+            .setTitle(`${wrapText(`${db_user.pref_name ?? user.nickname ?? user.displayName}`, textWrap)}`)
             .setThumbnail(db_user.pref_image ?? user.displayAvatarURL())
-            .setColor(db_user.pref_color ?? `#ADD8E6`)
+            .setColor(db_user.pref_color ?? user.displayHexColor)
             .addFields({ name: 'Currency', value: `${credits} credits`, inline: false })
             .setFooter({ text: wrapText(`try: +profile settings`, textWrap) })
         // .setTimestamp();
