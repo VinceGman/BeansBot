@@ -45,7 +45,7 @@ module.exports = {
         let currency_embed = new EmbedBuilder()
             .addFields({ name: 'Currency', value: `${user.credits} credits`, inline: false })
             .setTitle(`${user.pref_name ?? user_discord.user.username}`)
-            .setThumbnail(user.pref_image ?? user_discord.avatarURL())
+            .setThumbnail(user.pref_image ?? user_discord.displayAvatarURL())
             .setColor(user.pref_color ?? `#ADD8E6`)
             .setFooter({ text: `Credits` })
             .setTimestamp();

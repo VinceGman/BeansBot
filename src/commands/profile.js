@@ -109,7 +109,7 @@ module.exports = {
 
         let profile_embed = new EmbedBuilder()
             .setTitle(`${wrapText(`${db_user.pref_name ?? user.user.username}`, textWrap)}`)
-            .setThumbnail(db_user.pref_image ?? user.avatarURL())
+            .setThumbnail(db_user.pref_image ?? user.displayAvatarURL())
             .setColor(db_user.pref_color ?? `#ADD8E6`)
             .addFields({ name: 'Currency', value: `${credits} credits`, inline: false })
             .setFooter({ text: wrapText(`try: +profile settings`, textWrap) })
