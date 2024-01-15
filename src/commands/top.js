@@ -23,7 +23,7 @@ module.exports = {
             let leaderboard_embed = new EmbedBuilder()
                 .setTitle('Credits Leaderboard')
                 .setColor('#907aa8')
-                .setFooter({ text: `${msg.author.username}` })
+                .setFooter({ text: `${msg.author.globalName}` })
                 .setTimestamp();
 
             let discord_users_ids = [...(await msg.guild.members.fetch()).keys()];
@@ -44,7 +44,7 @@ module.exports = {
 
             for (let user of users_credits) {
                 let discord_user = await msg.guild.members.fetch(user.id);
-                leaderboard_embed.addFields({ name: discord_user.nickname ?? discord_user.user.username, value: `${user.credits}`, inline: false });
+                leaderboard_embed.addFields({ name: discord_user.user.globalName, value: `${user.credits}`, inline: false });
             }
 
             msg.channel.send({ embeds: [leaderboard_embed] });
