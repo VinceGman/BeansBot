@@ -1,7 +1,7 @@
 module.exports = {
     async palette(discord_client, server_id) {
         try {
-            let server = (await discord_client.guilds.fetch(server_id))
+            let server = (await discord_client.guilds.fetch(server_id));
             let colors = { name: server.name, count: 0, colors: [] };
             let roles = (await server.roles.fetch());
 
@@ -12,13 +12,13 @@ module.exports = {
                 }
             }
 
-            let colorSort = require('color-sorter')
-            let sorted = colors.colors.map(c => c.color).sort(colorSort.sortFn)
+            let colorSort = require('color-sorter');
+            let sorted = colors.colors.map(c => c.color).sort(colorSort.sortFn);
 
             let sorted_colors = [];
             for (let sorted_col of sorted) {
                 for (let col of colors.colors) {
-                    if (sorted_col == col.color) {
+                    if (sorted_col == col.color && !sorted_colors.includes(col)) {
                         sorted_colors.push(col);
                     }
                 }
