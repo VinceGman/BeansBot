@@ -1,5 +1,6 @@
 module.exports = {
     name: 'help',
+    alias: ['commands', 'command'],
     description: "gives relevant bot information",
     category: 'utility',
     admin: false,
