@@ -10,7 +10,7 @@ module.exports = {
     category: 'utility',
     admin: false,
     type: "production",
-    cooldown: 6,
+    cooldown: 3,
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
@@ -31,6 +31,7 @@ module.exports = {
                     .addFields({ name: 'color', value: `+profile color #d44a98`, inline: false })
                     .addFields({ name: 'image', value: `+profile image https://image-link.jpg`, inline: false })
                     .addFields({ name: 'status', value: `+profile status It's a watermelon.`, inline: false })
+                    .addFields({ name: 'clear', value: `+profile name clear`, inline: false })
                     .setFooter({ text: wrapText(`try: +profile`, textWrap) })
                 // .setTimestamp();
 
@@ -39,19 +40,24 @@ module.exports = {
             }
 
             // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
-            const { Firestore } = require('@google-cloud/firestore');
+            const { Firestore, FieldValue } = require('@google-cloud/firestore');
             const db = new Firestore({
                 projectId: 'beans-326017',
                 keyFilename: './service-account.json'
             });
 
+            let clear = false;
+
             let att = args.shift();
             let pref_att, pref_value;
-            switch (att) {
+            switch (att.toLowerCase()) {
                 case 'name':
                     pref_att = 'pref_name';
                     pref_value = args.join(' ');
-                    if (pref_value.length > 30) {
+                    if (pref_value.toLowerCase() == 'clear') {
+                        clear = true;
+                    }
+                    else if (pref_value.length > 30) {
                         msg.channel.send('The name must be less than 30 characters.');
                         return;
                     }
@@ -60,7 +66,10 @@ module.exports = {
                     const isImageURL = require('image-url-validator').default;
                     pref_att = 'pref_image';
                     pref_value = args.join(' ');
-                    if (!(await isImageURL(pref_value))) {
+                    if (pref_value.toLowerCase() == 'clear') {
+                        clear = true;
+                    }
+                    else if (!(await isImageURL(pref_value))) {
                         msg.channel.send('The image must be an image link.');
                         return;
                     }
@@ -69,7 +78,10 @@ module.exports = {
                     const { validateHTMLColorHex } = require("validate-color");
                     pref_att = 'pref_color';
                     pref_value = args.join(' ');
-                    if (!validateHTMLColorHex(pref_value)) {
+                    if (pref_value.toLowerCase() == 'clear') {
+                        clear = true;
+                    }
+                    else if (!validateHTMLColorHex(pref_value)) {
                         msg.channel.send('The color must be a hex code.');
                         return;
                     }
@@ -77,7 +89,10 @@ module.exports = {
                 case 'status':
                     pref_att = 'pref_status';
                     pref_value = args.join(' ');
-                    if (pref_value.length > 280) {
+                    if (pref_value.toLowerCase() == 'clear') {
+                        clear = true;
+                    }
+                    else if (pref_value.length > 280) {
                         msg.channel.send('The status must be less than 280 characters.');
                         return;
                     }
@@ -86,9 +101,16 @@ module.exports = {
                     msg.channel.send('The available profile preference changes are: name, image, status and color.');
                     return;
             }
-            await db.doc(`members/${msg.author.id}`).set({
-                [pref_att]: pref_value.toString(),
-            }, { merge: true });
+            if (clear) {
+                await db.doc(`members/${msg.author.id}`).update({
+                    [pref_att]: FieldValue.delete(),
+                });
+            }
+            else {
+                await db.doc(`members/${msg.author.id}`).set({
+                    [pref_att]: pref_value.toString(),
+                }, { merge: true });
+            }
         }
 
         this.display_profile(discord_client, msg, msg.author.id);
