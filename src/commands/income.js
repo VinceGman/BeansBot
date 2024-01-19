@@ -19,11 +19,12 @@ module.exports = {
 
         let user = await require('../utility/queries').user(msg.author.id);
         let income = user.hasOwnProperty('income') ? +user['income'] : 0;
+        let income_max_charges = user.hasOwnProperty('income_max_charges') ? +user['income_max_charges'] : 6;
 
         let charges = Math.floor(((current_time_in_seconds - income) / 3600));
         let new_cooldown, next_charge;
-        if (charges >= 6) {
-            charges = 6;
+        if (charges >= income_max_charges) {
+            charges = income_max_charges;
             new_cooldown = current_time_in_seconds;
             next_charge = new_cooldown + 3600;
         }
