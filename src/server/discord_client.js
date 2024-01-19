@@ -4,8 +4,15 @@ require('dotenv').config(); // .env values
 require('lodash.permutations');
 let _ = require('lodash');
 
+// dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
+const { Firestore, FieldValue, addDoc } = require('@google-cloud/firestore');
+const db = new Firestore({
+	projectId: 'beans-326017',
+	keyFilename: './service-account.json'
+});
+
 const { Client, Collection, EmbedBuilder } = require('discord.js');
-const discord_client = new Client({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'DirectMessages', 'GuildMessageReactions', 'MessageContent'], partials: ['Message', 'Channel'] });
+const discord_client = new Client({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'DirectMessages', 'GuildMessageReactions', 'MessageContent'], partials: ['Message', 'Channel', 'GuildMember'] });
 
 let prefix = '+';
 let run_type = 'production';
@@ -62,9 +69,11 @@ discord_client.on('messageCreate', async msg => {
 		let admin = false;
 		let execute = false;
 
+		// msg.author.id == '427677302608887810' || msg.author.id == '183019001058689025'
+		// msg.member.roles.cache.some(role => role.name.toLowerCase() === 'admins' || role.name.toLowerCase() === 'mods')
 		try {
 			if (discord_client.commands.get(command).type != run_type) return;
-			if (msg.member.roles.cache.some(role => role.name.toLowerCase() === 'admins' || role.name.toLowerCase() === 'mods')) admin = true;
+			if (msg.author.id == '427677302608887810' || msg.author.id == '183019001058689025') admin = true;
 
 			for (let scope of discord_client.commands.get(command).scopes ?? ['commands']) {
 				if (scope == 'commands' && msg.channel.name.includes('command')) execute = true;
@@ -96,6 +105,15 @@ discord_client.on('messageCreate', async msg => {
 		catch (err) {
 			// error
 		}
+	}
+});
+
+discord_client.on('guildMemberUpdate', async (oldMember, newMember) => {
+	if (run_type != 'test') return;
+
+	const addedRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
+	if (addedRoles.size > 0 && [...addedRoles.values()].some((value) => value.name.toLowerCase().includes('flag:'))) {
+		console.log(result);
 	}
 });
 
