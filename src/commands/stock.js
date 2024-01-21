@@ -24,7 +24,7 @@ module.exports = {
         if (options.includes('s')) {
             let stocks_embed = new EmbedBuilder()
                 .setTitle(`Stocks`)
-                .setDescription(`Active stocks and prices. -> **+buy** or **+sell**`)
+                .setDescription(`Trade with these. -> **+buy** or **+sell**`)
                 .setColor('#37914f')
                 .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
@@ -37,10 +37,10 @@ module.exports = {
                 let price = (await coinlore_client.getTicker(+stock.id))[0]?.price_usd;
                 if (price) {
                     if (stock.public > 0) {
-                        stocks_embed.addFields({ name: `${stock.symbol} - Open Shares: ${stock.public}`, value: `${((+price / +stock.base_price) * 1000).toFixed(2)}`, inline: false });
+                        stocks_embed.addFields({ name: `${stock.symbol} - Available Shares: ${stock.public}`, value: `${((+price / +stock.base_price) * 1000).toFixed(2)} credits`, inline: false });
                     }
                     else {
-                        stocks_embed.addFields({ name: `${stock.symbol} - N/A`, value: `${((+price / +stock.base_price) * 1000).toFixed(2)}`, inline: false });
+                        stocks_embed.addFields({ name: `${stock.symbol} - N/A`, value: `${((+price / +stock.base_price) * 1000).toFixed(2)} credits`, inline: false });
                     }
                 }
             }
