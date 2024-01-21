@@ -35,8 +35,13 @@ module.exports = {
 
                 const coinlore_client = new (require('coinlore-crypto-prices'))();
                 let price = (await coinlore_client.getTicker(+stock.id))[0]?.price_usd;
-                if (price && stock.public > 0) {
-                    stocks_embed.addFields({ name: `${stock.symbol} - Open Shares: ${stock.public}`, value: `${((+price / +stock.base_price) * 1000).toFixed(2)}`, inline: false });
+                if (price) {
+                    if (stock.public > 0) {
+                        stocks_embed.addFields({ name: `${stock.symbol} - Open Shares: ${stock.public}`, value: `${((+price / +stock.base_price) * 1000).toFixed(2)}`, inline: false });
+                    }
+                    else {
+                        stocks_embed.addFields({ name: `${stock.symbol} - N/A`, value: `${((+price / +stock.base_price) * 1000).toFixed(2)}`, inline: false });
+                    }
                 }
             }
 
