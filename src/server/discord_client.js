@@ -63,7 +63,7 @@ discord_client.on('messageCreate', async msg => {
 		channel_utilities.channel_function(discord_client, msg, run_type);
 	}
 	else if (msg.content.startsWith(prefix)) {
-		const args = msg.content.slice(prefix.length).split(/ +/);
+		const args = msg.content.replaceAll(',', '').slice(prefix.length).split(/ +/);
 		const command = args.shift().toLowerCase();
 
 		let admin = false;
