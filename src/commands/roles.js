@@ -1,6 +1,7 @@
 module.exports = {
     name: 'roles',
     alias: ['role', 'opt'],
+    alias_show: ['opt'],
     description: "role assignment",
     category: 'utility',
     admin: false,

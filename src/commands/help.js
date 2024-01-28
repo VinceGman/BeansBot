@@ -1,6 +1,7 @@
 module.exports = {
     name: 'help',
     alias: ['commands', 'command'],
+    alias_show: ['commands'],
     description: "gives relevant bot information",
     category: 'utility',
     admin: false,
@@ -36,7 +37,12 @@ module.exports = {
             for (let command of commands_sorted[category]) {
 
                 let aliases = '';
-                if (command.hasOwnProperty('alias')) {
+                if (command.hasOwnProperty('alias_show')) {
+                    if (command.alias_show.length > 0) {
+                        aliases = ' => Alias: ' + command.alias_show.map(a => `+${a}`).join(' ');
+                    }
+                }
+                else if (command.hasOwnProperty('alias')) {
                     aliases = ' => Alias: ' + command.alias.map(a => `+${a}`).join(' ');
                 }
 

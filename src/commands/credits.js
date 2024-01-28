@@ -13,7 +13,7 @@ const comma_adder = require('commas');
 
 module.exports = {
     name: 'credits',
-    alias: ['creds', 'c', 'value', 'credit', 'bal', 'balance'],
+    alias: ['c', 'bal'],
     description: "show me the money",
     category: 'credits',
     admin: false,

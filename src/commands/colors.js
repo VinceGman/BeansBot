@@ -9,7 +9,8 @@ const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'colors',
-    alias: ['color', 'color:'],
+    alias: ['color', 'color:', 'colours', 'colour', 'colour:'],
+    alias_show: [],
     description: "color assignment and creation",
     category: 'utility',
     admin: false,

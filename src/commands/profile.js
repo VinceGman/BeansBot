@@ -7,7 +7,7 @@ const comma_adder = require('commas');
 
 module.exports = {
     name: 'profile',
-    alias: ['prof', 'p'],
+    alias: ['p'],
     description: "set profile",
     category: 'utility',
     admin: false,

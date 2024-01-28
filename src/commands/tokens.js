@@ -9,6 +9,7 @@ const db = new Firestore({
 module.exports = {
     name: 'tokens',
     alias: ['token'],
+    alias_show: [],
     description: "tokens information",
     category: 'credits',
     admin: false,
