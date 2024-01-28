@@ -6,6 +6,8 @@ const db = new Firestore({
     keyFilename: './service-account.json'
 });
 
+const comma_adder = require('commas');
+
 module.exports = {
     name: 'credits',
     alias: ['creds', 'c', 'value', 'credit', 'bal', 'balance'],
@@ -43,7 +45,7 @@ module.exports = {
         let cumulative_value = +user.credits + +stocks_value;
 
         let currency_embed = new EmbedBuilder()
-            .addFields({ name: 'Currency', value: `${Math.trunc(user.credits)} credits`, inline: false })
+            .addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(user.credits))} credits`, inline: false })
             .setTitle(`${user.pref_name ?? user_discord.nickname ?? user_discord.displayName}`)
             .setThumbnail(user.pref_image ?? user_discord.displayAvatarURL())
             .setColor(user.pref_color ?? user_discord.displayHexColor)
@@ -55,8 +57,8 @@ module.exports = {
         }
 
         // if (lootbox_value > 0) currency_embed.addFields({ name: 'Lootbox Value', value: `${lootbox_value.toFixed(2)} credits`, inline: false })
-        if (stocks_value > 0) currency_embed.addFields({ name: 'Stocks Value', value: `${stocks_value.toFixed(2)} credits`, inline: false })
-        if (cumulative_value > +user.credits) currency_embed.addFields({ name: 'Cumulative Value', value: `${cumulative_value.toFixed(2)}`, inline: false })
+        if (stocks_value > 0) currency_embed.addFields({ name: 'Stocks Value', value: `${comma_adder.add(Math.trunc(stocks_value))} credits`, inline: false })
+        if (cumulative_value > +user.credits) currency_embed.addFields({ name: 'Cumulative Value', value: `${comma_adder.add(Math.trunc(cumulative_value))} credits`, inline: false })
 
         msg.channel.send({ embeds: [currency_embed] });
     },

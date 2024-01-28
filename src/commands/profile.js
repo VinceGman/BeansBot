@@ -3,6 +3,8 @@ const { EmbedBuilder } = require('discord.js');
 const wrapText = require("wrap-text");
 let textWrap = 31;
 
+const comma_adder = require('commas');
+
 module.exports = {
     name: 'profile',
     alias: ['prof', 'p'],
@@ -127,13 +129,13 @@ module.exports = {
         let user = msg.guild.members.cache.find(user => user.id === id);
 
         let db_user = await require('../utility/queries').user(id);
-        let credits = (+db_user.credits).toFixed(0);
+        let credits = (+db_user.credits);
 
         let profile_embed = new EmbedBuilder()
             .setTitle(`${wrapText(`${db_user.pref_name ?? user.nickname ?? user.displayName}`, textWrap)}`)
             .setThumbnail(db_user.pref_image ?? user.displayAvatarURL())
             .setColor(db_user.pref_color ?? user.displayHexColor)
-            .addFields({ name: 'Currency', value: `${Math.trunc(credits)} credits`, inline: false })
+            .addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: false })
             .setFooter({ text: wrapText(`try: +profile settings`, textWrap) })
         // .setTimestamp();
 
