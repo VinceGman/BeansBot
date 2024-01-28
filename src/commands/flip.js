@@ -1,7 +1,7 @@
 module.exports = {
     name: 'flip',
     alias: ['heads', 'tails'],
-    description: "playcoin flip",
+    description: "play coin flip",
     category: 'gambling',
     admin: false,
     type: "production",
