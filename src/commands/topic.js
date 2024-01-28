@@ -53,10 +53,16 @@ module.exports = {
                 });
 
                 time_shown = next_available;
+                topic_embed.addFields({ name: 'Cooldown', value: `Available <t:${time_shown}:R>.`, inline: true });
+            }
+            else {
+                topic_embed.addFields({ name: 'Cooldown', value: `Available Now.`, inline: true });
             }
         }
+        else {
+            topic_embed.addFields({ name: 'Cooldown', value: `Available <t:${time_shown}:R>.`, inline: true });
+        }
 
-        topic_embed.addFields({ name: 'Cooldown', value: `Available <t:${time_shown}:R>.`, inline: true });
         msg.channel.send({ embeds: [topic_embed] });
     }
 }
