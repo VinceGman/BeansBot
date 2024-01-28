@@ -74,12 +74,11 @@ module.exports = {
             }
 
             const Color = require('color');
-            color_hex = Color(color_hex).hex();
-            let color = Color(color_hex).hsv().color;
-            if (color[1] < 20 || color[1] > 80 || color[2] < 60) {
-                msg.channel.send('The restrictions for HSV: S must be between 20-80 and V must be 60 or over.');
-                return;
-            }
+            let color = Color(color_hex).hsv();
+            if (color.color[1] < 20) color.color[1] = 20;
+            if (color.color[1] > 80) color.color[1] = 80;
+            if (color.color[2] < 60) color.color[2] = 60;
+            color_hex = color.hex();
 
 
             let role = await msg.guild.roles.cache.some(role => role.name.toLowerCase().startsWith('color: ') && role.name.toLowerCase().replace('color: ', '') == name.toLowerCase())
@@ -141,7 +140,7 @@ module.exports = {
         try {
             let color = args.join(' ');
 
-            let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().startsWith('color: ') && r.name.toLowerCase().includes(color.toLowerCase()));
+            let role = msg.guild.roles.cache.find(r => r.name.toLowerCase().startsWith('color: ') && r.name.toLowerCase().replace('color: ', '') == color.toLowerCase()) ?? msg.guild.roles.cache.find(r => r.name.toLowerCase().startsWith('color: ') && r.name.toLowerCase().includes(color.toLowerCase()))
             let role_db = (await db.collection(`colors`).where('name', '==', role?.name?.replace('color: ', '').replace('Color: ', '')).get())?._docs()?.[0]?.data();
 
             if (!role_db || !role) {
@@ -160,12 +159,13 @@ module.exports = {
             let user = await msg.guild.members.fetch(msg.author.id);
 
             let removing = false;
+            let roles_remove = [];
             user.roles.cache.forEach(r => {
                 if (r.name.toLowerCase().startsWith('color: ')) {
                     if (r.name.toLowerCase().includes(color.toLowerCase())) {
                         removing = true;
                     }
-                    user.roles.remove(r);
+                    roles_remove.push(r);
                 }
             });
 
@@ -175,11 +175,13 @@ module.exports = {
             if (!removing) {
                 if (msg.author.id != role_db.owner_id) {
                     if (!(await require('../utility/credits').transaction(discord_client, msg, 10000))) return; // credits manager validates transaction
-                    await require('../utility/credits').refund(discord_client, role_db.owner_id, 10000); // credits manager refunds creditsFF
+                    await require('../utility/credits').refund(discord_client, role_db.owner_id, 10000); // credits manager refunds credits
                 }
-                user.roles.add(role);
+                await user.roles.add(role);
                 assign_or_remove = 'Assigned';
             }
+
+            await user.roles.remove(roles_remove);
 
             color_embed.setColor(`#${role.color.toString(16).padStart(6, '0').toUpperCase()}`)
                 .addFields({ name: `${assign_or_remove}`, value: `${role.name}`, inline: true })
