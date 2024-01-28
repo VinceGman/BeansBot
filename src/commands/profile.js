@@ -133,7 +133,7 @@ module.exports = {
             .setTitle(`${wrapText(`${db_user.pref_name ?? user.nickname ?? user.displayName}`, textWrap)}`)
             .setThumbnail(db_user.pref_image ?? user.displayAvatarURL())
             .setColor(db_user.pref_color ?? user.displayHexColor)
-            .addFields({ name: 'Currency', value: `${credits} credits`, inline: false })
+            .addFields({ name: 'Currency', value: `${Math.trunc(credits)} credits`, inline: false })
             .setFooter({ text: wrapText(`try: +profile settings`, textWrap) })
         // .setTimestamp();
 
