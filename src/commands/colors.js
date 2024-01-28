@@ -129,7 +129,7 @@ module.exports = {
 
     },
     async create_role(msg, color_hex, name) {
-        let role_count = (await msg.guild.roles.fetch()).size - 8;
+        let role_count = (await msg.guild.roles.fetch()).size - 9;
         await msg.guild.roles.create({
             color: color_hex,
             name: `Color: ${name}`,
