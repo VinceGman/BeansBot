@@ -22,6 +22,9 @@ module.exports = {
                 }
                 bet = +args[0];
             }
+            else if (args.length == 1 && args[0].toLowerCase() == 'all') {
+                bet = +(await require('../utility/queries').user(msg.author.id)).credits;
+            }
 
             if (!(await require('../utility/credits').transaction(discord_client, msg, bet))) return; // credits manager validates transaction
 
