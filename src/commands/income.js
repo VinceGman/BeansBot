@@ -49,6 +49,7 @@ module.exports = {
         }, { merge: true });
     },
     async income_embed(msg, charges, pay, next_charge, new_cooldown, booster) {
+        const comma_adder = require('commas');
         let color = '#607d8b';
         let booster_income = '';
         let fields = [];
@@ -56,7 +57,7 @@ module.exports = {
         //     fields.push({ name: 'Charges', value: `${charges}`, inline: false });
         // }
         if (pay != 0) {
-            fields.push({ name: 'Paid', value: `${pay} credits`, inline: false });
+            fields.push({ name: 'Paid', value: `${comma_adder.add(Math.trunc(pay))} credits`, inline: false });
         }
 
         if (booster) {
