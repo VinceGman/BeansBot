@@ -140,7 +140,7 @@ module.exports = {
         // .setTimestamp();
 
         if (db_user.pref_status != null && db_user.pref_status != '') {
-            profile_embed.setDescription(db_user.pref_status)
+            profile_embed.setDescription(wrapText(db_user.pref_status, textWrap));
         }
 
         msg.channel.send({ embeds: [profile_embed] });

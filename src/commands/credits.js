@@ -6,6 +6,9 @@ const db = new Firestore({
     keyFilename: './service-account.json'
 });
 
+const wrapText = require("wrap-text");
+let textWrap = 31;
+
 const comma_adder = require('commas');
 
 module.exports = {
@@ -49,11 +52,11 @@ module.exports = {
             .setTitle(`${user.pref_name ?? user_discord.nickname ?? user_discord.displayName}`)
             .setThumbnail(user.pref_image ?? user_discord.displayAvatarURL())
             .setColor(user.pref_color ?? user_discord.displayHexColor)
-            .setFooter({ text: `Credits` })
+            .setFooter({ text: `credits` })
             .setTimestamp();
 
         if (user.pref_status != null && user.pref_status != '') {
-            currency_embed.setDescription(user.pref_status)
+            currency_embed.setDescription(wrapText(user.pref_status, textWrap));
         }
 
         // if (lootbox_value > 0) currency_embed.addFields({ name: 'Lootbox Value', value: `${lootbox_value.toFixed(2)} credits`, inline: false })
