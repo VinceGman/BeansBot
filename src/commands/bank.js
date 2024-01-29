@@ -264,7 +264,7 @@ module.exports = {
                 }
                 else if (m.content.toLowerCase().includes('create') || action == 'create') {
                     if (action == 'create') {
-                        if (!isNaN(m.content) && bank_account_number == '') {
+                        if (!isNaN(m.content) && Number.isInteger(m.content) && bank_account_number == '') {
                             bank_account = (await db.doc(`bank_accounts / ${m.content} `).get()).data() ?? {};
                             if (Object.keys(bank_account).length != 0) {
                                 this.bank_embeds(discord_client, msg, `This account already exists. Please create a new bank account number.`);
