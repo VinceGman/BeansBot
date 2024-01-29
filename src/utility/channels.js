@@ -9,7 +9,13 @@ module.exports = {
 
                     let count_verification = false;
                     for (let reaction of msg.reactions.cache) {
-                        if (['✅', '☑️', '💯'].includes(reaction[0])) {
+                        if (!(await reaction[1].users.fetch()).has('510016054391734273')) continue; // only executes counting bot reactions
+
+                        if (['❌'].includes(reaction[0])) {
+                            // fines
+                            return;
+                        }
+                        else if (['✅', '☑️', '💯'].includes(reaction[0])) {
                             count_verification = true;
                         }
                     }
