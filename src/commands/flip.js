@@ -1,6 +1,5 @@
 module.exports = {
     name: 'flip',
-    alias: ['heads', 'tails'],
     description: "play coin flip",
     category: 'gambling',
     admin: false,
@@ -31,19 +30,12 @@ module.exports = {
             let max_num = 20;
             let roll_num = Math.floor(Math.random() * max_num) + 1; // [1, 20]
             let winnings = 0;
+            let outcome = 'Lost';
 
-            let outcome = roll_num <= max_num / 2 ? 'heads' : 'tails';
-
-            if ((msg.content.toLowerCase().startsWith('+heads') && outcome == 'heads') || (msg.content.toLowerCase().startsWith('+flip') && outcome == 'heads') || (msg.content.toLowerCase().startsWith('+tails') && outcome == 'tails')) {
+            if (roll_num <= max_num / 2) {
                 winnings = bet * 2;
+                outcome = 'Won';
                 await require('../utility/credits').refund(discord_client, msg.author.id, winnings);
-            }
-
-            if (winnings == 0) {
-                if (msg.content.toLowerCase().startsWith('+flip')) outcome = 'Lost';
-            }
-            else {
-                if (msg.content.toLowerCase().startsWith('+flip')) outcome = 'Won';
             }
 
             const { EmbedBuilder } = require('discord.js');
