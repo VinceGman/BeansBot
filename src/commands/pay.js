@@ -34,21 +34,19 @@ module.exports = {
         args = args.filter(a => !a.includes('<@'));
 
         let amount = 0;
-        if (args.length == 1) {
-            if (!isNaN(args[0])) {
-                if (+args[0] < 0) {
-                    msg.channel.send(`${msg.author.username} - Your number must be positive.`);
-                    return;
-                }
-                if (args[0].includes('.')) {
-                    msg.channel.send(`${msg.author.username} - Your number must be whole.`);
-                    return;
-                }
-                amount = +args[0];
+        if (args.length == 1 && !isNaN(args[0])) {
+            if (+args[0] < 0) {
+                msg.channel.send(`${msg.author.username} - Your number must be positive.`);
+                return;
             }
-            else if (args[0].toLowerCase() == 'all') {
-                amount = +(await require('../utility/queries').user(msg.author.id)).credits;
+            if (args[0].includes('.')) {
+                msg.channel.send(`${msg.author.username} - Your number must be whole.`);
+                return;
             }
+            amount = +args[0];
+        }
+        else if (args.length == 1 && args[0].toLowerCase() == 'all') {
+            amount = +(await require('../utility/queries').user(msg.author.id)).credits;
         }
         else {
             this.pay_guide(msg);
