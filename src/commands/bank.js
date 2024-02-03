@@ -12,7 +12,7 @@ module.exports = {
     description: "bank command",
     category: 'credits',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 6,
     async execute(discord_client, msg, args, admin) {
         let concluded = false;
