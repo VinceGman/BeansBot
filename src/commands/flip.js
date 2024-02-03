@@ -34,7 +34,7 @@ module.exports = {
 
             if (roll_num <= max_num / 2) {
                 winnings = bet * 2;
-                outcome = 'Won';
+                outcome = winnings > 0 ? 'Won' : 'Lost';
                 await require('../utility/credits').refund(discord_client, msg.author.id, winnings);
             }
 
