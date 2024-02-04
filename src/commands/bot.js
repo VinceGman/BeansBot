@@ -54,6 +54,10 @@ module.exports = {
                 leaderboard_embed.addFields({ name: discord_user.user.globalName, value: `${comma_adder.add(Math.trunc(user.credits))} credits`, inline: false });
             }
 
+            if (users_credits.length == 0) {
+                leaderboard_embed.setDescription('[none]');
+            }
+
             msg.channel.send({ embeds: [leaderboard_embed] });
 
         }
