@@ -123,7 +123,7 @@ module.exports = {
     },
     async zen_guide(msg, bet) {
         let zen_guide = new EmbedBuilder()
-            .setTitle(`Zen Guide & Dashboard`)
+            .setTitle(`Zen Guide`)
             .setDescription(`Bet on the sum of 2 dice. Auto-Bet: ${comma_adder.add(bet)} credits.`)
             .setColor('#000000')
             .addFields({ name: '+zen high', value: `Bet on sum **over 7**. Winnings: ${comma_adder.add(bet * 2.4)}`, inline: false })
