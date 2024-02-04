@@ -36,6 +36,11 @@ module.exports = {
                     if (key.startsWith('net_winnings')) {
                         net_credits += +value;
                     }
+                    if (key == 'deathroll_stats') {
+                        for (let stats in value) {
+                            net_credits += +value[stats].credit_net;
+                        }
+                    }
                 }
                 map_users_ids_credits.set(doc._ref._path.segments[1], net_credits);
             });
