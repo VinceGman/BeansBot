@@ -213,14 +213,41 @@ module.exports = {
         const filter = m => m.author.id == msg.author.id;
         const collector = msg.channel.createMessageCollector({ filter, time: 15000 });
 
-        collector.on('end', collected => {
+        collector.on('end', async (collected) => {
             if (!game.state.ended) {
                 game.stand();
             }
 
-            let winnings = 0;
-            if (game.state.player_multiplier != 0) winnings = game.state.player_multiplier * bet;
-            require('../utility/credits').refund(discord_client, msg.author.id, winnings); // credits manager refunds on error
+            let winnings = game.state.player_multiplier * bet;
+
+            let db_user = await require('../utility/queries').user(msg.author.id);
+            let credits = +db_user.credits;
+            let times_played_bj = db_user?.times_played_bj ? +db_user.times_played_bj : 0;
+            let times_won_bj = db_user?.times_won_bj ? +db_user.times_won_bj : 0;
+            let times_tie_bj = db_user?.times_tie_bj ? +db_user.times_tie_bj : 0;
+            let net_winnings_bj = db_user?.net_winnings_bj ? +db_user.net_winnings_bj : 0;
+
+            credits += winnings;
+            times_played_bj += 1;
+            if (game.state.player_multiplier == 0) {
+                net_winnings_bj -= bet;
+            }
+            else if (game.state.player_multiplier == 1) {
+                times_tie_bj += 1;
+            }
+            else if (game.state.player_multiplier == 2) {
+                times_won_bj += 1;
+                net_winnings_bj += bet;
+            }
+
+            await db.doc(`members/${msg.author.id}`).set({
+                credits: credits.toFixed(2).toString(),
+                times_played_bj: times_played_bj.toString(),
+                times_won_bj: times_won_bj.toString(),
+                times_tie_bj: times_tie_bj.toString(),
+                net_winnings_bj: net_winnings_bj.toFixed(2).toString(),
+            }, { merge: true });
+
             this.print_blackjack(msg, game.print_game(), winnings);
         });
 
