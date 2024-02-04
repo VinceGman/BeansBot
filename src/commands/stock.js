@@ -6,6 +6,7 @@ const db = new Firestore({
 });
 
 const fs = require('fs');
+const comma_adder = require('commas');
 
 module.exports = {
     name: 'stock',
@@ -86,14 +87,14 @@ module.exports = {
                         let member_id = member_ref._ref._path.segments[1];
                         let user = await discord_client.users.fetch(member_id);
                         if (user) {
-                            majority_holders += `${user.username}#${user.discriminator} - Shares: ${member.stocks[stocks[entry].symbol].count}\n`;
+                            majority_holders += `${user.username} - Shares: ${member.stocks[stocks[entry].symbol].count}\n`;
                         }
                     }
                 }
 
                 stocks_embed.setTitle(`${stocks[entry].symbol}`)
                     .setColor('#37914f')
-                    .addFields({ name: `Price`, value: `${((+stock.price_usd / +stocks[entry].base_price) * 1000).toFixed(2)}`, inline: false })
+                    .addFields({ name: `Price`, value: `${comma_adder.add(((+stock.price_usd / +stocks[entry].base_price) * 1000).toFixed(2))} credits`, inline: false })
                     .addFields({ name: `Open Shares`, value: `${stocks[entry].public}`, inline: false })
                     .addFields({ name: `1h`, value: `${stock.percent_change_1h}%`, inline: true })
                     .addFields({ name: `24h`, value: `${stock.percent_change_24h}%`, inline: true })

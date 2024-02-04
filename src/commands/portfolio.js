@@ -7,6 +7,7 @@ const db = new Firestore({
 });
 
 const { EmbedBuilder } = require('discord.js');
+const comma_adder = require('commas');
 
 module.exports = {
     name: 'portfolio',
@@ -57,7 +58,7 @@ module.exports = {
                     let adj_price = +((+price / +stock_db.base_price) * 1000).toFixed(2);
                     let earnings = (adj_price - user_stocks[stock].per) * user_stocks[stock].count;
                     port_earnings += earnings;
-                    portfolio_embed.addFields({ name: stock_db.symbol, value: `Price: ${adj_price}\nQuantity: ${user_stocks[stock].count}\nPrice/Unit: ${user_stocks[stock].per}\nPercent Change: ${((adj_price - user_stocks[stock].per) / user_stocks[stock].per * 100).toFixed(2)}%\nHoldings: ${(adj_price * user_stocks[stock].count).toFixed(2)}\nEarnings: ${earnings.toFixed(2)}`, inline: false });
+                    portfolio_embed.addFields({ name: stock_db.symbol, value: `Price: ${comma_adder.add(adj_price)}\nQuantity: ${user_stocks[stock].count}\nPrice/Unit: ${comma_adder.add(user_stocks[stock].per)}\nPercent Change: ${((adj_price - user_stocks[stock].per) / user_stocks[stock].per * 100).toFixed(2)}%\nHoldings: ${comma_adder.add((adj_price * user_stocks[stock].count).toFixed(2))}\nEarnings: ${comma_adder.add(earnings.toFixed(2))}`, inline: false });
                 }
             }
 
@@ -65,7 +66,7 @@ module.exports = {
                 portfolio_embed.setDescription('[none] -> **+stocks**');
             }
             else {
-                portfolio_embed.addFields({ name: 'Current Earnings', value: `${port_earnings.toFixed(2)}`, inline: false });
+                portfolio_embed.addFields({ name: 'Combined Earnings', value: `${comma_adder.add(port_earnings.toFixed(2))}`, inline: false });
             }
 
 
@@ -92,9 +93,9 @@ module.exports = {
             }
             else {
                 portfolio_embed.addFields({ name: 'Stocks', value: `${stocks_count}`, inline: false });
-                portfolio_embed.addFields({ name: `Combined Holdings`, value: `${(total_current_price).toFixed(2)}`, inline: false });
+                portfolio_embed.addFields({ name: `Holdings`, value: `${comma_adder.add((total_current_price).toFixed(2))} credits`, inline: false });
                 portfolio_embed.addFields({ name: `Percent Change`, value: `${((total_current_price - total_purchase_price) / total_purchase_price * 100).toFixed(2)}%`, inline: false });
-                portfolio_embed.addFields({ name: `Earnings`, value: `${(total_current_price - total_purchase_price).toFixed(2)}`, inline: false });
+                portfolio_embed.addFields({ name: `Earnings`, value: `${comma_adder.add((total_current_price - total_purchase_price).toFixed(2))} credits`, inline: false });
             }
 
             msg.channel.send({ embeds: [portfolio_embed] });
