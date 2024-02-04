@@ -26,27 +26,27 @@ module.exports = {
 
             if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
-            if (args.length == 1 && args[0].toLowerCase() == 'stats') {
-                let db_user = await require('../utility/queries').user(msg.author.id);
+            // if (args.length == 1 && args[0].toLowerCase() == 'stats') {
+            //     let db_user = await require('../utility/queries').user(msg.author.id);
 
-                let zen_stats = new EmbedBuilder()
-                    .setTitle(`Zen Stats`)
-                    .setColor('#000000')
-                    .setFooter({ text: `${msg.author.username}` })
-                    .setTimestamp();
+            //     let zen_stats = new EmbedBuilder()
+            //         .setTitle(`Zen Stats`)
+            //         .setColor('#000000')
+            //         .setFooter({ text: `${msg.author.username}` })
+            //         .setTimestamp();
 
-                if (db_user?.times_played_zen && db_user?.times_won_zen && db_user?.net_winnings_zen) {
-                    zen_stats.addFields({ name: 'Winrate', value: `Has won ${(db_user.times_won_zen / db_user.times_played_zen * 100).toFixed(2)}% of ${db_user.times_played_zen} zens.`, inline: false });
-                    let net_credits = db_user.net_winnings_zen >= 0 ? `You've earned ${comma_adder.add(Math.trunc(db_user.net_winnings_zen))} credits.` : `You've lost ${comma_adder.add(Math.trunc(db_user.net_winnings_zen))} credits.`;
-                    zen_stats.addFields({ name: 'Net Credits', value: `${net_credits}`, inline: false });
-                }
-                else {
-                    zen_stats.addFields({ name: 'No Zens', value: 'Play zen to see stats.', inline: false });
-                }
+            //     if (db_user?.times_played_zen && db_user?.times_won_zen && db_user?.net_winnings_zen) {
+            //         zen_stats.addFields({ name: 'Winrate', value: `Has won ${(db_user.times_won_zen / db_user.times_played_zen * 100).toFixed(2)}% of ${db_user.times_played_zen} zens.`, inline: false });
+            //         let net_credits = db_user.net_winnings_zen >= 0 ? `You've earned ${comma_adder.add(Math.trunc(db_user.net_winnings_zen))} credits.` : `You've lost ${comma_adder.add(Math.trunc(db_user.net_winnings_zen))} credits.`;
+            //         zen_stats.addFields({ name: 'Net Credits', value: `${net_credits}`, inline: false });
+            //     }
+            //     else {
+            //         zen_stats.addFields({ name: 'No Zens', value: 'Play zen to see stats.', inline: false });
+            //     }
 
-                msg.channel.send({ embeds: [zen_stats] });
-                return;
-            }
+            //     msg.channel.send({ embeds: [zen_stats] });
+            //     return;
+            // }
 
             if ((args.length == 1 && !['high', 'seven', 'low'].includes(args[0].toLowerCase())) || args.length > 1) {
                 this.zen_guide(msg, bet);
