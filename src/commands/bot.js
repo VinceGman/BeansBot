@@ -23,7 +23,7 @@ module.exports = {
 
             let leaderboard_embed = new EmbedBuilder()
                 .setTitle('Debt Leaderboard')
-                .setColor('#80122a')
+                .setColor('#260F52')
                 .setFooter({ text: `${msg.author.globalName}` })
                 .setTimestamp();
 
