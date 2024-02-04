@@ -10,8 +10,8 @@ const { EmbedBuilder } = require('discord.js');
 const comma_adder = require('commas');
 
 module.exports = {
-    name: 'top',
-    alias: ['leaderboard'],
+    name: 'cl',
+    alias: ['top'],
     description: "see the top credits",
     category: 'utility',
     admin: false,
@@ -31,7 +31,7 @@ module.exports = {
 
             let map_users_ids_credits = new Map();
             ((await db.collection(`members`).get())._docs()).forEach(async (doc) => {
-                map_users_ids_credits.set(doc._ref._path.segments[1], (+doc.data().credits ?? 0) + +(await require('../commands/credits').get_stocks_value(doc._ref._path.segments[1])));
+                map_users_ids_credits.set(doc._ref._path.segments[1], (+doc.data().credits ?? 0) + +(await require('./credits').get_stocks_value(doc._ref._path.segments[1])));
             });
 
             let users_credits = [];

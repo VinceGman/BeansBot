@@ -10,8 +10,8 @@ const { EmbedBuilder } = require('discord.js');
 const comma_adder = require('commas');
 
 module.exports = {
-    name: 'highroller',
-    alias: ['hr'],
+    name: 'gl',
+    alias: ['mid'],
     description: "see the highest gamblers",
     category: 'utility',
     admin: false,
