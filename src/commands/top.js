@@ -30,8 +30,8 @@ module.exports = {
             let discord_users_ids = [...(await msg.guild.members.fetch()).keys()];
 
             let map_users_ids_credits = new Map();
-            ((await db.collection(`members`).get())._docs()).forEach((doc) => {
-                map_users_ids_credits.set(doc._ref._path.segments[1], doc.data().credits ?? '0');
+            ((await db.collection(`members`).get())._docs()).forEach(async (doc) => {
+                map_users_ids_credits.set(doc._ref._path.segments[1], (+doc.data().credits ?? 0) + +(await require('../commands/credits').get_stocks_value(doc._ref._path.segments[1])));
             });
 
             let users_credits = [];
