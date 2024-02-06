@@ -19,27 +19,27 @@ module.exports = {
         try {
             if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
-            // if (args.length == 1 && args[0].toLowerCase() == 'stats') {
-            //     let db_user = await require('../utility/queries').user(msg.author.id);
+            if (args.length == 1 && args[0].toLowerCase() == 'stats' && admin) {
+                let db_user = await require('../utility/queries').user(msg.author.id);
 
-            //     let flip_stats = new EmbedBuilder()
-            //         .setTitle(`Flip Stats`)
-            //         .setColor('#000000')
-            //         .setFooter({ text: `${msg.author.username}` })
-            //         .setTimestamp();
+                let flip_stats = new EmbedBuilder()
+                    .setTitle(`Flip Stats`)
+                    .setColor('#000000')
+                    .setFooter({ text: `${msg.author.username}` })
+                    .setTimestamp();
 
-            //     if (db_user?.times_played_flip && db_user?.times_won_flip && db_user?.net_winnings_flip) {
-            //         flip_stats.addFields({ name: 'Winrate', value: `Has won ${(db_user.times_won_flip / db_user.times_played_flip * 100).toFixed(2)}% of ${db_user.times_played_flip} flips.`, inline: false });
-            //         let net_credits = db_user.net_winnings_flip >= 0 ? `You've earned ${comma_adder.add(Math.trunc(db_user.net_winnings_flip))} credits.` : `You've lost ${comma_adder.add(Math.trunc(db_user.net_winnings_flip))} credits.`;
-            //         flip_stats.addFields({ name: 'Net Credits', value: `${net_credits}`, inline: false });
-            //     }
-            //     else {
-            //         flip_stats.addFields({ name: 'No Flips', value: 'Play flip to see stats.', inline: false });
-            //     }
+                if (db_user?.times_played_flip && db_user?.times_won_flip && db_user?.net_winnings_flip) {
+                    flip_stats.addFields({ name: 'Winrate', value: `Has won ${(db_user.times_won_flip / db_user.times_played_flip * 100).toFixed(2)}% of ${db_user.times_played_flip} flips.`, inline: false });
+                    let net_credits = db_user.net_winnings_flip >= 0 ? `You've earned ${comma_adder.add(Math.trunc(db_user.net_winnings_flip))} credits.` : `You've lost ${comma_adder.add(Math.trunc(db_user.net_winnings_flip))} credits.`;
+                    flip_stats.addFields({ name: 'Net Credits', value: `${net_credits}`, inline: false });
+                }
+                else {
+                    flip_stats.addFields({ name: 'No Flips', value: 'Play flip to see stats.', inline: false });
+                }
 
-            //     msg.channel.send({ embeds: [flip_stats] });
-            //     return;
-            // }
+                msg.channel.send({ embeds: [flip_stats] });
+                return;
+            }
 
             let bet = 1000;
             if (args.length == 1 && !isNaN(args[0])) {
