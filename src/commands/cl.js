@@ -43,7 +43,7 @@ module.exports = {
             }
 
             users_credits.sort((a, b) => { return b.credits - a.credits });
-            users_credits.shift();
+            users_credits = users_credits.filter(u => u.id != '792157930886660120');
             users_credits = users_credits.slice(0, 10);
 
             for (let user of users_credits) {
