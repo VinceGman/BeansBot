@@ -289,7 +289,7 @@ module.exports = {
             else if (game.state.player_multiplier < 1) {
                 outcome = 'Lost';
             }
-            blackjack_embed.addFields({ name: `Results: ${outcome}`, value: `Winnings: ${comma_adder.add(winnings.toFixed(2))}`, inline: false });
+            blackjack_embed.addFields({ name: `Results: ${outcome}`, value: `Winnings: ${comma_adder.add(Math.trunc(winnings))}`, inline: false });
         }
 
         blackjack_embed.setTitle(`Blackjack`)

@@ -88,7 +88,7 @@ module.exports = {
             let trip_embed = new EmbedBuilder()
                 .setTitle(`Trip`)
                 .setColor('#000000')
-                .addFields({ name: `Result: ${outcome}`, value: `Winnings: ${comma_adder.add(winnings.toFixed(2))}`, inline: false })
+                .addFields({ name: `Result: ${outcome}`, value: `Winnings: ${comma_adder.add(Math.trunc(winnings))}`, inline: false })
                 .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
 

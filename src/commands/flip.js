@@ -88,7 +88,7 @@ module.exports = {
             let flip_embed = new EmbedBuilder()
                 .setTitle(`Coin Flip`)
                 .setColor('#000000')
-                .addFields({ name: `Result: ${outcome}`, value: `Winnings: ${comma_adder.add(winnings.toFixed(2))}`, inline: false })
+                .addFields({ name: `Result: ${outcome}`, value: `Winnings: ${comma_adder.add(Math.trunc(winnings))}`, inline: false })
                 .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
 
