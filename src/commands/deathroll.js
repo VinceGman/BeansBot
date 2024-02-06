@@ -6,6 +6,8 @@ const db = new Firestore({
     keyFilename: './service-account.json'
 });
 
+const comma_adder = require('commas');
+
 module.exports = {
     name: 'deathroll',
     alias: ['dr'],
@@ -124,7 +126,7 @@ module.exports = {
 
             require('../utility/credits').refund(discord_client, winner, cost * multiple); // credits manager refunds on error
             let user = await msg.guild.members.fetch(winner);
-            msg.channel.send(`Winner: ${user.user.username} - Payout: ${cost}`);
+            msg.channel.send(`Winner: ${user.user.username} - Payout: ${comma_adder.add(cost.toFixed(2))}`);
         });
 
         collector.on('collect', async m => {

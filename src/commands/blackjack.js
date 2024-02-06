@@ -181,6 +181,8 @@ class Blackjack {
     }
 }
 
+const comma_adder = require('commas');
+
 module.exports = {
     name: 'blackjack',
     alias: ['bj'],
@@ -287,7 +289,7 @@ module.exports = {
             else if (game.state.player_multiplier < 1) {
                 outcome = 'Lost';
             }
-            blackjack_embed.addFields({ name: `Results: ${outcome}`, value: `Winnings: ${winnings.toFixed(2)}`, inline: false });
+            blackjack_embed.addFields({ name: `Results: ${outcome}`, value: `Winnings: ${comma_adder.add(winnings.toFixed(2))}`, inline: false });
         }
 
         blackjack_embed.setTitle(`Blackjack`)
