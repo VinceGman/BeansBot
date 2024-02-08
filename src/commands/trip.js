@@ -75,7 +75,7 @@ module.exports = {
                 credits += winnings;
                 times_played_trip += 1;
                 times_won_trip += win;
-                net_winnings_trip = win == 1 ? net_winnings_trip + bet : net_winnings_trip - bet;
+                net_winnings_trip = win == 1 ? net_winnings_trip + winnings - bet : net_winnings_trip - bet;
 
                 await db.doc(`members/${msg.author.id}`).set({
                     credits: credits.toFixed(2).toString(),
