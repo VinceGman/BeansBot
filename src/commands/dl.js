@@ -56,7 +56,7 @@ module.exports = {
 
             for (let user of users_credits) {
                 let discord_user = await msg.guild.members.fetch(user.id);
-                leaderboard_embed.addFields({ name: discord_user.user.globalName, value: `${comma_adder.add(Math.trunc(user.credits))} credits`, inline: false });
+                leaderboard_embed.addFields({ name: discord_user.user.globalName ?? discord_user.user.username, value: `${comma_adder.add(Math.trunc(user.credits))} credits`, inline: false });
             }
 
             if (users_credits.length == 0) {
