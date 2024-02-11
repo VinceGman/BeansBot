@@ -70,7 +70,7 @@ discord_client.on('messageCreate', async msg => {
 			if (args[i].toLowerCase().endsWith('k') && !isNaN(args[i].slice(0, -1))) {
 				args[i] = (+args[i].slice(0, -1) * 1000).toString();
 			}
-			else if (args[i].toLowerCase().endsWith('m') && !isNaN(args[i].slice(0, -1))) {
+			else if ((args[i].toLowerCase().endsWith('m') || args[i].toLowerCase().endsWith('mil') || args[i].toLowerCase().endsWith('mill')) && !isNaN(args[i].slice(0, -1))) {
 				args[i] = (+args[i].slice(0, -1) * 1000000).toString();
 			}
 		}
