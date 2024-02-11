@@ -9,6 +9,9 @@ const db = new Firestore({
 const { EmbedBuilder } = require('discord.js');
 const comma_adder = require('commas');
 
+const wrapText = require("wrap-text");
+let textWrap = 31;
+
 module.exports = {
     name: 'portfolio',
     alias: ['port'],
@@ -42,11 +45,15 @@ module.exports = {
         let user_stocks = user.stocks ? user.stocks : {};
 
         let portfolio_embed = new EmbedBuilder()
-            .setTitle(`Stock Portfolio`)
-            // .setDescription(`Active portfolio and prices.`)
-            // .setColor('#37914f')
+            .setTitle(`${user.pref_name ?? discord_user.nickname ?? discord_user.displayName}`)
+            .setThumbnail(user.pref_image ?? discord_user.displayAvatarURL())
+            .setColor(user.pref_color ?? discord_user.displayHexColor)
             .setFooter({ text: `${discord_user.user.username}` })
             .setTimestamp();
+
+        if (user.pref_status != null && user.pref_status != '') {
+            portfolio_embed.setDescription(wrapText(user.pref_status, textWrap));
+        }
 
         if (options.includes('d')) {
             let port_earnings = 0;
@@ -63,7 +70,7 @@ module.exports = {
             }
 
             if (Object.keys(user_stocks).length === 0) {
-                portfolio_embed.setDescription('[none] -> **+stocks**');
+                portfolio_embed.addFields({ name: 'No Stocks', value: `[none] -> **+stocks**`, inline: false });
             }
             else {
                 portfolio_embed.addFields({ name: 'Combined Earnings', value: `${comma_adder.add(port_earnings.toFixed(2))}`, inline: false });
@@ -89,7 +96,7 @@ module.exports = {
             }
 
             if (Object.keys(user_stocks).length === 0) {
-                portfolio_embed.setDescription('[none] -> **+stocks**');
+                portfolio_embed.addFields({ name: 'No Stocks', value: `[none] -> **+stocks**`, inline: false });
             }
             else {
                 portfolio_embed.addFields({ name: 'Stocks', value: `${stocks_count}`, inline: false });
