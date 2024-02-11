@@ -15,7 +15,7 @@ let textWrap = 31;
 
 module.exports = {
     name: 'leaderboard',
-    alias: ['lb', 'stats', 'leaderboards'],
+    alias: ['cl', 'top', 'dl', 'mid', 'gl', 'bot', 'stats', 'lb', 'leaderboards'],
     alias_show: ['stats'],
     description: "see your and other's gambling stats",
     category: 'gambling',
@@ -39,6 +39,22 @@ module.exports = {
                 return;
             }
 
+            if (msg.content.toLowerCase().startsWith('+cl') || msg.content.toLowerCase().startsWith('+top')) {
+                if (!require('../utility/timers').timer(msg, 'cl', 60)) return; // timers manager checks cooldown
+                this.leaderboard_cl(msg);
+                return;
+            }
+
+            if (msg.content.toLowerCase().startsWith('+dl') || msg.content.toLowerCase().startsWith('+mid')) {
+                this.leaderboard_dl(msg);
+                return;
+            }
+
+            if (msg.content.toLowerCase().startsWith('+gl') || msg.content.toLowerCase().startsWith('+bot')) {
+                this.leaderboard_gl(msg);
+                return;
+            }
+
             this.leaderboard_guide(msg);
             return;
         }
@@ -51,7 +67,10 @@ module.exports = {
             .setTitle(`Leaderboards`)
             .setDescription(`This command will eventually show all leaderboards.`)
             .setColor('#000000')
-            .addFields({ name: '+stats || +lb stats', value: `Shows your relevant stats.`, inline: false })
+            .addFields({ name: '+stats', value: `Shows your relevant stats.`, inline: false })
+            .addFields({ name: '+cl || +top', value: `Credit Leaderboard`, inline: false })
+            .addFields({ name: '+dl || +mid', value: `Debt Leaderboard`, inline: false })
+            .addFields({ name: '+gl || +bot', value: `Gambling Leaderboard`, inline: false })
             .setFooter({ text: `${msg.author.username}` })
             .setTimestamp();
 
@@ -104,5 +123,129 @@ module.exports = {
 
         msg.channel.send({ embeds: [leaderboard_stats] });
         return;
+    },
+    async leaderboard_cl(msg) {
+        let warning = await msg.reply('Collecting the net worth of all users. Please wait, it may take a moment.');
+
+        let leaderboard_embed = new EmbedBuilder()
+            .setTitle('Credits Leaderboard')
+            .setColor('#907aa8')
+            .setFooter({ text: `${msg.author.globalName ?? msg.author.username}` })
+            .setTimestamp();
+
+        let discord_users_ids = [...(await msg.guild.members.fetch()).keys()];
+
+        let map_users_ids_credits = new Map();
+        for (let doc of (await db.collection(`members`).get())._docs()) {
+            let net_credits = (+doc.data().credits ?? 0) + +(await require('./credits').get_stocks_value(doc._ref._path.segments[1]));
+            map_users_ids_credits.set(doc._ref._path.segments[1], net_credits);
+        }
+
+        let users_credits = [];
+        for (let user_id of discord_users_ids) {
+            if (map_users_ids_credits.get(user_id)) users_credits.push({ id: user_id, credits: +map_users_ids_credits.get(user_id) })
+        }
+
+        users_credits.sort((a, b) => { return b.credits - a.credits });
+        users_credits = users_credits.filter(u => u.id != '792157930886660120');
+        users_credits = users_credits.slice(0, 10);
+
+        for (let user of users_credits) {
+            let discord_user = await msg.guild.members.fetch(user.id);
+            leaderboard_embed.addFields({ name: discord_user.user.globalName ?? discord_user.user.username, value: `${comma_adder.add(Math.trunc(user.credits))} credits`, inline: false });
+        }
+
+        if (warning) warning.delete();
+        msg.reply({ embeds: [leaderboard_embed] });
+    },
+    async leaderboard_dl(msg) {
+        let leaderboard_embed = new EmbedBuilder()
+            .setTitle('Debt Leaderboard')
+            .setColor('#260F52')
+            .setFooter({ text: `${msg.author.globalName ?? msg.author.username}` })
+            .setTimestamp();
+
+        let discord_users_ids = [...(await msg.guild.members.fetch()).keys()];
+
+        let map_users_ids_credits = new Map();
+        ((await db.collection(`members`).get())._docs()).forEach((doc) => {
+            let net_credits = 0;
+            for (let [key, value] of Object.entries(doc.data())) {
+                if (key.startsWith('net_winnings')) {
+                    net_credits += +value;
+                }
+                if (key == 'deathroll_stats') {
+                    for (let stats in value) {
+                        net_credits += +value[stats].credit_net;
+                    }
+                }
+            }
+            map_users_ids_credits.set(doc._ref._path.segments[1], net_credits);
+        });
+
+        let users_credits = [];
+        for (let user_id of discord_users_ids) {
+            if (map_users_ids_credits.get(user_id)) users_credits.push({ id: user_id, credits: +map_users_ids_credits.get(user_id) })
+        }
+
+        users_credits.sort((a, b) => { return a.credits - b.credits });
+        users_credits = users_credits.filter(u => u.credits < 0);
+        users_credits = users_credits.slice(0, 10);
+
+        for (let user of users_credits) {
+            let discord_user = await msg.guild.members.fetch(user.id);
+            leaderboard_embed.addFields({ name: discord_user.user.globalName ?? discord_user.user.username, value: `${comma_adder.add(Math.trunc(user.credits))} credits`, inline: false });
+        }
+
+        if (users_credits.length == 0) {
+            leaderboard_embed.setDescription('[none]');
+        }
+
+        msg.channel.send({ embeds: [leaderboard_embed] });
+    },
+    async leaderboard_gl(msg) {
+        let leaderboard_embed = new EmbedBuilder()
+            .setTitle('Gambling Leaderboard')
+            .setColor('#80122a')
+            .setFooter({ text: `${msg.author.globalName ?? msg.author.username}` })
+            .setTimestamp();
+
+        let discord_users_ids = [...(await msg.guild.members.fetch()).keys()];
+
+        let map_users_ids_credits = new Map();
+        ((await db.collection(`members`).get())._docs()).forEach((doc) => {
+            let net_credits = 0;
+            for (let [key, value] of Object.entries(doc.data())) {
+                if (key.startsWith('net_winnings')) {
+                    net_credits += +value;
+                }
+                if (key == 'deathroll_stats') {
+                    for (let stats in value) {
+                        net_credits += +value[stats].credit_net;
+                    }
+                }
+            }
+            map_users_ids_credits.set(doc._ref._path.segments[1], net_credits);
+        });
+
+        let users_credits = [];
+        for (let user_id of discord_users_ids) {
+            if (map_users_ids_credits.get(user_id)) users_credits.push({ id: user_id, credits: +map_users_ids_credits.get(user_id) })
+        }
+
+        users_credits.sort((a, b) => { return b.credits - a.credits });
+        users_credits = users_credits.filter(u => u.credits > 0);
+        users_credits = users_credits.slice(0, 10);
+
+        for (let user of users_credits) {
+            let discord_user = await msg.guild.members.fetch(user.id);
+            leaderboard_embed.addFields({ name: discord_user.user.globalName ?? discord_user.user.username, value: `${comma_adder.add(Math.trunc(user.credits))} credits`, inline: false });
+        }
+
+        if (users_credits.length == 0) {
+            leaderboard_embed.setDescription('[none]');
+        }
+
+        msg.channel.send({ embeds: [leaderboard_embed] });
     }
 }
