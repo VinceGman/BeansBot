@@ -24,7 +24,7 @@ module.exports = {
             let leaderboard_embed = new EmbedBuilder()
                 .setTitle('Gambling Leaderboard')
                 .setColor('#80122a')
-                .setFooter({ text: `${msg.author.globalName}` })
+                .setFooter({ text: `${msg.author.globalName ?? msg.author.username}` })
                 .setTimestamp();
 
             let discord_users_ids = [...(await msg.guild.members.fetch()).keys()];
