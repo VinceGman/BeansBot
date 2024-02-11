@@ -53,7 +53,7 @@ module.exports = {
             let att = args.shift();
             let pref_att, pref_value;
             switch (att.toLowerCase()) {
-                case 'name':
+                case 'name': case 'name:':
                     pref_att = 'pref_name';
                     pref_value = args.join(' ');
                     if (pref_value.toLowerCase() == 'clear') {
@@ -64,7 +64,7 @@ module.exports = {
                         return;
                     }
                     break;
-                case 'image':
+                case 'image': case 'image:':
                     const isImageURL = require('image-url-validator').default;
                     pref_att = 'pref_image';
                     pref_value = args.join(' ');
@@ -76,7 +76,7 @@ module.exports = {
                         return;
                     }
                     break;
-                case 'color':
+                case 'color': case 'color:':
                     const { validateHTMLColorHex } = require("validate-color");
                     pref_att = 'pref_color';
                     pref_value = args.join(' ');
@@ -88,7 +88,7 @@ module.exports = {
                         return;
                     }
                     break;
-                case 'status':
+                case 'status': case 'status:':
                     pref_att = 'pref_status';
                     pref_value = args.join(' ');
                     if (pref_value.toLowerCase() == 'clear') {
