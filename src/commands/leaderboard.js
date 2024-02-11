@@ -20,7 +20,7 @@ module.exports = {
     description: "see your and other's gambling stats",
     category: 'gambling',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 6,
     async execute(discord_client, msg, args, admin) {
         try {
