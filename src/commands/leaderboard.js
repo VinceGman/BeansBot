@@ -21,7 +21,7 @@ module.exports = {
     category: 'gambling',
     admin: false,
     type: "production",
-    cooldown: 6,
+    cooldown: 3,
     async execute(discord_client, msg, args, admin) {
         try {
             let recipient = msg.mentions.users.keys().next().value;
@@ -40,7 +40,7 @@ module.exports = {
             }
 
             if (msg.content.toLowerCase().startsWith('+cl') || msg.content.toLowerCase().startsWith('+top')) {
-                if (!require('../utility/timers').timer(msg, 'cl', 60)) return; // timers manager checks cooldown
+                if (!require('../utility/timers').timer(msg, 'Credit Leaderboard', 60)) return; // timers manager checks cooldown
                 this.leaderboard_cl(msg);
                 return;
             }
