@@ -224,30 +224,30 @@ module.exports = {
 
             let db_user = await require('../utility/queries').user(msg.author.id);
             let credits = +db_user.credits;
-            let times_played_bj = db_user?.times_played_bj ? +db_user.times_played_bj : 0;
-            let times_won_bj = db_user?.times_won_bj ? +db_user.times_won_bj : 0;
-            let times_tie_bj = db_user?.times_tie_bj ? +db_user.times_tie_bj : 0;
-            let net_winnings_bj = db_user?.net_winnings_bj ? +db_user.net_winnings_bj : 0;
+            let times_played_blackjack = db_user?.times_played_blackjack ? +db_user.times_played_blackjack : 0;
+            let times_won_blackjack = db_user?.times_won_blackjack ? +db_user.times_won_blackjack : 0;
+            let times_tie_blackjack = db_user?.times_tie_blackjack ? +db_user.times_tie_blackjack : 0;
+            let net_winnings_blackjack = db_user?.net_winnings_blackjack ? +db_user.net_winnings_blackjack : 0;
 
             credits += winnings;
-            times_played_bj += 1;
+            times_played_blackjack += 1;
             if (game.state.player_multiplier == 0) {
-                net_winnings_bj -= bet;
+                net_winnings_blackjack -= bet;
             }
             else if (game.state.player_multiplier == 1) {
-                times_tie_bj += 1;
+                times_tie_blackjack += 1;
             }
             else if (game.state.player_multiplier == 2) {
-                times_won_bj += 1;
-                net_winnings_bj += bet;
+                times_won_blackjack += 1;
+                net_winnings_blackjack += bet;
             }
 
             await db.doc(`members/${msg.author.id}`).set({
                 credits: credits.toFixed(2).toString(),
-                times_played_bj: times_played_bj.toString(),
-                times_won_bj: times_won_bj.toString(),
-                times_tie_bj: times_tie_bj.toString(),
-                net_winnings_bj: net_winnings_bj.toFixed(2).toString(),
+                times_played_blackjack: times_played_blackjack.toString(),
+                times_won_blackjack: times_won_blackjack.toString(),
+                times_tie_blackjack: times_tie_blackjack.toString(),
+                net_winnings_blackjack: net_winnings_blackjack.toFixed(2).toString(),
             }, { merge: true });
 
             this.print_blackjack(msg, game.print_game(), winnings);
