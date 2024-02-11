@@ -14,7 +14,8 @@ let textWrap = 31;
 
 module.exports = {
     name: 'portfolio',
-    alias: ['port'],
+    alias: ['port', 'report'],
+    alias_show: ['report'],
     options: ['d'],
     description: "your stock portfolio",
     category: 'stocks',
@@ -55,7 +56,7 @@ module.exports = {
             portfolio_embed.setDescription(wrapText(user.pref_status, textWrap));
         }
 
-        if (options.includes('d')) {
+        if (options.includes('d') || msg.content.toLowerCase().startsWith('+report')) {
             let port_earnings = 0;
             for (let stock in user_stocks) {
                 let stock_db = (await db.collection(`companies`).where('market', '==', true).where('symbol', '==', stock).limit(1).get())._docs()[0]?.data();
