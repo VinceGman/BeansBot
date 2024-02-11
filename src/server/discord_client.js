@@ -66,6 +66,15 @@ discord_client.on('messageCreate', async msg => {
 		const args = msg.content.replaceAll(',', '').slice(prefix.length).split(/ +/);
 		const command = args.shift().toLowerCase();
 
+		for (let i = 0; i < args.length; i++) {
+			if (args[i].toLowerCase().endsWith('k') && !isNaN(args[i].slice(0, -1))) {
+				args[i] = (+args[i].slice(0, -1) * 1000).toString();
+			}
+			else if (args[i].toLowerCase().endsWith('m') && !isNaN(args[i].slice(0, -1))) {
+				args[i] = (+args[i].slice(0, -1) * 1000000).toString();
+			}
+		}
+
 		let admin = false;
 		let execute = false;
 
