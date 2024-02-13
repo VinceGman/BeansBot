@@ -7,7 +7,7 @@ const db = new Firestore({
 });
 
 const wrapText = require("wrap-text");
-let textWrap = 31;
+let textWrap = 2000;
 
 const comma_adder = require('commas');
 

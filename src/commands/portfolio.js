@@ -10,7 +10,7 @@ const { EmbedBuilder } = require('discord.js');
 const comma_adder = require('commas');
 
 const wrapText = require("wrap-text");
-let textWrap = 31;
+let textWrap = 2000;
 
 module.exports = {
     name: 'portfolio',
