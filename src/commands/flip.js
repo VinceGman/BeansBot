@@ -10,7 +10,7 @@ const comma_adder = require('commas');
 
 module.exports = {
     name: 'flip',
-    description: "play coin flip",
+    description: "play flip",
     category: 'gambling',
     admin: false,
     type: "production",
@@ -100,7 +100,7 @@ module.exports = {
 
 
             let flip_embed = new EmbedBuilder()
-                .setTitle(`Coin Flip`)
+                .setTitle(`Flip`)
                 .setColor('#000000')
                 .addFields({ name: `Result: ${outcome}`, value: `Winnings: ${comma_adder.add(Math.trunc(winnings))}`, inline: false })
                 .setFooter({ text: `${msg.author.username}` })
