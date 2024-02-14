@@ -9,11 +9,11 @@ const { EmbedBuilder } = require('discord.js');
 const comma_adder = require('commas');
 
 module.exports = {
-    name: 'slop',
-    description: "play slop",
+    name: 'slip',
+    description: "play slip",
     category: 'gambling',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 1,
     async execute(discord_client, msg, args, admin) {
         try {
@@ -22,22 +22,22 @@ module.exports = {
             if (args.length == 1 && args[0].toLowerCase() == 'stats' && admin) {
                 let db_user = await require('../utility/queries').user(msg.author.id);
 
-                let slop_stats = new EmbedBuilder()
-                    .setTitle(`Slop Stats`)
+                let slip_stats = new EmbedBuilder()
+                    .setTitle(`Slip Stats`)
                     .setColor('#000000')
                     .setFooter({ text: `${msg.author.username}` })
                     .setTimestamp();
 
-                if (db_user?.times_played_slop && db_user?.times_won_slop && db_user?.net_winnings_slop) {
-                    slop_stats.addFields({ name: 'Winrate', value: `Has won ${(db_user.times_won_slop / db_user.times_played_slop * 100).toFixed(2)}% of ${db_user.times_played_slop} slops.`, inline: false });
-                    let net_credits = db_user.net_winnings_slop >= 0 ? `You've earned ${comma_adder.add(Math.trunc(db_user.net_winnings_slop))} credits.` : `You've lost ${comma_adder.add(Math.trunc(db_user.net_winnings_slop))} credits.`;
-                    slop_stats.addFields({ name: 'Net Credits', value: `${net_credits}`, inline: false });
+                if (db_user?.times_played_slip && db_user?.times_won_slip && db_user?.net_winnings_slip) {
+                    slip_stats.addFields({ name: 'Winrate', value: `Has won ${(db_user.times_won_slip / db_user.times_played_slip * 100).toFixed(2)}% of ${db_user.times_played_slip} slips.`, inline: false });
+                    let net_credits = db_user.net_winnings_slip >= 0 ? `You've earned ${comma_adder.add(Math.trunc(db_user.net_winnings_slip))} credits.` : `You've lost ${comma_adder.add(Math.trunc(db_user.net_winnings_slip))} credits.`;
+                    slip_stats.addFields({ name: 'Net Credits', value: `${net_credits}`, inline: false });
                 }
                 else {
-                    slop_stats.addFields({ name: 'No Slops', value: 'Play slop to see stats.', inline: false });
+                    slip_stats.addFields({ name: 'No Slips', value: 'Play slip to see stats.', inline: false });
                 }
 
-                msg.channel.send({ embeds: [slop_stats] });
+                msg.channel.send({ embeds: [slip_stats] });
                 return;
             }
 
@@ -68,31 +68,31 @@ module.exports = {
             if (bet >= 1000) {
                 let db_user = await require('../utility/queries').user(msg.author.id);
                 let credits = +db_user.credits;
-                let times_played_slop = db_user?.times_played_slop ? +db_user.times_played_slop : 0;
-                let times_won_slop = db_user?.times_won_slop ? +db_user.times_won_slop : 0;
-                let net_winnings_slop = db_user?.net_winnings_slop ? +db_user.net_winnings_slop : 0;
+                let times_played_slip = db_user?.times_played_slip ? +db_user.times_played_slip : 0;
+                let times_won_slip = db_user?.times_won_slip ? +db_user.times_won_slip : 0;
+                let net_winnings_slip = db_user?.net_winnings_slip ? +db_user.net_winnings_slip : 0;
 
                 credits += winnings;
-                times_played_slop += 1;
-                times_won_slop += win;
-                net_winnings_slop = win == 1 ? net_winnings_slop + winnings - bet : net_winnings_slop - bet;
+                times_played_slip += 1;
+                times_won_slip += win;
+                net_winnings_slip = win == 1 ? net_winnings_slip + winnings - bet : net_winnings_slip - bet;
 
                 await db.doc(`members/${msg.author.id}`).set({
                     credits: credits.toFixed(2).toString(),
-                    times_played_slop: times_played_slop.toString(),
-                    times_won_slop: times_won_slop.toString(),
-                    net_winnings_slop: net_winnings_slop.toFixed(2).toString(),
+                    times_played_slip: times_played_slip.toString(),
+                    times_won_slip: times_won_slip.toString(),
+                    net_winnings_slip: net_winnings_slip.toFixed(2).toString(),
                 }, { merge: true });
             }
 
-            let slop_embed = new EmbedBuilder()
-                .setTitle(`Slop`)
+            let slip_embed = new EmbedBuilder()
+                .setTitle(`Slip`)
                 .setColor('#000000')
                 .addFields({ name: `Result: ${outcome}`, value: `Winnings: ${comma_adder.add(Math.trunc(winnings))}`, inline: false })
                 .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
 
-            msg.channel.send({ embeds: [slop_embed] });
+            msg.channel.send({ embeds: [slip_embed] });
             return;
         }
         catch (err) {
