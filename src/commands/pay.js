@@ -33,6 +33,18 @@ module.exports = {
 
         args = args.filter(a => !a.includes('<@'));
 
+        let random = false;
+        if (args.length == 1) {
+            let prefixes = ['rand', 'ran', 'r'];
+            for (let pf of prefixes) {
+                if (args[0].toLowerCase().startsWith(pf)) {
+                    args[0] = args[0].slice(pf.length, args[0].length);
+                    random = true;
+                    break;
+                }
+            }
+        }
+
         let amount = 0;
         if (args.length == 1 && !isNaN(args[0])) {
             if (+args[0] < 0) {
@@ -52,6 +64,8 @@ module.exports = {
             this.pay_guide(msg);
             return;
         }
+
+        amount = random ? Math.floor(Math.random() * amount) + 1 : amount;
 
         if (!(await require('../utility/credits').transaction(discord_client, msg, amount))) return; // credits manager validates transaction
         await require('../utility/credits').refund(discord_client, recipient, amount); // credits manager refunds credits
