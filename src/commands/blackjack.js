@@ -190,7 +190,7 @@ module.exports = {
     category: 'gambling',
     admin: false,
     type: "production",
-    cooldown: 4,
+    cooldown: 2,
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 

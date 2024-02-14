@@ -14,7 +14,7 @@ module.exports = {
     category: 'gambling',
     admin: false,
     type: "production",
-    cooldown: 2,
+    cooldown: 1,
     async execute(discord_client, msg, args, admin) {
         try {
             let bet = 10000;
