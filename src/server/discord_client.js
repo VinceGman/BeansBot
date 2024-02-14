@@ -32,6 +32,25 @@ for (const file of commandFiles) {
 	}
 }
 
+const { CronJob } = require('cron');
+
+// every second * * * * * *
+// every minute * * * * *
+// every hour   0 * * * *
+const job = new CronJob(
+	'0 * * * *', // cronTime
+	async function () {
+		let socks = (await db.doc(`values/socks`).get()).data() ?? {};
+		socks.run = socks.run == null ? false : socks.run;
+		if (socks.run) {
+			console.log(`${new Date().getTime() / 1000} - ${socks.run}`);
+		}
+	}, // onTick
+	null, // onComplete
+	true, // start
+	'America/Los_Angeles' // timeZone
+);
+
 discord_client.on('ready', async () => {
 	// discord_client.user.setActivity('+income', { type: 'CUSTOM' });
 
@@ -67,18 +86,28 @@ discord_client.on('messageCreate', async msg => {
 		const command = args.shift().toLowerCase();
 
 		for (let i = 0; i < args.length; i++) {
-			if (args[i].toLowerCase().endsWith('k') && !isNaN(args[i].slice(0, -1))) {
-				args[i] = (+args[i].slice(0, -1) * 1000).toString();
+			let arg = args[i];
+
+			let set_prefix = '';
+			if (arg.toLowerCase().startsWith('r')) {
+				set_prefix += 'r';
+				arg = arg.slice(1, arg.length);
 			}
-			else if (args[i].toLowerCase().endsWith('m') && !isNaN(args[i].slice(0, -1))) {
-				args[i] = (+args[i].slice(0, -1) * 1000000).toString();
+
+			console.log(arg);
+
+			let postfixes = ['k', 'mill', 'mil', 'm'];
+			for (let pf of postfixes) {
+				let modifier = pf == 'k' ? 1000 : 1000000;
+				if (arg.toLowerCase().endsWith(pf)) {
+					if (!isNaN(arg.slice(0, -pf.length))) {
+						arg = (+arg.slice(0, -pf.length) * modifier).toString();
+					}
+					break;
+				}
 			}
-			else if (args[i].toLowerCase().endsWith('mil') && !isNaN(args[i].slice(0, -3))) {
-				args[i] = (+args[i].slice(0, -3) * 1000000).toString();
-			}
-			else if (args[i].toLowerCase().endsWith('mill') && !isNaN(args[i].slice(0, -4))) {
-				args[i] = (+args[i].slice(0, -4) * 1000000).toString();
-			}
+
+			args[i] = set_prefix + arg;
 		}
 
 		let admin = false;
