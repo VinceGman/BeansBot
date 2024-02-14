@@ -41,6 +41,18 @@ module.exports = {
                 return;
             }
 
+            let random = false;
+            if (args.length == 1) {
+                let prefixes = ['rand', 'ran', 'r'];
+                for (let pf of prefixes) {
+                    if (args[0].toLowerCase().startsWith(pf)) {
+                        args[0] = args[0].slice(pf.length, args[0].length);
+                        random = true;
+                        break;
+                    }
+                }
+            }
+
             let bet = 1000;
             if (args.length == 1 && !isNaN(args[0])) {
                 if (+args[0] < 1000) {
@@ -57,6 +69,8 @@ module.exports = {
                 bet = +(await require('../utility/queries').user(msg.author.id)).credits;
             }
 
+            bet = random ? Math.floor(Math.random() * bet) + 1 : bet;
+
             if (!(await require('../utility/credits').transaction(discord_client, msg, bet))) return; // credits manager validates transaction
 
             let max_num = 20;
@@ -65,25 +79,25 @@ module.exports = {
             let outcome = winnings > 0 ? 'Won' : 'Lost';
             let win = roll_num <= max_num / 2 ? 1 : 0;
 
-            if (bet >= 1000) {
-                let db_user = await require('../utility/queries').user(msg.author.id);
-                let credits = +db_user.credits;
-                let times_played_flip = db_user?.times_played_flip ? +db_user.times_played_flip : 0;
-                let times_won_flip = db_user?.times_won_flip ? +db_user.times_won_flip : 0;
-                let net_winnings_flip = db_user?.net_winnings_flip ? +db_user.net_winnings_flip : 0;
 
-                credits += winnings;
-                times_played_flip += 1;
-                times_won_flip += win;
-                net_winnings_flip = win == 1 ? net_winnings_flip + winnings - bet : net_winnings_flip - bet;
+            let db_user = await require('../utility/queries').user(msg.author.id);
+            let credits = +db_user.credits;
+            let times_played_flip = db_user?.times_played_flip ? +db_user.times_played_flip : 0;
+            let times_won_flip = db_user?.times_won_flip ? +db_user.times_won_flip : 0;
+            let net_winnings_flip = db_user?.net_winnings_flip ? +db_user.net_winnings_flip : 0;
 
-                await db.doc(`members/${msg.author.id}`).set({
-                    credits: credits.toFixed(2).toString(),
-                    times_played_flip: times_played_flip.toString(),
-                    times_won_flip: times_won_flip.toString(),
-                    net_winnings_flip: net_winnings_flip.toFixed(2).toString(),
-                }, { merge: true });
-            }
+            credits += winnings;
+            times_played_flip += 1;
+            times_won_flip += win;
+            net_winnings_flip = win == 1 ? net_winnings_flip + winnings - bet : net_winnings_flip - bet;
+
+            await db.doc(`members/${msg.author.id}`).set({
+                credits: credits.toFixed(2).toString(),
+                times_played_flip: times_played_flip.toString(),
+                times_won_flip: times_won_flip.toString(),
+                net_winnings_flip: net_winnings_flip.toFixed(2).toString(),
+            }, { merge: true });
+
 
             let flip_embed = new EmbedBuilder()
                 .setTitle(`Coin Flip`)
@@ -91,6 +105,8 @@ module.exports = {
                 .addFields({ name: `Result: ${outcome}`, value: `Winnings: ${comma_adder.add(Math.trunc(winnings))}`, inline: false })
                 .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
+
+            if (random) flip_embed.addFields({ name: `Random`, value: `Bet: ${comma_adder.add(Math.trunc(bet))}`, inline: false });
 
             msg.channel.send({ embeds: [flip_embed] });
             return;

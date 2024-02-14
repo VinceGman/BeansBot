@@ -194,6 +194,18 @@ module.exports = {
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
+        let random = false;
+        if (args.length == 1) {
+            let prefixes = ['rand', 'ran', 'r'];
+            for (let pf of prefixes) {
+                if (args[0].toLowerCase().startsWith(pf)) {
+                    args[0] = args[0].slice(pf.length, args[0].length);
+                    random = true;
+                    break;
+                }
+            }
+        }
+
         let bet = 1000;
         if (args.length == 1 && !isNaN(args[0])) {
             if (+args[0] < 1000) {
@@ -206,6 +218,11 @@ module.exports = {
             }
             bet = +args[0];
         }
+        else if (args.length == 1 && args[0].toLowerCase() == 'all') {
+            bet = +(await require('../utility/queries').user(msg.author.id)).credits;
+        }
+
+        bet = random ? Math.floor(Math.random() * bet) + 1 : bet;
 
         if (!(await require('../utility/credits').transaction(discord_client, msg, bet))) return; // credits manager validates transaction
 
@@ -250,7 +267,7 @@ module.exports = {
                 net_winnings_blackjack: net_winnings_blackjack.toFixed(2).toString(),
             }, { merge: true });
 
-            this.print_blackjack(msg, game.print_game(), winnings);
+            this.print_blackjack(msg, game.print_game(), winnings, random, bet);
         });
 
         collector.on('collect', m => {
@@ -261,7 +278,7 @@ module.exports = {
                     collector.stop();
                 }
                 else {
-                    this.print_blackjack(msg, game.print_game());
+                    this.print_blackjack(msg, game.print_game(), 0, random, bet);
                 }
             }
             else if (m.content.toLowerCase().includes('stand') || m.content.toLowerCase().includes('stay') || m.content.toLowerCase().includes('hold') || m.content.toLowerCase().includes('pass') || m.content.toLowerCase().includes('+blackjack') || m.content.toLowerCase().includes('+bj')) {
@@ -273,10 +290,10 @@ module.exports = {
             collector.stop();
         }
         else {
-            this.print_blackjack(msg, game.print_game());
+            this.print_blackjack(msg, game.print_game(), 0, random, bet);
         }
     },
-    async print_blackjack(msg, game, winnings) {
+    async print_blackjack(msg, game, winnings, random, bet) {
         const { EmbedBuilder } = require('discord.js');
 
         let blackjack_embed = new EmbedBuilder();
@@ -299,6 +316,8 @@ module.exports = {
             .addFields({ name: `Dealer: ${game.dealer_score}`, value: `Cards: ${game.dealer_cards.map(card => card.rank + card.suit).join(' ')}`, inline: false })
             .setFooter({ text: `${msg.author.username}` })
             .setTimestamp();
+
+        if (random) blackjack_embed.addFields({ name: `Random`, value: `Bet: ${comma_adder.add(Math.trunc(bet))}`, inline: false });
 
         msg.channel.send({ embeds: [blackjack_embed] });
         return;
