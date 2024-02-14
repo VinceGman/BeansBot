@@ -13,7 +13,7 @@ module.exports = {
     description: "play slop",
     category: 'gambling',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 1,
     async execute(discord_client, msg, args, admin) {
         try {
