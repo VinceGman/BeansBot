@@ -1,4 +1,4 @@
-https://github.com/saanuregh/discord.js-pagination/blob/master/index.js
+// https://github.com/saanuregh/discord.js-pagination/blob/master/index.js
 /*
 This comes from 'discord.js-pagination@msg' npm package but it wasn't working. 
 I fixed it here so I could use it as a utility. I also want to expand on it.
