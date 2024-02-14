@@ -89,12 +89,14 @@ discord_client.on('messageCreate', async msg => {
 			let arg = args[i];
 
 			let set_prefix = '';
-			if (arg.toLowerCase().startsWith('r')) {
-				set_prefix += 'r';
-				arg = arg.slice(1, arg.length);
+			let prefixes = ['rand', 'ran', 'r'];
+			for (let pf of prefixes) {
+				if (arg.toLowerCase().startsWith(pf)) {
+					set_prefix = pf;
+					arg = arg.slice(pf.length, arg.length);
+					break;
+				}
 			}
-
-			console.log(arg);
 
 			let postfixes = ['k', 'mill', 'mil', 'm'];
 			for (let pf of postfixes) {
