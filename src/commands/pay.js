@@ -7,7 +7,7 @@ module.exports = {
     category: 'credits',
     admin: false,
     type: "production",
-    cooldown: 6,
+    cooldown: 2,
     async execute(discord_client, msg, args, admin) {
         if (args.length == 0) {
             this.pay_guide(msg);
