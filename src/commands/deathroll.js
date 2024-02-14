@@ -10,12 +10,12 @@ const comma_adder = require('commas');
 
 module.exports = {
     name: 'deathroll',
-    alias: ['dr'],
+    alias: ['dr', 'testdr'],
     description: "deathroll for money",
     category: 'gambling',
     admin: false,
-    type: "production",
-    cooldown: 4,
+    type: "test",
+    cooldown: 2,
     async execute(discord_client, msg, args, admin) {
 
         const { EmbedBuilder } = require('discord.js');
@@ -25,7 +25,7 @@ module.exports = {
                 .setTitle(`Deathroll Guide & Dashboard`)
                 .setDescription(`Deathroll 1v1`)
                 .setColor('#000000')
-                .addFields({ name: '+deathroll @Sore', value: `Starts a deathroll game with Sore with an auto 10k bet.`, inline: false })
+                .addFields({ name: '+deathroll @Sore', value: `Starts a deathroll game with Sore with an auto 1k bet.`, inline: false })
                 .addFields({ name: '+deathroll @Sore 20000', value: `Starts a deathroll game with Sore with a 20k bet.`, inline: false })
                 .addFields({ name: '\u200B', value: '\u200B', inline: false })
                 .addFields({ name: 'Dashboard', value: `Here's all your deathroll data.`, inline: false })
@@ -57,7 +57,7 @@ module.exports = {
 
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
-        let cost = 10000;
+        let cost = 1000;
 
         if (msg.mentions.users.size != 1) {
             msg.channel.send(`${msg.author.username} - **+deathroll** for more info.`);
@@ -163,20 +163,22 @@ module.exports = {
     async set_stats(target, opponent, challenger, winner, turns, cost) {
         let target_db = await require('../utility/queries').user(target);
         let deathroll_stats = target_db?.deathroll_stats ? target_db.deathroll_stats : {};
-        if (!deathroll_stats?.[opponent]) deathroll_stats[opponent] = {
-            wins: 0,
-            losses: 0,
-            credit_net: 0,
-            turns: 0,
-            skips: 0,
-            top_skip: 0,
-            top_death: 0,
-            challenge_out: 0,
-            challenge_in: 0,
-            low_turn_kill: 0,
-            high_turn_kill: 0,
-            low_turn_death: 0,
-            high_turn_death: 0,
+        if (!deathroll_stats?.[opponent]) {
+            deathroll_stats[opponent] = {
+                wins: 0,
+                losses: 0,
+                credit_net: 0,
+                turns: 0,
+                skips: 0,
+                top_skip: 0,
+                top_death: 0,
+                challenge_out: 0,
+                challenge_in: 0,
+                low_turn_kill: 0,
+                high_turn_kill: 0,
+                low_turn_death: 0,
+                high_turn_death: 0,
+            }
         }
         else {
             for (const property in deathroll_stats[opponent]) {
@@ -230,14 +232,14 @@ module.exports = {
     }
 }
 
-                // highest turn skip        (+)     check if one of the skips was bigger than the current, replace
-                // average skip per turn    (-)     skips count / turns count
-                // be challenged count      (+)     increment when challenger
-                // give challenged count    (+)     increment when challenged
-                // lowest turn kill         (+)     check if the turns of the game are lower than the one in the system
-                // highest turn kill        (+)     check if the turns of the game are higher than the one in the system
-                // lowest turn death        (+)     check if the turns of the game are lower than the one in the system
-                // highest turn death       (+)     check if the turns of the game are higher than the one in the system
-                // average turns            (-)     turns count / (wins + losses)
-                // turns count              (+)
-                // skips count              (+)
+// highest turn skip        (+)     check if one of the skips was bigger than the current, replace
+// average skip per turn    (-)     skips count / turns count
+// be challenged count      (+)     increment when challenger
+// give challenged count    (+)     increment when challenged
+// lowest turn kill         (+)     check if the turns of the game are lower than the one in the system
+// highest turn kill        (+)     check if the turns of the game are higher than the one in the system
+// lowest turn death        (+)     check if the turns of the game are lower than the one in the system
+// highest turn death       (+)     check if the turns of the game are higher than the one in the system
+// average turns            (-)     turns count / (wins + losses)
+// turns count              (+)
+// skips count              (+)
