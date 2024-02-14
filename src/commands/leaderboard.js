@@ -11,7 +11,7 @@ const comma_adder = require('commas');
 let _ = require('lodash');
 
 const wrapText = require("wrap-text");
-let textWrap = 31;
+let textWrap = 2000;
 
 module.exports = {
     name: 'leaderboard',
