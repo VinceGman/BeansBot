@@ -86,6 +86,7 @@ discord_client.on('messageCreate', async msg => {
 		const command = args.shift().toLowerCase();
 
 		for (let i = 0; i < args.length; i++) {
+			if (['name', 'status'].includes(args[i])) break;
 			let arg = args[i];
 
 			let set_prefix = '';
