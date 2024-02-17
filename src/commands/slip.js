@@ -10,7 +10,7 @@ const comma_adder = require('commas');
 
 module.exports = {
     name: 'slip',
-    description: "play slip - 10:1 odds & 10x pay",
+    description: "play slip - 10:1 odds w/ 10x pay",
     category: 'gambling',
     admin: false,
     type: "production",

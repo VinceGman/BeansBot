@@ -10,7 +10,7 @@ const comma_adder = require('commas');
 
 module.exports = {
     name: 'rip',
-    description: "play rip - 2:1 w/ 2x, 3:1 w/ 3x or 4:1 w/ 4x",
+    description: "play rip - 2:1 w/ 2x, 3:1 w/ 3x, or 4:1 w/ 4x",
     category: 'gambling',
     admin: false,
     type: "production",
