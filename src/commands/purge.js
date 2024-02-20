@@ -10,7 +10,7 @@ module.exports = {
     description: "purge your cards",
     category: 'cards',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 2,
     async execute(discord_client, msg, args, admin) {
         const { EmbedBuilder } = require('discord.js');
