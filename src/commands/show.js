@@ -13,6 +13,7 @@ module.exports = {
             let show_guide = new EmbedBuilder()
                 .setTitle(`Show Guide`)
                 .setColor('#000000')
+                .setDescription(`Locked cards won't show.`)
                 .addFields({ name: '+show 123', value: `shows card with rank #123`, inline: false })
                 .addFields({ name: '+show Nezuko Kamado', value: `shows cards with name 'Nezuko Kamado'`, inline: false })
                 .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
