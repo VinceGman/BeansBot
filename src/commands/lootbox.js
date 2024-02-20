@@ -51,7 +51,6 @@ module.exports = {
         }
         catch (err) {
             msg.channel.send(`${msg.author.username} - System Error: Anime API Failed`);
-            console.log(err);
             await require('../utility/credits').refund(discord_client, msg.author.id, card_cost); // credits manager refunds on error
             return;
         }
@@ -72,8 +71,6 @@ module.exports = {
 
         lootbox_total_cards += 1;
         lootbox_flips_per_hour += 1;
-
-        msg.channel.send(`lootbox_total_cards: ${lootbox_total_cards}\nlootbox_flips_per_hour: ${lootbox_flips_per_hour}\nlootbox_flips_timestamp: ${lootbox_flips_timestamp}`);
 
         try {
             await db.doc(`members/${msg.author.id}`).set({
