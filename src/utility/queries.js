@@ -30,10 +30,10 @@ module.exports = {
         }
 
         try {
-            var characters = (await db.collection(`edition_one`).where(attribute, '==', match.toLowerCase()).orderBy("rank", "asc").limit(limit).get())._docs();
+            var characters = (await db.collection(`anime_cards`).where(attribute, '==', match.toLowerCase()).where(`${msg.guildId}_locked`, '==', false).orderBy("rank", "asc").limit(limit).get())._docs();
             if (characters.length == 0) throw 'null character';
             characters.forEach((char, index, characters) => {
-                characters[index] = char._fieldsProto;
+                characters[index] = char.data();
             });
             return characters;
         }
@@ -86,11 +86,7 @@ module.exports = {
 
         let characters = [];
         for (let match of matches) {
-            let db_characters = (await db.collection(`edition_one`).where(attribute, '==', match.toLowerCase()).orderBy("rank", "asc").limit(limit).get())._docs();
-            db_characters.forEach((char, index, db_characters) => {
-                db_characters[index] = char._fieldsProto;
-                characters.push(db_characters[index]);
-            });
+            characters.push(...((await db.collection(`anime_cards`).where(attribute, '==', match.toLowerCase()).where(`${msg.guildId}_locked`, '==', false).orderBy("rank", "asc").limit(limit).get())._docs()).map(card => card.data()));
         }
         return { matches: matches, characters: characters };
     },
@@ -107,11 +103,7 @@ module.exports = {
 
         let characters = [];
         for (let match of matches) {
-            let db_characters = (await db.collection(`edition_one`).where(attribute, '==', match.toLowerCase()).where('owned', '==', true).orderBy("rank", "asc").limit(limit).get())._docs();
-            db_characters.forEach((char, index, db_characters) => {
-                db_characters[index] = char._fieldsProto;
-                characters.push(db_characters[index]);
-            });
+            characters.push(...((await db.collection(`anime_cards`).where(`${msg.guildId}_owned`, '==', true).where(attribute, '==', match.toLowerCase()).where(`${msg.guildId}_locked`, '==', false).orderBy("rank", "asc").limit(limit).get())._docs()).map(card => card.data()));
         }
         return { matches: matches, characters: characters };
     },
