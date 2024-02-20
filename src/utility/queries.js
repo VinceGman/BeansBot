@@ -26,7 +26,7 @@ module.exports = {
         }
         else {
             attribute = 'name_lower';
-            match = require('../../deprecated/searches').search('name', args.join(' ').toLowerCase())[0];
+            match = require('./searches').search('name', args.join(' ').toLowerCase())[0];
         }
 
         try {
@@ -51,18 +51,22 @@ module.exports = {
         });
 
         let attribute, match;
-        if (args.length == 1 && !isNaN(args[0].replace('#', ''))) {
+        if (args.length == 1 && !isNaN(args[0].replace('#', '')) && args[0].replace('#', '').length <= 5 && +args[0].replace('#', '') <= 20000) {
             attribute = 'rank_text';
             match = args[0].replace('#', '');
         }
+        else if (args.length == 1 && !isNaN(args[0]) && args[0].length == 6) {
+            attribute = 'locked_id';
+            match = args[0];
+        }
         else {
             attribute = 'name_lower';
-            match = require('../../deprecated/searches').search('name', args.join(' ').toLowerCase())[0];
+            match = require('./searches').search('name', args.join(' ').toLowerCase())[0];
         }
 
         try {
-            var character = (await db.collection(`edition_one`).where('owner_id', '==', msg.author.id).where(attribute, '==', match.toLowerCase()).orderBy("rank", "asc").limit(1).get())._docs()[0];
-            return character._fieldsProto;
+            var character = (await db.collection(`anime_cards`).where(`${msg.guildId}_owner_id`, '==', msg.author.id).where(attribute, '==', match.toLowerCase()).where(`${msg.guildId}_locked`, '==', attribute == 'locked_id' ? true : false).orderBy("rank", "asc").limit(1).get())._docs()[0];
+            return character.data();
         }
         catch (err) {
             msg.channel.send(`${msg.author.username} - No character found.`);
@@ -78,7 +82,7 @@ module.exports = {
         });
 
         let attribute = 'origin_lower';
-        let matches = require('../../deprecated/searches').compound_search('collection', args.join(' ').toLowerCase());
+        let matches = require('./searches').compound_search('collection', args.join(' ').toLowerCase());
 
         let characters = [];
         for (let match of matches) {
@@ -99,7 +103,7 @@ module.exports = {
         });
 
         let attribute = 'origin_lower';
-        let matches = require('../../deprecated/searches').compound_search('collection', args.join(' ').toLowerCase());
+        let matches = require('./searches').compound_search('collection', args.join(' ').toLowerCase());
 
         let characters = [];
         for (let match of matches) {
