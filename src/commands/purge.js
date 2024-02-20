@@ -80,7 +80,7 @@ module.exports = {
         require('../utility/data_management').update_user_card_count(msg.author.id, cards.length * -1);
 
         if (warning_msg) warning_msg.delete();
-        msg.reply(`${msg.author.username} - ${cards.length} ${cards.length == 1 ? 'card' : 'cards'} purged.`);
+        msg.channel.send(`${msg.author.username} - ${cards.length} ${cards.length == 1 ? 'card' : 'cards'} purged.`);
     },
     async return_card(card, msg) {
         const res = await db.doc(`anime_cards/${card.rank_text}`).update({
