@@ -15,7 +15,7 @@ module.exports = {
     cooldown: 2,
     async execute(discord_client, msg, args, admin) {
 
-        let lootbox_flips_per_hour_limit = 100;
+        let lootbox_flips_per_hour_limit = 15;
         let card_cost = 1000;
 
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
