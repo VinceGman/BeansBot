@@ -15,7 +15,7 @@ let textWrap = 2000;
 
 module.exports = {
     name: 'leaderboard',
-    alias: ['cl', 'top', 'dl', 'mid', 'gl', 'bot', 'stats', 'lb', 'leaderboards'],
+    alias: ['cl', 'top', 'dl', 'mid', 'gl', 'bot', 'stats', 'leaderboards'],
     alias_show: ['stats'],
     description: "see your and other's gambling stats",
     category: 'gambling',
