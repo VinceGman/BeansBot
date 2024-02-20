@@ -26,7 +26,7 @@ module.exports = {
 
         if (args.length > 0) {
             if (msg.mentions.users.size > 0) {
-                this.display_profile_full(discord_client, msg, msg.mentions.users.keys().next().value, options);
+                this.display_profile(discord_client, msg, msg.mentions.users.keys().next().value, options);
                 return;
             }
 
@@ -116,7 +116,7 @@ module.exports = {
             }
         }
 
-        this.display_profile_full(discord_client, msg, msg.author.id, options);
+        this.display_profile(discord_client, msg, msg.author.id, options);
         return;
     },
     async display_profile(discord_client, msg, id, options) {
