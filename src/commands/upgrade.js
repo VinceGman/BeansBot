@@ -15,7 +15,7 @@ module.exports = {
     description: "upgrade a piece of your account",
     category: 'utility',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 3,
     async execute(discord_client, msg, args, admin) {
         if (args.length != 1) {

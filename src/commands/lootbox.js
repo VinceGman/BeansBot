@@ -11,7 +11,7 @@ module.exports = {
     description: "rolls for 20000 collectibles",
     category: 'cards',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 2,
     async execute(discord_client, msg, args, admin) {
 
