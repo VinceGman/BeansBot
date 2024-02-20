@@ -33,7 +33,7 @@ module.exports = {
         }
 
         if (lootbox_flips_per_hour >= lootbox_flips_per_hour_limit) {
-            msg.channel.send(`${msg.author.username} - You've hit your hourly lootbox rolls limit.`);
+            msg.channel.send(`${msg.author.username} - You've hit your hourly lootbox rolls limit. To reset -> **+rolls**`);
             return;
         }
 
