@@ -30,7 +30,7 @@ module.exports = {
         }
 
         try {
-            var characters = (await db.collection(`anime_cards`).where(attribute, '==', match.toLowerCase()).where(`${msg.guildId}_locked`, '==', false).orderBy("rank", "asc").limit(limit).get())._docs();
+            var characters = (await db.collection(`anime_cards`).where(attribute, '==', match.toLowerCase()).orderBy("rank", "asc").limit(limit).get())._docs();
             if (characters.length == 0) throw 'null character';
             characters.forEach((char, index, characters) => {
                 characters[index] = char.data();
@@ -86,7 +86,7 @@ module.exports = {
 
         let characters = [];
         for (let match of matches) {
-            characters.push(...((await db.collection(`anime_cards`).where(attribute, '==', match.toLowerCase()).where(`${msg.guildId}_locked`, '==', false).orderBy("rank", "asc").limit(limit).get())._docs()).map(card => card.data()));
+            characters.push(...((await db.collection(`anime_cards`).where(attribute, '==', match.toLowerCase()).orderBy("rank", "asc").limit(limit).get())._docs()).map(card => card.data()));
         }
         return { matches: matches, characters: characters };
     },
