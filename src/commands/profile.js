@@ -1,5 +1,5 @@
 // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
-const { Firestore } = require('@google-cloud/firestore');
+const { Firestore, FieldValue } = require('@google-cloud/firestore');
 const db = new Firestore({
     projectId: 'beans-326017',
     keyFilename: './service-account.json'
@@ -162,7 +162,7 @@ module.exports = {
         if (options.includes('i')) {
             for (let character of owned) {
                 character = character.data();
-                pages.push(await require('../utility/embeds').make_card_embed(discord_client, msg, character))
+                pages.push(await require('../utility/embeds').make_card_embed(discord_client, msg, character, true))
             }
             if (owned.length == 0) {
                 ownedText = '[none]';
