@@ -29,36 +29,37 @@ module.exports = {
 
         msg.channel.send({ embeds: [character_embed] });
     },
-    async make_card_embed(discord_client, msg, character) {
-        try {
-            var owner = await discord_client.users.fetch(character[`${msg.guildId}_owner_id`]);
-            owner = owner ? `${owner.username}` : '[none]';
-        }
-        catch (err) {
-            owner = '[none]';
-        }
-
+    async make_card_embed(discord_client, msg, character, profile = false) {
         let character_embed = new EmbedBuilder();
 
-        if (character[`${msg.guildId}_locked`]) {
-            character_embed.setTitle(`Locked`)
-                .setDescription(`ID: ${character.locked_id} `)
-                .setImage(`https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Black_colour.jpg/1536px-Black_colour.jpg`)
-                .setColor('#000000')
-                .addFields({ name: 'Rarity', value: `${character.rarity} - ${character.stars}`, inline: true })
-                .addFields({ name: 'Owner', value: wrapText(`${msg.author.username}`, textWrap), inline: false })
-        }
-        else {
+        if (!character[`${msg.guildId}_locked`] || !profile) {
             character_embed.setTitle(`${wrapText(character.name, textWrap)}`)
                 .setDescription(`${wrapText(character.origin, textWrap)}`)
                 .setImage(`${character.image}`)
                 .setColor(character.color)
                 .addFields({ name: 'Rank', value: `#${character.rank_text}`, inline: true })
                 .addFields({ name: 'Rarity', value: `${character.rarity} - ${character.stars}`, inline: true })
-                .addFields({ name: 'Owner', value: wrapText(owner, textWrap), inline: false })
+        }
+        else {
+            character_embed.setTitle(`Locked`)
+                .setDescription(`ID: ${character.locked_id} `)
+                .setImage(`https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Black_colour.jpg/1536px-Black_colour.jpg`)
+                .setColor('#000000')
+                .addFields({ name: 'Rarity', value: `${character.rarity} - ${character.stars}`, inline: true })
         }
 
-        character_embed.setFooter({ text: 'Beans - ACC' }).setTimestamp();
+
+        let owner = '[none]';
+        try {
+            owner = !character[`${msg.guildId}_locked`] || profile ? (await discord_client?.users?.fetch(character[`${msg.guildId}_owner_id`])).username ?? '[none]' : '[none]';
+        }
+        catch (err) {
+            owner = '[none]';
+        }
+
+        character_embed.addFields({ name: 'Owner', value: wrapText(owner, textWrap), inline: false })
+            .setFooter({ text: 'Beans - ACC' })
+            .setTimestamp();
 
         return character_embed;
     },
