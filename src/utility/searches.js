@@ -4,9 +4,8 @@ const collections = [`Code Geass: Hangyaku no Lelouch`, `Shingeki no Kyojin`, `O
 
 const { Searcher } = require("fast-fuzzy");
 
-const names_set = new Searcher(names);
 const names_set_data = new Searcher(names, { sortBy: 'insertOrder', returnMatchData: true });
-const collections_set = new Searcher(collections, { sortBy: 'insertOrder' });
+const collections_set_data = new Searcher(collections, { sortBy: 'insertOrder', returnMatchData: true });
 
 module.exports = {
     search(type, term) {
@@ -15,7 +14,7 @@ module.exports = {
                 return names_set_data.search(term).sort((a, b) => b.score - a.score).map(name => name.item);
                 break;
             case 'collection':
-                return collections_set.search(term);
+                return collections_set_data.search(term).sort((a, b) => b.score - a.score).map(collection => collection.item);;
                 break;
             default:
                 return false;
