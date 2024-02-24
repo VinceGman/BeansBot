@@ -11,7 +11,7 @@ module.exports = {
     description: "protect a card",
     category: 'cards',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 3,
     async execute(discord_client, msg, args, admin) {
         const { EmbedBuilder } = require('discord.js');
@@ -22,7 +22,7 @@ module.exports = {
                 .setDescription(`Protected cards aren't affected by **+purge**.`)
                 .setColor('#000000')
                 .addFields({ name: '+protect 123', value: `protects card with rank #123`, inline: false })
-                .addFields({ name: '+protect 001123', value: `protects card with ID:001123`, inline: false })
+                .addFields({ name: '+protect 001123', value: `protects card with ID: 001123`, inline: false })
                 .addFields({ name: '+protect Nezuko Kamado', value: `protects card with name 'Nezuko Kamado'`, inline: false })
                 .addFields({ name: '+protect all', value: `protects all unprotected cards in your inventory`, inline: false })
                 .addFields({ name: '+protect none', value: `unprotects all protected cards in your inventory`, inline: false })

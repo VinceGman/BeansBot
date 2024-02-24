@@ -81,14 +81,15 @@ module.exports = {
             keyFilename: './service-account.json'
         });
 
-        let attribute = 'origin_lower';
         let matches = require('./searches').compound_search('collection', args.join(' ').toLowerCase());
-
-        let characters = [];
-        for (let match of matches) {
-            characters.push(...((await db.collection(`anime_cards`).where(attribute, '==', match.toLowerCase()).orderBy("rank", "asc").limit(limit).get())._docs()).map(card => card.data()));
+        try {
+            var characters = ((await db.collection(`anime_cards`).where('origin_lower', 'in', matches.map(m => m.toLowerCase())).orderBy("rank", "asc").limit(limit).get())._docs()).map(card => card.data());
+            return { matches: matches, characters: characters };
         }
-        return { matches: matches, characters: characters };
+        catch (err) {
+            msg.channel.send(`${msg.author.username} - No collection found.`);
+            return false;
+        }
     },
     async owned_collection(msg, args, limit = 50) { // returns one to many characters by name
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
@@ -98,13 +99,14 @@ module.exports = {
             keyFilename: './service-account.json'
         });
 
-        let attribute = 'origin_lower';
         let matches = require('./searches').compound_search('collection', args.join(' ').toLowerCase());
-
-        let characters = [];
-        for (let match of matches) {
-            characters.push(...((await db.collection(`anime_cards`).where(`${msg.guildId}_owned`, '==', true).where(attribute, '==', match.toLowerCase()).where(`${msg.guildId}_locked`, '==', false).orderBy("rank", "asc").limit(limit).get())._docs()).map(card => card.data()));
+        try {
+            var characters = ((await db.collection(`anime_cards`).where(`${msg.guildId}_owned`, '==', true).where(`${msg.guildId}_locked`, '==', false).where('origin_lower', 'in', matches.map(m => m.toLowerCase())).orderBy("rank", "asc").limit(limit).get())._docs()).map(card => card.data());
+            return { matches: matches, characters: characters };
         }
-        return { matches: matches, characters: characters };
+        catch (err) {
+            msg.channel.send(`${msg.author.username} - No collection found.`);
+            return false;
+        }
     },
 }

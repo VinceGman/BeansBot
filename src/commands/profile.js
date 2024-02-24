@@ -26,7 +26,7 @@ module.exports = {
 
         if (args.length > 0) {
             if (msg.mentions.users.size > 0) {
-                this.display_profile(discord_client, msg, msg.mentions.users.keys().next().value, options);
+                this.display_profile_full(discord_client, msg, msg.mentions.users.keys().next().value, options);
                 return;
             }
 
@@ -116,7 +116,7 @@ module.exports = {
             }
         }
 
-        this.display_profile(discord_client, msg, msg.author.id, options);
+        this.display_profile_full(discord_client, msg, msg.author.id, options);
         return;
     },
     async display_profile(discord_client, msg, id, options) {
@@ -166,10 +166,17 @@ module.exports = {
             }
             if (owned.length == 0) {
                 ownedText = '[none]';
-                pages.push(new EmbedBuilder().addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: false })
+                let profile_embed = new EmbedBuilder()
+                    .addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: false })
                     .setTitle(`${wrapText(`${db_user.pref_name ?? user.nickname ?? user.displayName}`, textWrap)}`)
                     .setThumbnail(db_user.pref_image ?? user.displayAvatarURL())
-                    .setColor(db_user.pref_color ?? user.displayHexColor));
+                    .setColor(db_user.pref_color ?? user.displayHexColor);
+
+                if (db_user.pref_status != null && db_user.pref_status != '') {
+                    profile_embed.setDescription(wrapText(db_user.pref_status, textWrap));
+                }
+
+                pages.push(profile_embed);
             }
             let pg = '';
             let j = 1;
@@ -394,7 +401,7 @@ module.exports = {
                             fields.push({ current_origin: current_origin, ownedText: ownedText });
                             for (let i = 0; i < fields.length; i++) {
                                 if (i % 5 == 0) {
-                                    pages.push(new EmbedBuilder().addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: true }).addFields({ name: 'Card Count', value: `${lootbox_total_cards}/${lootbox_total_cards_limit}`, inline: true }));
+                                    pages.push(new EmbedBuilder().addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: true }).addFields({ name: 'Card Count', value: `${lootbox_total_cards}/${lootbox_total_cards_limit}`, inline: true }).addFields({ name: 'Cards Value', value: `${comma_adder.add(Math.trunc(account_value))} credits`, inline: true }));
                                     page++;
                                 }
                                 pages[page - 1].addFields({ name: `${fields[i].current_origin}`, value: `${fields[i].ownedText}`, inline: false });
@@ -454,7 +461,7 @@ module.exports = {
                         if (i == owned.length - 1) {
                             fields.push({ ownedText: ownedText });
                             for (let i = 0; i < fields.length; i++) {
-                                pages.push(new EmbedBuilder().addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: true }).addFields({ name: 'Card Count', value: `${lootbox_total_cards}/${lootbox_total_cards_limit}`, inline: true }).addFields({ name: 'Cards Owned', value: `${fields[i].ownedText}`, inline: false }));
+                                pages.push(new EmbedBuilder().addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: true }).addFields({ name: 'Card Count', value: `${lootbox_total_cards}/${lootbox_total_cards_limit}`, inline: true }).addFields({ name: 'Cards Value', value: `${comma_adder.add(Math.trunc(account_value))} credits`, inline: true }).addFields({ name: 'Cards Owned', value: `${fields[i].ownedText}`, inline: false }));
                             }
                         }
                         i++;

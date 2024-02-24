@@ -1,11 +1,11 @@
 module.exports = {
     name: 'show',
     alias: ['see', 'look'],
-    description: "look at a card",
+    description: "show a card",
     category: 'cards',
     admin: false,
-    type: "test",
-    cooldown: 4,
+    type: "production",
+    cooldown: 3,
     async execute(discord_client, msg, args, admin) {
         const { EmbedBuilder } = require('discord.js');
 
@@ -13,10 +13,10 @@ module.exports = {
             let show_guide = new EmbedBuilder()
                 .setTitle(`Show Guide`)
                 .setColor('#000000')
-                .setDescription(`Locked cards won't show.`)
+                .setDescription(`Show any card in the system by rank or name.`)
                 .addFields({ name: '+show 123', value: `shows card with rank #123`, inline: false })
                 .addFields({ name: '+show Nezuko Kamado', value: `shows cards with name 'Nezuko Kamado'`, inline: false })
-                .setFooter({ text: `${msg.author.username}#${msg.author.discriminator}` })
+                .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
 
             msg.channel.send({ embeds: [show_guide] });

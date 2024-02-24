@@ -11,7 +11,7 @@ module.exports = {
     description: "rolls for 20000 collectibles",
     category: 'cards',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 2,
     async execute(discord_client, msg, args, admin) {
 
@@ -55,10 +55,8 @@ module.exports = {
             return;
         }
 
-        require('../utility/embeds').print_lootbox(msg, character); // embeds manager prints lootbox card
-
         try {
-            const res = await db.collection('anime_cards').doc(`${roll_num}`).update({ // updates owner_id on roll_num card in database
+            const res = await db.collection('anime_cards').doc(`${character.rank_text}`).update({ // updates owner_id on roll_num card in database
                 [`${msg.guildId}_owner_id`]: msg.author.id.toString(),
                 [`${msg.guildId}_owned`]: true,
             });
@@ -83,5 +81,7 @@ module.exports = {
             msg.channel.send(`${msg.author.username} - System Error: Database Failed - Logging User Changes`);
             return;
         }
+
+        require('../utility/embeds').print_lootbox(msg, character); // embeds manager prints lootbox card
     }
 }

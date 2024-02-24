@@ -5,12 +5,14 @@ const db = new Firestore({
     keyFilename: './service-account.json'
 });
 
+const comma_adder = require('commas');
+
 module.exports = {
     name: 'purge',
     description: "purge your cards",
     category: 'cards',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 2,
     async execute(discord_client, msg, args, admin) {
         const { EmbedBuilder } = require('discord.js');
@@ -58,8 +60,6 @@ module.exports = {
         }
 
 
-        console.log(stars_purge, lockedId_purge, rankText_purge);
-
         let cards = [];
         try { cards.push(...(await db.collection(`anime_cards`).where(`${msg.guildId}_owner_id`, '==', msg.author.id).where(`${msg.guildId}_protected`, '==', false).where('stars', 'in', stars_purge).get())._docs()); } catch (err) { }
         try { cards.push(...(await db.collection(`anime_cards`).where(`${msg.guildId}_owner_id`, '==', msg.author.id).where(`${msg.guildId}_protected`, '==', false).where(`${msg.guildId}_locked`, '==', true).where('locked_id', 'in', lockedId_purge).get())._docs()); } catch (err) { }
@@ -69,25 +69,96 @@ module.exports = {
         let _ = require('lodash');
         cards = _.uniqBy(cards, 'rank_text');
 
-        if (cards.length >= 15) {
+        if (cards.length >= 10) {
             var warning_msg = await msg.reply('Purging cards. Please wait, it may take a moment.');
         }
 
+        let refund_value = 0;
         for (let card of cards) {
+            let value = 0;
+            switch (card.rarity) {
+                case 'Common':
+                    value = 250;
+                    break;
+                case 'Uncommon':
+                    value = 500;
+                    break;
+                case 'Rare':
+                    value = 2500;
+                    break;
+                case 'Epic':
+                    value = 5000;
+                    break;
+                case 'Legendary':
+                    value = 15000;
+                    break;
+                case 'Ultimate':
+                    value = 25000;
+                    break;
+                default:
+                    value = 0;
+            }
+
+            refund_value += value;
+
             await this.return_card(card, msg);
         };
 
-        require('../utility/data_management').update_user_card_count(msg.author.id, cards.length * -1);
+        await require('../utility/credits').refund(discord_client, msg.author.id, refund_value); // credits manager refunds on error
+        await require('../utility/data_management').update_user_card_count(msg.author.id, cards.length * -1);
 
         if (warning_msg) warning_msg.delete();
-        msg.channel.send(`${msg.author.username} - ${cards.length} ${cards.length == 1 ? 'card' : 'cards'} purged.`);
+
+        let pay_result = new EmbedBuilder()
+            .setTitle(`Purge Payment`)
+            .setColor('#37914f')
+            .addFields({ name: `Purged`, value: `${cards.length} ${cards.length == 1 ? 'card' : 'cards'}`, inline: true })
+            .addFields({ name: `Amount`, value: `+${comma_adder.add(Math.trunc(refund_value))} credits`, inline: true })
+            .setFooter({ text: `${msg.author.username}` })
+            .setTimestamp();
+
+        msg.channel.send({ embeds: [pay_result] });
+        return;
     },
     async return_card(card, msg) {
+        let color = '#FFFFFF';
+        let rarity = 'Common';
+        let stars = '★';
+
+        if (card.rank <= 20) {
+            color = '#fc5d65';
+            rarity = 'Ultimate';
+            stars = '★★★★★★';
+        }
+        else if (card.rank <= 200) {
+            color = '#ffab4b';
+            rarity = 'Legendary';
+            stars = '★★★★★';
+        }
+        else if (card.rank <= 800) {
+            color = '#c369ec';
+            rarity = 'Epic';
+            stars = '★★★★';
+        }
+        else if (card.rank <= 2000) {
+            color = '#0070DD';
+            rarity = 'Rare';
+            stars = '★★★';
+        }
+        else if (card.rank <= 8000) {
+            color = '#7aaf74';
+            rarity = 'Uncommon';
+            stars = '★★';
+        }
+
         const res = await db.doc(`anime_cards/${card.rank_text}`).update({
             [`${msg.guildId}_owner_id`]: '',
             [`${msg.guildId}_owned`]: false,
             [`${msg.guildId}_protected`]: false,
             [`${msg.guildId}_locked`]: card.locked_id ? true : false,
+            color: color,
+            rarity: rarity,
+            stars: stars,
         }).catch(err => msg.channel.send(`${msg.author.username} - This product wasn't purged properly. Please contact Sore#1414. Rank: ${card.rank_text}`));
     }
 }
