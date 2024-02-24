@@ -1,6 +1,6 @@
 module.exports = {
     name: 'show',
-    alias: ['see', 'look'],
+    alias: ['see', 'look', 'view'],
     description: "show a card",
     category: 'cards',
     admin: false,
