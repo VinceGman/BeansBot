@@ -153,6 +153,7 @@ module.exports = {
         let owned = (await db.collection('anime_cards').where(`${msg.guildId}_owner_id`, '==', id).orderBy("rank", "asc").get())._docs();
 
         if (options.includes('c')) {
+            owned = owned.filter(o => o._fieldsProto[`${msg.guildId}_locked`][o._fieldsProto[`${msg.guildId}_locked`].valueType] == false)
             owned = owned.sort((a, b) => {
                 return (a._fieldsProto.origin.stringValue < b._fieldsProto.origin.stringValue) ? -1 : (a._fieldsProto.origin.stringValue > b._fieldsProto.origin.stringValue) ? 1 : 0;
             });
@@ -350,6 +351,7 @@ module.exports = {
             let account_value = 0;
             do {
                 if (options.includes('c')) {
+                    owned = owned.filter(o => o._fieldsProto[`${msg.guildId}_locked`][o._fieldsProto[`${msg.guildId}_locked`].valueType] == false)
                     if (owned.length == 0) {
                         ownedText = '[none]';
                         pages.push(new EmbedBuilder().addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: false }));
