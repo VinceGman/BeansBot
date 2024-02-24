@@ -6,7 +6,7 @@ module.exports = {
 					await this.dahlia(discord_client, msg);
 					return;
 				}
-				await this.ilyaas(discord_client, msg);
+				await this.buttercup(discord_client, msg);
 				await this.compile_description(msg);
 				return;
 			}
@@ -32,7 +32,7 @@ module.exports = {
 		}
 		return;
 	},
-	async ilyaas(discord_client, msg) {
+	async buttercup(discord_client, msg) {
 		try {
 			let { msg_col, users_present } = await this.message_history(msg);
 
@@ -47,8 +47,6 @@ module.exports = {
 				if (db_user?.description) user_description += `${db_user.description}`;
 				msg_col.unshift({ "role": "system", "content": `${user_description}` });
 			}
-
-			// let member_list = await this.get_member_list(msg);
 
 			// adding the bot information to system content
 			let beans_bot_description = `Your name is Buttercup. You're Rabeea's (Ruby's) personal emotional support and provider of information.`;
@@ -85,13 +83,12 @@ module.exports = {
 				msg_col.unshift({ "role": "system", "content": `${user_description}` });
 			}
 
-			// let member_list = await this.get_member_list(msg);
-
 			// adding the bot information to system content
 			let db_beans_bot = await require('../utility/queries').user(discord_client.user.id);
 			let beans_bot_description = db_beans_bot?.description ? `${db_beans_bot.description}` : `Your name is Beans. You're a helpful assistant in a discord server.`;
 			msg_col.unshift({ "role": "system", "content": `${beans_bot_description} Answer as concisely as possible when helping others.` });
 
+			if (msg_col.find(m => m.content == '')) return;
 
 			// set up the axios client auth
 			const axios_client = require("axios").create({ headers: { Authorization: "Bearer " + process.env.OPENAI_API_KEY } });
@@ -211,24 +208,6 @@ module.exports = {
 		}
 
 		return { username, nickname, pronouns, days_of_membership };
-	},
-	async get_member_list(msg) {
-		let members = await msg.guild.members.fetch();
-
-		let date = Date.now();
-		let seconds_in_a_day = 86400;
-
-		let count = 0;
-		let member_list = '';
-		for (let member of members) {
-			member = member[1];
-			if (member.user.bot) continue;
-			count++;
-
-			let days_of_membership = ((date - member.joinedTimestamp) / (seconds_in_a_day * 1000)).toFixed(0);
-
-			member_list += `${member.user.username}, ${member.nickname ? member.nickname : 'N/A'}, ${pronouns}, ${days_of_membership}, [${roles}]`;
-		}
 	}
 }
 
