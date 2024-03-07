@@ -12,5 +12,11 @@ module.exports = {
 
         timer[attribute] = current_time_in_seconds;
         return true;
+    },
+    reset_timer(msg, cmd) {
+        let attribute = `${msg.author.id}_${cmd}`;
+        if (timer.hasOwnProperty(attribute)) {
+            delete timer[attribute];
+        }
     }
 }

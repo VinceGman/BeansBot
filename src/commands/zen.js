@@ -114,6 +114,7 @@ module.exports = {
             zen_embed.addFields({ name: `Path: ${path}`, value: `Rolled (${dice_1}, ${dice_2}): ${dice_sum}`, inline: false })
 
             msg.channel.send({ embeds: [zen_embed] });
+            require('../utility/timers').reset_timer(msg, this.name); // release resource
             return;
         }
         catch (err) {

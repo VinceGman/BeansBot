@@ -13,7 +13,7 @@ module.exports = {
     category: 'cards',
     admin: false,
     type: "production",
-    cooldown: 2,
+    cooldown: 60,
     async execute(discord_client, msg, args, admin) {
         const { EmbedBuilder } = require('discord.js');
 
@@ -118,6 +118,7 @@ module.exports = {
             .setTimestamp();
 
         msg.channel.send({ embeds: [pay_result] });
+        require('../utility/timers').reset_timer(msg, this.name); // release resource
         return;
     },
     async return_card(card, msg) {

@@ -109,6 +109,7 @@ module.exports = {
             if (random) trip_embed.addFields({ name: `Random`, value: `Bet: ${comma_adder.add(Math.trunc(bet))}`, inline: false });
 
             msg.channel.send({ embeds: [trip_embed] });
+            require('../utility/timers').reset_timer(msg, this.name); // release resource
             return;
         }
         catch (err) {

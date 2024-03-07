@@ -268,6 +268,7 @@ module.exports = {
             }, { merge: true });
 
             this.print_blackjack(msg, game.print_game(), winnings, random, bet);
+            require('../utility/timers').reset_timer(msg, this.name); // release resource
         });
 
         collector.on('collect', m => {
