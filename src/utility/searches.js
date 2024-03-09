@@ -23,7 +23,7 @@ module.exports = {
     compound_search(type, term) {
         let fuzzy_matches = this.search(type, term);
         let best_match = fuzzy_matches[0];
-        let true_matches = fuzzy_matches.filter(match => match.includes(best_match));
+        let true_matches = fuzzy_matches.filter(match => match.includes(best_match) || match.toLowerCase().includes(term));
         return true_matches;
     }
 }
