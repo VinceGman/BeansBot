@@ -11,10 +11,10 @@ module.exports = {
     search(type, term) {
         switch (type) {
             case 'name':
-                return names_set_data.search(term).sort((a, b) => (b.key == term) - (a.key == term) || b.score - a.score).map(name => name.item);
+                return names_set_data.search(term).sort((a, b) => (b.item.toLowerCase() == term) - (a.item.toLowerCase() == term) || b.score - a.score).map(name => name.item);
                 break;
             case 'collection':
-                return collections_set_data.search(term).sort((a, b) => (b.key == term) - (a.key == term) || b.score - a.score).map(collection => collection.item);;
+                return collections_set_data.search(term).sort((a, b) => (b.item.toLowerCase() == term) - (a.item.toLowerCase() == term) || b.score - a.score).map(collection => collection.item);
                 break;
             default:
                 return false;
