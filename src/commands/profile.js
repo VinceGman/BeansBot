@@ -14,7 +14,7 @@ let textWrap = 2000;
 module.exports = {
     name: 'profile',
     alias: ['p'],
-    options: ['i', 'c'],
+    options: ['i', 'c', 'u'],
     description: "set profile",
     category: 'utility',
     admin: false,
@@ -151,6 +151,10 @@ module.exports = {
         let lootbox_total_cards_limit = db_user?.lootbox_total_cards_limit ? +db_user.lootbox_total_cards_limit : 100; // if not there, 200
 
         let owned = (await db.collection('anime_cards').where(`${msg.guildId}_owner_id`, '==', id).orderBy("rank", "asc").get())._docs();
+
+        if (options.includes('u')) {
+            owned = owned.filter(o => o._fieldsProto[`${msg.guildId}_protected`][o._fieldsProto[`${msg.guildId}_protected`].valueType] == false);
+        }
 
         if (options.includes('c')) {
             owned = owned.filter(o => o._fieldsProto[`${msg.guildId}_locked`][o._fieldsProto[`${msg.guildId}_locked`].valueType] == false)
