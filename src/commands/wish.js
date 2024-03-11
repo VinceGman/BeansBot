@@ -28,7 +28,7 @@ module.exports = {
 
         if (msg.content.toLowerCase() == '+wishlist') options = options.filter(op => op != 'i');
 
-        if ((msg.content.toLowerCase().startsWith('+wish') && !msg.content.toLowerCase().startsWith('+wishlist') && args.length != 1) || (msg.content.toLowerCase().startsWith('+unwish') && args.length != 1)) {
+        if ((msg.content.toLowerCase().startsWith('+wish') && !msg.content.toLowerCase().startsWith('+wishlist') && args.length == 0) || (msg.content.toLowerCase().startsWith('+unwish') && args.length == 0)) {
             this.wish_guide(msg);
             return;
         }
@@ -131,7 +131,7 @@ module.exports = {
                 .setThumbnail(db_user.pref_image ?? discord_user.displayAvatarURL())
                 .setColor(db_user.pref_color ?? discord_user.displayHexColor)
                 .addFields({ name: 'Wish Chances', value: `${1 + (wish_chance * 2)}x more likely to roll a wish`, inline: false })
-                .setFooter({ text: `${characters.length}/5` })
+                .setFooter({ text: `${characters.length}/${wishlist_max_size}` })
                 .setTimestamp();
 
             if (db_user.pref_status != null && db_user.pref_status != '') {
