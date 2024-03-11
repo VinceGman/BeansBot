@@ -125,10 +125,11 @@ module.exports = {
             }
         }
         else {
+            let discord_user = await msg.guild.members.fetch(msg.author.id);
             let profile_embed = new EmbedBuilder()
-                .setTitle(`${wrapText(`${db_user.pref_name ?? user.nickname ?? user.displayName}`, textWrap)}`)
-                .setThumbnail(db_user.pref_image ?? user.displayAvatarURL())
-                .setColor(db_user.pref_color ?? user.displayHexColor)
+                .setTitle(`${wrapText(`${db_user.pref_name ?? discord_user.nickname ?? discord_user.displayName}`, textWrap)}`)
+                .setThumbnail(db_user.pref_image ?? discord_user.displayAvatarURL())
+                .setColor(db_user.pref_color ?? discord_user.displayHexColor)
                 .addFields({ name: 'Wish Chances', value: `${1 + (wish_chance * 2)}x more likely to roll a wish`, inline: false })
                 .setFooter({ text: `${characters.length}/5` })
                 .setTimestamp();
