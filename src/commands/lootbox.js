@@ -29,6 +29,9 @@ module.exports = {
         let lootbox_legendary_chance = db_user?.lootbox_legendary_chance ? +db_user.lootbox_legendary_chance : 10; // +10
         let lootbox_ultimate_chance = db_user?.lootbox_ultimate_chance ? +db_user.lootbox_ultimate_chance : 1; // +10
 
+        let wishlist = db_user?.wishlist ? db_user.wishlist : [];
+        let wish_chance = db_user?.wish_chance ? +db_user.wish_chance : 5;
+
         let current_time_in_seconds = Math.floor(Date.now() / 1000);
         if ((current_time_in_seconds - lootbox_flips_timestamp) >= 3600) {
             lootbox_flips_per_hour = 0;
@@ -52,6 +55,13 @@ module.exports = {
         if (!(await require('../utility/credits').transaction(discord_client, msg, card_cost))) return; // credits manager validates transaction
 
         let roll_num = Math.floor(Math.random() * 20000) + 1; // [1, 20000]
+
+        for (let i = wishlist.length - 1; i >= 0; i--) {
+            if (Math.abs(+wishlist[i] - roll_num) <= wish_chance) {
+                roll_num = +wishlist[i];
+            }
+        }
+
         try {
             var character = (await db.collection('anime_cards').where(`${msg.guildId}_owned`, "==", false).where("rank", ">=", roll_num).orderBy("rank", "asc").limit(1).get())?._docs()?.[0]?.data(); // retrieve character from database
             if (!character) throw 'no character';
@@ -144,6 +154,7 @@ module.exports = {
             await new Promise(r => setTimeout(r, 6000));
             if (success) {
                 rolling_msg.edit({ embeds: [await require('../utility/embeds').make_card_embed(discord_client, msg, character)] });
+                require('../commands/wish').notice_wishlist(discord_client, rolling_msg, character);
             }
             else {
                 rolling_msg.edit(await this.rolling_embed(msg, character, 'failure', chance));
