@@ -20,6 +20,7 @@
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
     "@shineiichijo/marika": "^2.0.6",
+    "an-array-of-english-words": "^2.0.0",
     "axios": "^1.2.3",
     "chartjs-to-image": "^1.2.2",
     "coinlore-crypto-prices": "^0.1.1",
@@ -39,7 +40,6 @@
     "lodash.permutations": "^1.0.0",
     "nasa-apod": "^0.2.0",
     "nodemon": "^2.0.15",
-    "random-words": "^2.0.1",
     "validate-color": "^2.2.1",
     "wrap-text": "^1.0.9"
   }
