@@ -27,11 +27,11 @@ module.exports = {
             this.show_puzzle(msg, args);
             return;
         }
-        else if (['guide', 'tutorial', 'help', 'example', 'ex'].includes(args.join(' ').toLowerCase())) {
+        else if (['guide', 'example', 'ex'].includes(args.join(' ').toLowerCase())) {
             this.capital_guide(msg);
             return;
         }
-        else if (['pass', 'skip', 'clear'].includes(args.join(' ').toLowerCase())) {
+        else if (['skip'].includes(args.join(' ').toLowerCase())) {
             await db.doc(`members/${msg.author.id}`).set({
                 capital_puzzle: FieldValue.delete(),
             }, { merge: true });
@@ -189,7 +189,7 @@ module.exports = {
 
         const { generate } = await import('random-words');
 
-        let solution = generate({ maxLength: Math.min((Math.floor(capital_income / 48000) + 4), 26) });
+        let solution = generate({ minLength: Math.min((Math.floor(capital_income / 48000) + 4), 26) });
         let puzzle = require('lodash').shuffle(solution).join('');
         let pay = (puzzle.length * 400).toString();
 
