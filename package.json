@@ -39,6 +39,7 @@
     "lodash.permutations": "^1.0.0",
     "nasa-apod": "^0.2.0",
     "nodemon": "^2.0.15",
+    "random-words": "^2.0.1",
     "validate-color": "^2.2.1",
     "wrap-text": "^1.0.9"
   }
