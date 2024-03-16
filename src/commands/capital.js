@@ -166,8 +166,8 @@ module.exports = {
         let letters = '';
         let solution = '';
 
-        let problem_length = Math.floor(capital_income / 192000) + 5;
-        let pay = (problem_length * 100).toString();
+        let problem_length = Math.floor(capital_income / 96000) + 5;
+        let pay = (problem_length * 200).toString();
 
         let numbers_range = Math.min((Math.floor(capital_income / 48000) + 3), 9);
         let letters_range = Math.min((Math.floor(capital_income / 48000) + 3), 26);
@@ -187,11 +187,12 @@ module.exports = {
     async anagram(capital_income) {
         let type = 'Anagram';
 
-        const { generate } = await import('random-words');
+        let words = require('an-array-of-english-words')
+        words = words.filter(word => word.length >= 5 && word.length <= (Math.floor(capital_income / 96000) + 5));
 
-        let solution = generate({ maxLength: (Math.floor(capital_income / 48000) + 4) });
+        let solution = words[Math.floor(Math.random() * words.length)].toUpperCase();
         let puzzle = require('lodash').shuffle(solution).join('');
-        let pay = (puzzle.length * 100).toString();
+        let pay = (puzzle.length * 200).toString();
 
         return { puzzle: puzzle, solution: solution, type: type, pay: pay };
     }
