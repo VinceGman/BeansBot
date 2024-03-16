@@ -189,7 +189,7 @@ module.exports = {
 
         const { generate } = await import('random-words');
 
-        let solution = generate({ minLength: 4, maxLength: Math.floor(capital_income / 48000) + 4 });
+        let solution = generate({ minLength: 12, maxLength: Math.floor(capital_income / 48000) + 4 });
         let puzzle = require('lodash').shuffle(solution).join('');
         let pay = (puzzle.length * 250).toString();
 
