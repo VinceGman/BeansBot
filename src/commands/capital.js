@@ -167,7 +167,7 @@ module.exports = {
         let solution = '';
 
         let problem_length = Math.floor(capital_income / 192000) + 5;
-        let pay = (problem_length * 250).toString();
+        let pay = (problem_length * 200).toString();
 
         let numbers_range = Math.min((Math.floor(capital_income / 48000) + 3), 9);
         let letters_range = Math.min((Math.floor(capital_income / 48000) + 3), 26);
@@ -189,9 +189,9 @@ module.exports = {
 
         const { generate } = await import('random-words');
 
-        let solution = generate({ minLength: 12, maxLength: Math.floor(capital_income / 48000) + 4 });
+        let solution = generate({ maxLength: (Math.floor(capital_income / 48000) + 4) });
         let puzzle = require('lodash').shuffle(solution).join('');
-        let pay = (puzzle.length * 250).toString();
+        let pay = (puzzle.length * 100).toString();
 
         return { puzzle: puzzle, solution: solution, type: type, pay: pay };
     }
