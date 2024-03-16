@@ -20,7 +20,7 @@ module.exports = {
     description: "earn credits with capital games",
     category: 'credits',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 3,
     async execute(discord_client, msg, args, admin) {
         if (args.length == 0) {
