@@ -20,7 +20,7 @@ module.exports = {
     description: "earn credits with capital games",
     category: 'credits',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 3,
     async execute(discord_client, msg, args, admin) {
         if (args.length == 0) {
@@ -167,7 +167,7 @@ module.exports = {
         let solution = '';
 
         let problem_length = Math.floor(capital_income / 192000) + 5;
-        let pay = (problem_length * 200).toString();
+        let pay = (problem_length * 100).toString();
 
         let numbers_range = Math.min((Math.floor(capital_income / 48000) + 3), 9);
         let letters_range = Math.min((Math.floor(capital_income / 48000) + 3), 26);
