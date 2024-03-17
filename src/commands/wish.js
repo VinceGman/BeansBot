@@ -93,7 +93,7 @@ module.exports = {
             .setTitle(`Wish Guide`)
             .setDescription(`Wishing for a card increases your chances of rolling it and notifies you when it's rolled.`)
             .setColor('#000000')
-            .addFields({ name: 'Wish Chances', value: `${1 + (wish_chance * 2)}x more likely to roll a wish`, inline: false })
+            .addFields({ name: 'Wish Chances', value: `${(wish_chance * 2)}x more likely to roll a wish`, inline: false })
             .addFields({ name: '+wish 12', value: `Adds card with rank #12 to wishlist`, inline: false })
             .addFields({ name: '+unwish 12', value: `Removes card with rank #12 from wishlist`, inline: false })
             .addFields({ name: '+wishlist', value: `Shows wishlist`, inline: false })
@@ -130,7 +130,7 @@ module.exports = {
                 .setTitle(`${wrapText(`${db_user.pref_name ?? discord_user.nickname ?? discord_user.displayName}`, textWrap)}`)
                 .setThumbnail(db_user.pref_image ?? discord_user.displayAvatarURL())
                 .setColor(db_user.pref_color ?? discord_user.displayHexColor)
-                .addFields({ name: 'Wish Chances', value: `${1 + (wish_chance * 2)}x more likely to roll a wish`, inline: false })
+                .addFields({ name: 'Wish Chances', value: `${(wish_chance * 2)}x more likely to roll a wish`, inline: false })
                 .setFooter({ text: `${characters.length}/${wishlist_max_size}` })
                 .setTimestamp();
 

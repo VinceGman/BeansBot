@@ -89,7 +89,7 @@ module.exports = {
                 .setTitle(`Upgrade`)
                 .setDescription(`Increased Wish Chance`)
                 .setColor('#000000')
-                .addFields({ name: 'Wish Chance Multiplier', value: `${1 + ((wish_chance - 2)*2)}x -> **${1 + (wish_chance * 2)}x**`, inline: false })
+                .addFields({ name: 'Wish Chance Multiplier', value: `${((wish_chance - 2)*2)}x -> **${(wish_chance * 2)}x**`, inline: false })
                 .addFields({ name: 'Cost', value: `1,000,000 credits`, inline: false })
                 .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
@@ -140,7 +140,7 @@ module.exports = {
             .setColor('#000000')
             .addFields({ name: '+upgrade income', value: `Increases your total income charges by 1\nCurrent: ${income_max_charges} charges`, inline: false })
             .addFields({ name: '+upgrade inventory', value: `Increases your card inventory limit by 100\nCurrent: ${lootbox_total_cards_limit} cards`, inline: false })
-            .addFields({ name: '+upgrade wish chance', value: `Increases your wish chance by 4x\nCurrent: ${1 + (wish_chance * 2)}x`, inline: false })
+            .addFields({ name: '+upgrade wish chance', value: `Increases your wish chance by 4x\nCurrent: ${(wish_chance * 2)}x`, inline: false })
             .addFields({ name: '+upgrade wishlist size', value: `Increases your wishlist size by 1\nCurrent: ${wishlist_max_size} wishes`, inline: false })
             .setFooter({ text: `${msg.author.username}` })
             .setTimestamp();
