@@ -95,7 +95,7 @@ module.exports = {
             try {
                 let capital_income = db_user?.[`capital_income_${capital_puzzle.type}`] ? +db_user[`capital_income_${capital_puzzle.type}`] : 0;
                 if (capital_income < example_max_income) {
-                    let example_puzzle = await this[capital_puzzle.type.toLowerCase()](0);
+                    let example_puzzle = await this[capital_puzzle.type](0);
                     capital_guide.addFields({ name: `${capital_puzzle.type} - Example`, value: `\`\`\`\nExample:\n${example_puzzle.puzzle}\n\nSolution:\n${example_puzzle.solution}\n\`\`\``, inline: false });
                 }
             }
@@ -142,10 +142,10 @@ module.exports = {
 
         let type;
         try {
-            type = types_searcher.search(get_puzzle_method)[0].key;
+            type = types_searcher.search(get_puzzle_method)[0].item;
         }
         catch (err) {
-            type = 'glyphix';
+            type = 'Glyphix';
         }
 
         let db_user = await require('../utility/queries').user(msg.author.id);
@@ -159,7 +159,7 @@ module.exports = {
 
         return capital_puzzle;
     },
-    async glyphix(capital_income) {
+    async Glyphix(capital_income) {
         let type = 'Glyphix';
 
         let numbers = '';
@@ -184,10 +184,10 @@ module.exports = {
 
         return { puzzle: puzzle, solution: solution, type: type, pay: pay }
     },
-    async anagram(capital_income) {
+    async Anagram(capital_income) {
         let type = 'Anagram';
 
-        let words = require('an-array-of-english-words')
+        let words = require('an-array-of-english-words');
         words = words.filter(word => word.length >= 5 && word.length <= (Math.floor(capital_income / 96000) + 5));
 
         let solution = words[Math.floor(Math.random() * words.length)].toUpperCase();
