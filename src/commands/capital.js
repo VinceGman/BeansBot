@@ -187,8 +187,8 @@ module.exports = {
     async Anagram(capital_income) {
         let type = 'Anagram';
 
-        let words = require('an-array-of-english-words');
-        words = words.filter(word => word.length >= 5 && word.length <= (Math.floor(capital_income / 96000) + 5));
+        let words = require('../utility/english-words');
+        words = words.filter(word => word.length >= 5 && word.length <= (Math.floor(capital_income / 96000) + 5) && !word.includes('-') && !word.includes('(') && !word.includes(')') && !word.includes('\''));
 
         let solution = words[Math.floor(Math.random() * words.length)].toUpperCase();
         let puzzle = require('lodash').shuffle(solution).join('');
