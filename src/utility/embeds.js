@@ -17,7 +17,7 @@ module.exports = {
         }
         else {
             character_embed.setTitle(`${wrapText(character.name, textWrap)}`)
-                .setDescription(`${wrapText(character.origin, textWrap)}`)
+                .setDescription(`${wrapText(`${character.origin}${character.rating.startsWith('R+') || character.rating.startsWith('Rx') ? ' - 🔞' : ''}`, textWrap)}`)
                 .setImage(`${character.image}`)
                 .setColor(character.color)
                 .addFields({ name: 'Rank', value: `#${character.rank_text}`, inline: true })
@@ -28,13 +28,20 @@ module.exports = {
         character_embed.setFooter({ text: 'Beans - ACC' }).setTimestamp();
 
         msg.channel.send({ embeds: [character_embed] });
+        // const messagePromise = msg.channel.send({ embeds: [character_embed] });
+
+        // return messagePromise.then(async sentMessage => {
+        //     await new Promise(r => setTimeout(r, 10000));
+        //     msg.channel.send('this is being sent after');
+        //     return sentMessage;
+        // });
     },
     async make_card_embed(discord_client, msg, character, profile = false) {
         let character_embed = new EmbedBuilder();
 
         if (!character[`${msg.guildId}_locked`] || !profile) {
             character_embed.setTitle(`${wrapText(character.name, textWrap)}`)
-                .setDescription(`${wrapText(character.origin, textWrap)}`)
+                .setDescription(`${wrapText(`${character.origin}${character.rating.startsWith('R+') || character.rating.startsWith('Rx') ? ' - 🔞' : ''}`, textWrap)}`)
                 .setImage(`${character.image}`)
                 .setColor(character.color)
                 .addFields({ name: 'Rank', value: `#${character.rank_text}`, inline: true })
