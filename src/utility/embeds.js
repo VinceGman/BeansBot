@@ -16,8 +16,11 @@ module.exports = {
                 .addFields({ name: 'Owner', value: wrapText(`${msg.author.username}`, textWrap), inline: false })
         }
         else {
+            let rating = '';
+            rating = character.rating.startsWith('R+') ? ' - 🌶️' : '';
+            rating = character.rating.startsWith('Rx') ? ' - 🔞' : '';
             character_embed.setTitle(`${wrapText(character.name, textWrap)}`)
-                .setDescription(`${wrapText(`${character.origin}${character.rating.startsWith('R+') || character.rating.startsWith('Rx') ? ' - 🔞' : ''}`, textWrap)}`)
+                .setDescription(`${wrapText(`${character.origin}${rating}`, textWrap)}`)
                 .setImage(`${character.image}`)
                 .setColor(character.color)
                 .addFields({ name: 'Rank', value: `#${character.rank_text}`, inline: true })
@@ -40,8 +43,11 @@ module.exports = {
         let character_embed = new EmbedBuilder();
 
         if (!character[`${msg.guildId}_locked`] || !profile) {
+            let rating = '';
+            rating = character.rating.startsWith('R+') ? ' - 🌶️' : '';
+            rating = character.rating.startsWith('Rx') ? ' - 🔞' : '';
             character_embed.setTitle(`${wrapText(character.name, textWrap)}`)
-                .setDescription(`${wrapText(`${character.origin}${character.rating.startsWith('R+') || character.rating.startsWith('Rx') ? ' - 🔞' : ''}`, textWrap)}`)
+                .setDescription(`${wrapText(`${character.origin}${rating}`, textWrap)}`)
                 .setImage(`${character.image}`)
                 .setColor(character.color)
                 .addFields({ name: 'Rank', value: `#${character.rank_text}`, inline: true })
