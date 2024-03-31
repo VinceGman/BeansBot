@@ -17,8 +17,8 @@ module.exports = {
         }
         else {
             let rating = '';
-            rating = character.rating.startsWith('R+') ? ' - 🌶️' : '';
-            rating = character.rating.startsWith('Rx') ? ' - 🔞' : '';
+            rating = character.rating.startsWith('R+') ? ' - 🌶️' : rating;
+            rating = character.rating.startsWith('Rx') ? ' - 🔞' : rating;
             character_embed.setTitle(`${wrapText(character.name, textWrap)}`)
                 .setDescription(`${wrapText(`${character.origin}${rating}`, textWrap)}`)
                 .setImage(`${character.image}`)
@@ -44,8 +44,8 @@ module.exports = {
 
         if (!character[`${msg.guildId}_locked`] || !profile) {
             let rating = '';
-            rating = character.rating.startsWith('R+') ? ' - 🌶️' : '';
-            rating = character.rating.startsWith('Rx') ? ' - 🔞' : '';
+            rating = character.rating.startsWith('R+') ? ' - 🌶️' : rating;
+            rating = character.rating.startsWith('Rx') ? ' - 🔞' : rating;
             character_embed.setTitle(`${wrapText(character.name, textWrap)}`)
                 .setDescription(`${wrapText(`${character.origin}${rating}`, textWrap)}`)
                 .setImage(`${character.image}`)
