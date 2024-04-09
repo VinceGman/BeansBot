@@ -28,6 +28,7 @@
     "color-sorter": "^5.0.3",
     "commas": "^1.0.1",
     "cron": "^3.1.6",
+    "crypto-hash": "^3.0.0",
     "discord.js": "^14.14.1",
     "dotenv": "^8.6.0",
     "ejs": "^3.1.9",
