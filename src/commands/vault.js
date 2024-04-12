@@ -13,7 +13,7 @@ let vault_codes = [];
 
 module.exports = {
     name: 'vault',
-    alias: ['hack', 'claim', 'code', 'v'],
+    alias: ['code', 'v'],
     description: "claim a vault code",
     category: 'credits',
     admin: false,
@@ -53,7 +53,7 @@ module.exports = {
         }
 
         try {
-            let salt = '';
+            let salt = (new Date()).toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' });
 
             let hash = (await sha256(`${salt}${msg.author.id}${args.join(' ')}`)).slice(-3);
 
