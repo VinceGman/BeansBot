@@ -24,18 +24,18 @@ module.exports = {
 
         try {
             if (msg.mentions.users.size == 1) {
-                await this.output_value(discord_client, msg, msg.mentions.users.keys().next().value);
+                await this.credits_embed(discord_client, msg, msg.mentions.users.keys().next().value);
                 return;
             }
 
-            await this.output_value(discord_client, msg, msg.author.id);
+            await this.credits_embed(discord_client, msg, msg.author.id);
         }
         catch (err) {
             msg.channel.send('Something went wrong with retrieving credits.');
             return;
         }
     },
-    async output_value(discord_client, msg, id) {
+    async credits_embed(discord_client, msg, id) {
         const { EmbedBuilder } = require('discord.js');
 
         let user = await require('../utility/queries').user(id);
@@ -59,7 +59,7 @@ module.exports = {
             currency_embed.setDescription(wrapText(user.pref_status, textWrap));
         }
 
-        // if (lootbox_value > 0) currency_embed.addFields({ name: 'Lootbox Value', value: `${lootbox_value.toFixed(2)} credits`, inline: false })
+        // if (lootbox_value > 0) currency_embed.addFields({ name: 'Lootbox Value', value: `${comma_adder.add(Math.trunc(lootbox_value))} credits`, inline: false })
         if (stocks_value > 0) currency_embed.addFields({ name: 'Stocks Value', value: `${comma_adder.add(Math.trunc(stocks_value))} credits`, inline: false })
         if (cumulative_value > +user.credits) currency_embed.addFields({ name: 'Cumulative Value', value: `${comma_adder.add(Math.trunc(cumulative_value))} credits`, inline: false })
 
@@ -68,7 +68,7 @@ module.exports = {
     async get_lootbox_value(id) {
         let total = 0;
 
-        let characters = (await db.collection(`edition_one`).where('owner_id', '==', id).get())._docs();
+        let characters = (await db.collection(`anime_cards`).where(`${msg.guildId}_owner_id`, '==', id).get())._docs();
         for (let character of characters) {
             character = character.data();
 
