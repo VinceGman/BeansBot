@@ -84,5 +84,22 @@ module.exports = {
             .setTimestamp();
         msg.channel.send({ embeds: [notice_embed] });
         return;
+    },
+    async personalized_embed(msg, id = msg.author.id, db_user, guild_member) {
+        db_user = db_user ? db_user : await require('../utility/queries').user(id);
+        guild_member = guild_member ? guild_member : await msg.guild.members.fetch(id);
+
+        let personalized_embed = new EmbedBuilder()
+            .setTitle(`${wrapText(`${db_user.pref_name ?? guild_member.nickname ?? guild_member.displayName}`, textWrap)}`)
+            .setThumbnail(db_user.pref_image ?? guild_member.displayAvatarURL())
+            .setColor(db_user.pref_color ?? guild_member.displayHexColor)
+            .setFooter({ text: `${msg.author.username}` })
+            .setTimestamp();
+
+        if (db_user.pref_status) {
+            personalized_embed.setDescription(wrapText(db_user.pref_status, textWrap));
+        }
+
+        return { db_user, guild_member, personalized_embed };
     }
 }
