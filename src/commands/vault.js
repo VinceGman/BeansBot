@@ -10,6 +10,7 @@ const { EmbedBuilder } = require('discord.js');
 const { sha256 } = require('../utility/hash')
 
 let vault_codes = [];
+let vault_codes_reset_timestamp = 0;
 
 module.exports = {
     name: 'vault',
@@ -22,30 +23,38 @@ module.exports = {
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
-        if (vault_codes.length == 0) await this.create_codes(200);
+        let midnight_in_seconds = ((new Date()).setHours(0, 0, 0, 0)) / 1000;
+        if (midnight_in_seconds - vault_codes_reset_timestamp >= 86400) {
+            vault_codes = [];
+            vault_codes_reset_timestamp = midnight_in_seconds;
+            await this.create_codes(200);
+        }
 
         if (args.length == 0) {
             let pages = [];
-            let page_num = 1;
             let codes_list = '';
-            for (let i = 0; i < vault_codes.length; i++) {
-                codes_list += !vault_codes[i].hasOwnProperty('claimed') ? `=> ${vault_codes[i].code}\n` : `=> ${vault_codes[i].code} => **${vault_codes[i].claimed}**\n`;
+            let i = 0;
+            do {
+                if (vault_codes.length != 0) {
+                    codes_list += !vault_codes[i].hasOwnProperty('claimed') ? `=> ${vault_codes[i].code}\n` : `=> ${vault_codes[i].code} => **${vault_codes[i].claimed}**\n`;
+                }
 
-                if (codes_list.length > 900 || ((i + 1) % 20 == 0)) {
+                if (codes_list.length > 900 || ((i + 1) % 20 == 0) || ((i + 1) >= vault_codes.length)) {
+                    codes_list = vault_codes.length == 0 ? '[none]' : codes_list;
                     let hash_guide = new EmbedBuilder()
                         .setTitle(`Vault Guide`)
                         .setDescription(`Everything you type will generate a unique hash. You're paid if you match a vault code. Each vault code pays 50,000 credits.`)
                         .setColor('#37914f')
                         .addFields({ name: '+vault <input>', value: `You're paid for vault codes that match the hashed input.`, inline: false })
-                        .addFields({ name: `Codes - ${page_num}`, value: `${codes_list}`, inline: false })
+                        .addFields({ name: `Codes${vault_codes.length == 0 ? '' : ` - ${Math.floor(i / 20) + 1}`}`, value: `${codes_list}`, inline: false })
                         .setFooter({ text: `${msg.author.username}` })
                         .setTimestamp();
 
                     pages.push(hash_guide);
-                    page_num++;
                     codes_list = '';
                 }
-            }
+                i++;
+            } while (i < vault_codes.length);
 
             await require('../utility/pagination').paginationEmbed(msg, pages);
             require('../utility/timers').reset_timer(msg, this.name); // release resource
@@ -69,11 +78,14 @@ module.exports = {
 
                 let db_user = await require('../utility/queries').user(msg.author.id);
                 let vault_total = db_user?.vault_total ? +db_user.vault_total : 0;
+                let vault_hits = db_user?.vault_hits ? +db_user.vault_hits : 0;
 
                 vault_total += +code.reward;
+                vault_hits += 1;
 
                 await db.doc(`members/${msg.author.id}`).set({
                     vault_total: vault_total.toString(),
+                    vault_hits: vault_hits.toString(),
                 }, { merge: true });
 
                 await require('../utility/credits').refund(discord_client, msg.author.id, +code.reward); // credits manager refunds credits
