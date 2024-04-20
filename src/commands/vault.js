@@ -115,11 +115,13 @@ module.exports = {
             return;
         }
     },
-    async create_codes(count, reward = '50000') {
+    async create_codes(count) {
         let seed = Math.floor(Date.now() / 1000);
         for (let i = 1; i <= count; i++) {
-            vault_codes.push({
-                reward: reward.toString(), code: (await sha256(`${seed}${i}`)).slice(-3)
+            let reward = Math.floor(Math.random() * 50000) + 1;
+            vault_codes.push({ 
+                reward: reward.toString(), 
+                code: (await sha256(`${seed}${i}`)).slice(-3) 
             })
         }
     }
