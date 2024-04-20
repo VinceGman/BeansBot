@@ -64,8 +64,9 @@ discord_client.on('ready', async () => {
 				[new EmbedBuilder()
 					.setColor(`#000000`)
 					.setTitle(`System Restart`)
-					.setDescription(`run_env: **${run_type}**`)
-					.setFooter({ text: `Beans Staff Message` })
+					.addFields({ name: 'Env', value: `${run_type}`, inline: false })
+					.addFields({ name: 'Time', value: `${new Date().toLocaleTimeString('en-US', { hour12: false, timeZoneName: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 })}`, inline: false })
+					.setFooter({ text: `${discord_client.user.username}` })
 					.setTimestamp()]
 		});
 	}
@@ -125,14 +126,16 @@ discord_client.on('messageCreate', async msg => {
 			for (let scope of discord_client.commands.get(command).scopes ?? ['commands']) {
 				if (scope == 'commands' && msg.channel.name.includes('command')) execute = true;
 				if (scope == 'global') execute = true;
-				if (msg.channel.id == scope) execute = true;
+				if (scope == msg.channel.id) execute = true;
 			}
 
 			if (!execute) return;
-			discord_client.commands.get(command).execute(discord_client, msg, args, admin);
+			// if (!require('../utility/timers').timer(msg, command, this.cooldown)) return; // timers manager checks cooldown
+			await discord_client.commands.get(command).execute(discord_client, msg, args, admin);
+			// require('../utility/timers').reset_timer(msg, command);
 		}
 		catch (err) {
-			// console.error(err);
+			console.error(`Error(${command}): ${err}`);
 		}
 	}
 	else {
@@ -151,6 +154,7 @@ discord_client.on('messageCreate', async msg => {
 		}
 		catch (err) {
 			// error
+			console.log(err);
 		}
 	}
 });
