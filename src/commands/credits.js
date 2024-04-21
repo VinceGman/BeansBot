@@ -42,7 +42,7 @@ module.exports = {
         let user_discord = msg.guild.members.cache.find(user => user.id === id);
 
         // let lootbox_value = await this.get_lootbox_value(id);
-        let stocks_value = await this.get_stocks_value(id);
+        let stocks_value = await this.get_stocks_value(msg, id);
 
         // let cumulative_value = +user.credits + +lootbox_value + +stocks_value;
         let cumulative_value = +user.credits + +stocks_value;
@@ -101,7 +101,7 @@ module.exports = {
 
         return total;
     },
-    async get_stocks_value(id) {
+    async get_stocks_value(msg, id) {
         let total = 0;
 
         let user = await require('../utility/queries').user(msg.guildId, id);
