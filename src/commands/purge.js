@@ -8,9 +8,11 @@ const db = new Firestore({
 const comma_adder = require('commas');
 
 module.exports = {
+    name: 'purge',
     description: "purge your cards",
     category: 'cards',
     admin: false,
+    type: "production",
     cooldown: 60,
     async execute(discord_client, msg, args, admin) {
         const { EmbedBuilder } = require('discord.js');
@@ -65,36 +67,45 @@ module.exports = {
         cards = cards.map(card => card.data());
 
         let _ = require('lodash');
+        cards = _.uniqBy(cards, 'rank_text');
 
         if (cards.length >= 10) {
             var warning_msg = await msg.reply('Purging cards. Please wait, it may take a moment.');
         }
 
+        let refund_value = 0;
         for (let card of cards) {
+            let value = 0;
             switch (card.rarity) {
                 case 'Common':
+                    value = 250;
                     break;
                 case 'Uncommon':
+                    value = 500;
                     break;
                 case 'Rare':
+                    value = 2500;
                     break;
                 case 'Epic':
+                    value = 5000;
                     break;
                 case 'Legendary':
+                    value = 15000;
                     break;
                 case 'Ultimate':
+                    value = 25000;
                     break;
                 default:
+                    value = 0;
             }
 
+            refund_value += value;
 
             await this.return_card(card, msg);
         };
 
-        await require('../utility/credits').refund(discord_client, msg.author.id, refund_value); // credits manager refunds on error
-        await require('../utility/data_management').update_user_card_count(msg.author.id, cards.length * -1);
-        await require('../utility/credits').refund(discord_client, msg, msg.author.id, total_refund_value); // credits manager refunds on error
-        await require('../utility/data_management').update_user_card_count(msg.guildId, msg.author.id, cards.length * -1);
+        await require('../utility/credits').refund(discord_client, msg, msg.author.id, refund_value); // credits manager refunds on error
+        await require('../utility/data_management').update_user_card_count(msg, msg.author.id, cards.length * -1);
 
         if (warning_msg) warning_msg.delete();
 
@@ -102,6 +113,7 @@ module.exports = {
             .setTitle(`Purge Payment`)
             .setColor('#37914f')
             .addFields({ name: `Purged`, value: `${cards.length} ${cards.length == 1 ? 'card' : 'cards'}`, inline: true })
+            .addFields({ name: `Amount`, value: `+${comma_adder.add(Math.trunc(refund_value))} credits`, inline: true })
             .setFooter({ text: `${msg.author.username}` })
             .setTimestamp();
 
