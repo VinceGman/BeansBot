@@ -6,12 +6,15 @@ const db = new Firestore({
     keyFilename: './service-account.json'
 });
 
+const comma_adder = require('commas');
+
 module.exports = {
     name: 'buy',
+    alias: ['testbuy'],
     description: "buy stocks",
     category: 'stocks',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 4,
     async execute(discord_client, msg, args, admin) {
         try {
@@ -69,7 +72,7 @@ module.exports = {
             }
 
             if (+stock_db.public < quantity) {
-                msg.channel.send(`Quantity of this stock available: ${+stock_db.public}`);
+                msg.channel.send(`Quantity of **${stock_symbol}** available: ${+stock_db.public}`);
                 return;
             }
 
@@ -110,19 +113,22 @@ module.exports = {
                 public: new_public.toString(),
             }, { merge: true });
 
-            msg.channel.send(`${msg.author.username} - Order Completed: [Buy] ${quantity} ${stock_symbol} (${(cost / quantity).toFixed(2)}/unit) - Cost: ${cost.toFixed(2)}`);
+            let buy_embed = new EmbedBuilder()
+                .setTitle(`Order Filled - [Buy]`)
+                .setColor('#37914f')
+                .addFields({ name: 'Price/Unit', value: `${comma_adder.add((cost / quantity).toFixed(2))}`, inline: true })
+                .addFields({ name: `${stock_symbol}`, value: `${quantity}`, inline: true })
+                .addFields({ name: 'Total Cost', value: `${comma_adder.add(cost.toFixed(2))}`, inline: false })
+                .setFooter({ text: `${msg.author.username}` })
+                .setTimestamp();
+
+            msg.channel.send({ embeds: [buy_embed] });
+            return;
         }
         catch (err) {
             msg.channel.send('Something went wrong.');
+            console.log(err)
             return
         }
     }
 }
-// } else if (isNaN(args[0]) && isNaN(args[1])) {
-//     if (args[0].toLowerCase() == 'max') {
-//         stock_symbol = args[1];
-//         quantity = args[0];
-//     } else if (args[1].toLowerCase() == 'max') {
-//         stock_symbol = args[0];
-//         quantity = args[1];
-//     }
