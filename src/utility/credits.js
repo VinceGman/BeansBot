@@ -100,7 +100,7 @@ module.exports = {
         }); // firestore credentials
 
         let current_time = Math.floor(Date.now() / 1000);
-        let user = await require('./queries').user(msg.author.id);
+        let user = await require('./queries').user(msg.guildId, msg.author.id);
 
         let credits = +user.credits;
         let last_update = user.hasOwnProperty(name) ? +user[name] : 0;

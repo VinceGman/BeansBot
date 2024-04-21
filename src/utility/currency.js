@@ -9,7 +9,7 @@ module.exports = {
     async transaction(discord_client, msg, cost) {
         if (cost == 0) return true;
 
-        let db_user = await require('./queries').user(msg.author.id);
+        let db_user = await require('./queries').user(msg.guildId, msg.author.id);
         let credits = +db_user.credits;
 
         if (credits < cost) {
@@ -28,7 +28,7 @@ module.exports = {
     async refund(discord_client, msg, id, cost) {
         if (cost == 0) return;
 
-        let db_user = await require('./queries').user(id);
+        let db_user = await require('./queries').user(msg.guildId, id);
         let credits = +db_user.credits;
 
         credits += cost;
