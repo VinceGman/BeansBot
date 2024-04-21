@@ -43,7 +43,7 @@ module.exports = {
                     codes_list = vault_codes.length == 0 ? '[none]' : codes_list;
                     let hash_guide = new EmbedBuilder()
                         .setTitle(`Vault Guide`)
-                        .setDescription(`Everything you type will generate a unique hash. You're paid if you match a vault code. Each vault code pays 50,000 credits.`)
+                        .setDescription(`Everything you type will generate a unique hash. You're paid if you match a vault code. Each vault code pays up to 50,000 credits.`)
                         .setColor('#37914f')
                         .addFields({ name: '+vault <input>', value: `You're paid for vault codes that match the hashed input.`, inline: false })
                         .addFields({ name: `Codes${vault_codes.length == 0 ? '' : ` - ${Math.floor(i / 20) + 1}`}`, value: `${codes_list}`, inline: false })
