@@ -30,14 +30,9 @@ module.exports = {
 
         character_embed.setFooter({ text: 'Beans - ACC' }).setTimestamp();
 
-        msg.channel.send({ embeds: [character_embed] });
-        // const messagePromise = msg.channel.send({ embeds: [character_embed] });
+        let char_embed = msg.channel.send({ embeds: [character_embed] });
 
-        // return messagePromise.then(async sentMessage => {
-        //     await new Promise(r => setTimeout(r, 10000));
-        //     msg.channel.send('this is being sent after');
-        //     return sentMessage;
-        // });
+        return await char_embed;
     },
     async make_card_embed(discord_client, msg, character, profile = false) {
         let character_embed = new EmbedBuilder();

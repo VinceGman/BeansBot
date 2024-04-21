@@ -25,9 +25,9 @@ module.exports = {
         let lootbox_flips_per_hour = db_user?.lootbox_flips_per_hour ? +db_user.lootbox_flips_per_hour : 0;
         let lootbox_flips_timestamp = db_user?.lootbox_flips_timestamp ? +db_user.lootbox_flips_timestamp : 0;
 
-        let lootbox_epic_chance = db_user?.lootbox_epic_chance ? +db_user.lootbox_epic_chance : 30; // +10
+        let lootbox_epic_chance = db_user?.lootbox_epic_chance ? +db_user.lootbox_epic_chance : 10; // +10
         let lootbox_legendary_chance = db_user?.lootbox_legendary_chance ? +db_user.lootbox_legendary_chance : 10; // +10
-        let lootbox_ultimate_chance = db_user?.lootbox_ultimate_chance ? +db_user.lootbox_ultimate_chance : 1; // +10
+        let lootbox_ultimate_chance = db_user?.lootbox_ultimate_chance ? +db_user.lootbox_ultimate_chance : 10; // +10
 
         let wishlist = db_user?.wishlist ? db_user.wishlist : [];
         let wish_chance = db_user?.wish_chance ? +db_user.wish_chance : 5;
@@ -87,7 +87,8 @@ module.exports = {
                         lootbox_epic_chance += 10;
                     }
                     else {
-                        lootbox_epic_chance = 30;
+                        let overflow = lootbox_epic_chance > 100 ? lootbox_epic_chance - 100 : 0;
+                        lootbox_epic_chance = 10 + overflow;
                     }
                     break;
                 case 'Legendary':
@@ -97,7 +98,8 @@ module.exports = {
                         lootbox_legendary_chance += 10;
                     }
                     else {
-                        lootbox_legendary_chance = 10;
+                        let overflow = lootbox_legendary_chance > 100 ? lootbox_legendary_chance - 100 : 0;
+                        lootbox_legendary_chance = 10 + overflow;
                     }
                     break;
                 case 'Ultimate':
@@ -107,7 +109,8 @@ module.exports = {
                         lootbox_ultimate_chance += 10;
                     }
                     else {
-                        lootbox_ultimate_chance = 1;
+                        let overflow = lootbox_ultimate_chance > 100 ? lootbox_ultimate_chance - 100 : 0;
+                        lootbox_ultimate_chance = 10 + overflow;
                     }
                     break;
             }
@@ -154,14 +157,15 @@ module.exports = {
             await new Promise(r => setTimeout(r, 6000));
             if (success) {
                 rolling_msg.edit({ embeds: [await require('../utility/embeds').make_card_embed(discord_client, msg, character)] });
-                require('../commands/wish').notice_wishlist(discord_client, rolling_msg, character);
+                require('../commands/wish').notice_wishlist(rolling_msg, character);
             }
             else {
                 rolling_msg.edit(await this.rolling_embed(msg, character, 'failure', chance));
             }
         }
         else {
-            require('../utility/embeds').print_lootbox(msg, character);
+            let lootbox_msg = require('../utility/embeds').print_lootbox(msg, character);
+            require('../commands/wish').notice_wishlist(await lootbox_msg, character);
         }
 
         require('../utility/timers').reset_timer(msg, this.name); // release resource
@@ -173,7 +177,7 @@ module.exports = {
             case 'pending':
                 rolling_embed
                     .addFields({ name: 'Roll', value: `Pending...`, inline: true })
-                    .addFields({ name: 'Chance', value: `${chance}%`, inline: true })
+                    .addFields({ name: 'Chance', value: `${chance > 100 ? 100 : chance}%`, inline: true })
                     .setImage(`https://cdn.discordapp.com/attachments/1185611459921711134/1216158640860565634/lock_bg.gif?ex=65ff5eff&is=65ece9ff&hm=17d77b11d56c8856071871853627b17560425edd081be9d6b6324eae2f05cffe&`)
                     .setColor(character.color)
                     .setFooter({ text: 'Beans - ACC' })
