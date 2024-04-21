@@ -25,6 +25,23 @@ module.exports = {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
         let options = require('../utility/parsers').parse_command(msg, this.name, this.alias);
 
+        // try {
+        //     const { Anime } = require("@shineiichijo/marika"); // const { Anime, Character, Manga } = require("@shineiichijo/marika")
+        //     const animeClient = new Anime();
+
+        //     let result = (await animeClient.searchAnime(args.join(' ')))?.data?.[0];
+        //     let anime = (await animeClient.getAnimeFullById(result?.mal_id));
+
+        //     let relations_title = anime?.relations?.[0]?.entry?.[0]?.name;
+
+        //     console.log(relations_title);
+
+        //     if (relations_title) args = relations_title.split(' ');
+        // }
+        // catch (err) {
+        //     // silently fail
+        // }
+
         if (options.includes('o')) {
             var { matches, characters } = await require('../utility/queries').owned_collection(msg, args);
         }

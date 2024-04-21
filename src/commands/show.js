@@ -24,6 +24,23 @@ module.exports = {
         }
 
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
+
+        // if (isNaN(args.join(' '))) {
+        //     try {
+        //         const { Character } = require("@shineiichijo/marika");
+        //         const charaClient = new Character();
+
+        //         let results = (await charaClient.searchCharacter(args.join(' ')))?.data?.[0]?.name;
+
+        //         if (results) args = results.split(' ');
+
+        //         console.log(await charaClient.getTopCharacters({ query: 1200 }));
+        //     }
+        //     catch (err) {
+        //         // silently fail
+        //     }
+        // }
+
         let characters = await require('../utility/queries').character(msg, args);
         if (!characters) return;
 
