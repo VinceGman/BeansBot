@@ -17,7 +17,7 @@ module.exports = {
     cooldown: 7,
     async execute(discord_client, msg, args, admin) {
         if (args.length == 0) {
-            let db_user = await require('../utility/queries').user(msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let lootbox_legendary_chance = db_user?.lootbox_legendary_chance ? +db_user.lootbox_legendary_chance : 10; // +10
             let lootbox_ultimate_chance = db_user?.lootbox_ultimate_chance ? +db_user.lootbox_ultimate_chance : 1; // +10
 
@@ -45,7 +45,7 @@ module.exports = {
             return;
         }
 
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let lootbox_total_cards = db_user?.lootbox_total_cards ? +db_user.lootbox_total_cards : 0;
         let lootbox_legendary_chance = db_user?.lootbox_legendary_chance ? +db_user.lootbox_legendary_chance : 10; // +10
         let lootbox_ultimate_chance = db_user?.lootbox_ultimate_chance ? +db_user.lootbox_ultimate_chance : 1; // +10
@@ -95,7 +95,7 @@ module.exports = {
         }
 
         try {
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 lootbox_total_cards: lootbox_total_cards.toString(),
                 lootbox_legendary_chance: lootbox_legendary_chance.toString(),
                 lootbox_ultimate_chance: lootbox_ultimate_chance.toString(),

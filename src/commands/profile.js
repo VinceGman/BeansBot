@@ -66,7 +66,7 @@ module.exports = {
     async profile_attribute_change(discord_client, msg, args) {
         if (args.length == 1 && args[0].toLowerCase() == 'clear') {
             try {
-                await db.doc(`members/${msg.author.id}`).update({
+                await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).update({
                     pref_name: FieldValue.delete(),
                     pref_image: FieldValue.delete(),
                     pref_color: FieldValue.delete(),
@@ -120,7 +120,7 @@ module.exports = {
         }
 
         try {
-            await db.doc(`members/${msg.author.id}`).update({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).update({
                 [pref_att]: args[0].toLowerCase() == 'clear' ? FieldValue.delete() : pref_value.toString(),
             });
         }
@@ -155,7 +155,7 @@ module.exports = {
         cards = cards.map(card => card.data());
 
         let guild_member = await msg.guild.members.fetch(id);
-        let db_user = await require('../utility/queries').user(id);
+        let db_user = await require('../utility/queries').user(msg.guildId, id);
         let credits = +db_user.credits;
         let lootbox_total_cards = db_user?.lootbox_total_cards ? +db_user.lootbox_total_cards : 0;
         let lootbox_total_cards_limit = db_user?.lootbox_total_cards_limit ? +db_user.lootbox_total_cards_limit : 100; // if not there, 100

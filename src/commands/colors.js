@@ -176,7 +176,7 @@ module.exports = {
             if (!removing) {
                 if (msg.author.id != role_db.owner_id) {
                     if (!(await require('../utility/credits').transaction(discord_client, msg, 10000))) return; // credits manager validates transaction
-                    await require('../utility/credits').refund(discord_client, role_db.owner_id, 10000); // credits manager refunds credits
+                    await require('../utility/credits').refund(discord_client, msg, role_db.owner_id, 10000); // credits manager refunds credits
                 }
                 await user.roles.add(role);
                 assign_or_remove = 'Assigned';

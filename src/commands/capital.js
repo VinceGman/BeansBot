@@ -32,7 +32,7 @@ module.exports = {
             return;
         }
         else if (['skip'].includes(args.join(' ').toLowerCase())) {
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 capital_puzzle: FieldValue.delete(),
             }, { merge: true });
 
@@ -40,17 +40,17 @@ module.exports = {
             return;
         }
         else {
-            let db_user = await require('../utility/queries').user(msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let capital_income = db_user?.[`capital_income_${db_user?.capital_puzzle?.type}`] ? +db_user[`capital_income_${db_user?.capital_puzzle?.type}`] : 0;
 
             if (db_user?.capital_puzzle) {
                 let capital_puzzle = db_user.capital_puzzle;
                 if (capital_puzzle.solution.toLowerCase() == args.join(' ').toLowerCase()) {
-                    require('../utility/credits').refund(discord_client, msg.author.id, +capital_puzzle.pay); // credits manager refunds on error
+                    require('../utility/credits').refund(discord_client, msg, msg.author.id, +capital_puzzle.pay); // credits manager refunds on error
 
                     capital_income += +capital_puzzle.pay;
 
-                    await db.doc(`members/${msg.author.id}`).set({
+                    await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                         capital_puzzle: FieldValue.delete(),
                         [`capital_income_${capital_puzzle.type}`]: capital_income.toString(),
                     }, { merge: true });
@@ -78,7 +78,7 @@ module.exports = {
         }
     },
     async capital_guide(msg) {
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let capital_puzzle = db_user?.capital_puzzle;
 
         let capital_guide = new EmbedBuilder()
@@ -107,7 +107,7 @@ module.exports = {
         msg.channel.send({ embeds: [capital_guide] });
     },
     async show_puzzle(msg, args) {
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let capital_puzzle = db_user?.capital_puzzle ? db_user.capital_puzzle : await this.generate_puzzle(msg, args);
         let capital_income = db_user?.[`capital_income_${capital_puzzle.type}`] ? +db_user[`capital_income_${capital_puzzle.type}`] : 0;
 
@@ -148,12 +148,12 @@ module.exports = {
             type = 'Glyphix';
         }
 
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let capital_income = db_user?.[`capital_income_${type}`] ? +db_user[`capital_income_${type}`] : 0;
 
         let capital_puzzle = await this[type](capital_income);
 
-        await db.doc(`members/${msg.author.id}`).set({
+        await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
             capital_puzzle: capital_puzzle,
         }, { merge: true });
 

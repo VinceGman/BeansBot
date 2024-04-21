@@ -58,7 +58,7 @@ module.exports = {
             amount = +args[0];
         }
         else if (args.length == 1 && args[0].toLowerCase() == 'all') {
-            amount = +(await require('../utility/queries').user(msg.author.id)).credits;
+            amount = +(await require('../utility/queries').user(msg.guildId, msg.author.id)).credits;
         }
         else {
             this.pay_guide(msg);
@@ -68,7 +68,7 @@ module.exports = {
         amount = random ? Math.floor(Math.random() * amount) + 1 : amount;
 
         if (!(await require('../utility/credits').transaction(discord_client, msg, amount))) return; // credits manager validates transaction
-        await require('../utility/credits').refund(discord_client, recipient, amount); // credits manager refunds credits
+        await require('../utility/credits').refund(discord_client, msg, recipient, amount); // credits manager refunds credits
         // msg.channel.send(`${msg.author.username} - User paid.`);
 
         let pay_result = new EmbedBuilder()

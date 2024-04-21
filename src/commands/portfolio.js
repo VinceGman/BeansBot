@@ -42,7 +42,7 @@ module.exports = {
     async port(msg, options, id) {
         let discord_user = await msg.guild.members.fetch(id);
 
-        let user = await require('../utility/queries').user(id);
+        let user = await require('../utility/queries').user(msg.guildId, id);
         let user_stocks = user.stocks ? user.stocks : {};
 
         let portfolio_embed = new EmbedBuilder()

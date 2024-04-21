@@ -70,7 +70,7 @@ module.exports = {
         character.image = new_image_link;
         msg.channel.send({ embeds: [await require('../utility/embeds').make_card_embed(discord_client, msg, character)] });
 
-        await require('../utility/credits').refund(discord_client, msg.author.id, 100000); // credits manager refunds on error
+        await require('../utility/credits').refund(discord_client, msg, msg.author.id, 100000); // credits manager refunds on error
 
         let pay_result = new EmbedBuilder()
             .setTitle(`Restore Payment`)

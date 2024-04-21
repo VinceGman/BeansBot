@@ -78,7 +78,7 @@ module.exports = {
         return;
     },
     async leaderboard_stats(msg, id) {
-        let db_user = await require('../utility/queries').user(id);
+        let db_user = await require('../utility/queries').user(msg.guildId, id);
         let user_discord = msg.guild.members.cache.find(user => user.id === id);
 
         let leaderboard_stats = new EmbedBuilder()

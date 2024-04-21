@@ -49,8 +49,8 @@ module.exports = {
         let character = await require('../utility/queries').owned_character(msg, args);
         if (!character) return;
 
-        require('../utility/data_management').update_user_card_count(msg.author.id, -1);
-        require('../utility/data_management').update_user_card_count(recipient, 1);
+        require('../utility/data_management').update_user_card_count(msg.guildId, msg.author.id, -1);
+        require('../utility/data_management').update_user_card_count(msg.guildId, recipient, 1);
 
         const res = await db.collection('anime_cards').doc(`${character.rank_text}`).update({ // updates owner_id on character_ref card in database
             [`${msg.guildId}_owner_id`]: recipient,

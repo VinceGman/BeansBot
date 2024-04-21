@@ -33,7 +33,7 @@ module.exports = {
             return;
         }
 
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let wishlist = db_user?.wishlist ? db_user.wishlist : [];
         let wishlist_max_size = db_user?.wishlist_max_size ? +db_user.wishlist_max_size : 5;
 
@@ -43,7 +43,7 @@ module.exports = {
                 return;
             }
             else if (args.length == 1 && args[0].toLowerCase() == 'clear') {
-                await db.doc(`members/${msg.author.id}`).update({
+                await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).update({
                     wishlist: FieldValue.delete(),
                 }).catch(err => msg.channel.send(`${msg.author.username} - This action wasn't completed properly. Please contact Sore#1414.`));
 
@@ -79,7 +79,7 @@ module.exports = {
             wishlist = wishlist.filter(w => w != characters[0].rank_text);
         }
 
-        await db.doc(`members/${msg.author.id}`).update({
+        await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).update({
             wishlist: wishlist,
         }).catch(err => msg.channel.send(`${msg.author.username} - This product wasn't stored properly. Please contact Sore#1414.`));
 
@@ -87,7 +87,7 @@ module.exports = {
         return;
     },
     async wish_guide(msg) {
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let wish_chance = db_user?.wish_chance ? +db_user.wish_chance : 5;
         let wish_guide = new EmbedBuilder()
             .setTitle(`Wish Guide`)
@@ -105,7 +105,7 @@ module.exports = {
         require('../utility/timers').reset_timer(msg, this.name); // release resource
     },
     async show_wishlist(discord_client, msg, options) {
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let wishlist = db_user?.wishlist ? db_user.wishlist : [];
         let wishlist_max_size = db_user?.wishlist_max_size ? +db_user.wishlist_max_size : 5;
         let wish_chance = db_user?.wish_chance ? +db_user.wish_chance : 5;

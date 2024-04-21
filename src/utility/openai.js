@@ -42,7 +42,7 @@ module.exports = {
 			}
 
 			for (let id of users_present) {
-				let db_user = await require('../utility/queries').user(id);
+				let db_user = await require('../utility/queries').user(msg.guildId, id);
 				let user_description = ``;
 				if (db_user?.description) user_description += `${db_user.description}`;
 				msg_col.unshift({ "role": "system", "content": `${user_description}` });
@@ -76,7 +76,7 @@ module.exports = {
 			}
 
 			for (let id of users_present) {
-				let db_user = await require('../utility/queries').user(id);
+				let db_user = await require('../utility/queries').user(msg.guildId, id);
 				let { username, nickname, pronouns, days_of_membership } = await this.discord_user_information(msg, id);
 				let user_description = `Here is some relevant information about the user that could assist you in helping them. ${username} uses ${pronouns} pronouns and joined ${days_of_membership} days ago. ${nickname}`;
 				if (db_user?.description) user_description += `${db_user.description}`;
@@ -84,7 +84,7 @@ module.exports = {
 			}
 
 			// adding the bot information to system content
-			let db_beans_bot = await require('../utility/queries').user(discord_client.user.id);
+			let db_beans_bot = await require('../utility/queries').user(msg.guildId, discord_client.user.id);
 			let beans_bot_description = db_beans_bot?.description ? `${db_beans_bot.description}` : `Your name is Beans. You're a helpful assistant in a discord server.`;
 			msg_col.unshift({ "role": "system", "content": `${beans_bot_description} Answer as concisely as possible when helping others.` });
 
@@ -160,7 +160,7 @@ module.exports = {
 			let discord_user = await msg.guild.members.fetch(msg.author.id);
 			let user_info = `This user's name is ${discord_user.user.username}. This user said "${msg.content}". `;
 
-			let db_user = await require('../utility/queries').user(msg.author.id);
+			let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
 			if (db_user?.description) {
 				user_info += db_user.description;
 			}
@@ -182,7 +182,7 @@ module.exports = {
 				keyFilename: './service-account.json'
 			});
 
-			const res = await db.doc(`members/${msg.author.id}`).set({
+			const res = await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
 				description: result.data.choices[0].message.content.trim().substring(0, 2000)
 			}, { merge: true });
 		}

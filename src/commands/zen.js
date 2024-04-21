@@ -26,7 +26,7 @@ module.exports = {
             if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
             if (args.length == 1 && args[0].toLowerCase() == 'stats' && admin) {
-                let db_user = await require('../utility/queries').user(msg.author.id);
+                let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
 
                 let zen_stats = new EmbedBuilder()
                     .setTitle(`Zen Stats`)
@@ -74,7 +74,7 @@ module.exports = {
             let win = winnings > 0 ? 1 : 0;
 
 
-            let db_user = await require('../utility/queries').user(msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let credits = +db_user.credits;
             let times_played_zen = db_user?.times_played_zen ? +db_user.times_played_zen : 0;
             let times_won_zen = db_user?.times_won_zen ? +db_user.times_won_zen : 0;
@@ -85,7 +85,7 @@ module.exports = {
             times_won_zen += win;
             net_winnings_zen = win == 1 ? net_winnings_zen + winnings - bet : net_winnings_zen - bet;
 
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 credits: credits.toFixed(2).toString(),
                 times_played_zen: times_played_zen.toString(),
                 times_won_zen: times_won_zen.toString(),

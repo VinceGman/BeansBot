@@ -20,7 +20,7 @@ module.exports = {
             if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
             if (args.length == 1 && args[0].toLowerCase() == 'stats' && admin) {
-                let db_user = await require('../utility/queries').user(msg.author.id);
+                let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
 
                 let quip_stats = new EmbedBuilder()
                     .setTitle(`Quip Stats`)
@@ -66,7 +66,7 @@ module.exports = {
                 bet = +args[0];
             }
             else if (args.length == 1 && args[0].toLowerCase() == 'all') {
-                bet = +(await require('../utility/queries').user(msg.author.id)).credits;
+                bet = +(await require('../utility/queries').user(msg.guildId, msg.author.id)).credits;
             }
 
             bet = random ? Math.floor(Math.random() * bet) + 1 : bet;
@@ -80,7 +80,7 @@ module.exports = {
             let win = roll_num <= max_num / 4 ? 1 : 0;
 
 
-            let db_user = await require('../utility/queries').user(msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let credits = +db_user.credits;
             let times_played_quip = db_user?.times_played_quip ? +db_user.times_played_quip : 0;
             let times_won_quip = db_user?.times_won_quip ? +db_user.times_won_quip : 0;
@@ -91,7 +91,7 @@ module.exports = {
             times_won_quip += win;
             net_winnings_quip = win == 1 ? net_winnings_quip + winnings - bet : net_winnings_quip - bet;
 
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 credits: credits.toFixed(2).toString(),
                 times_played_quip: times_played_quip.toString(),
                 times_won_quip: times_won_quip.toString(),

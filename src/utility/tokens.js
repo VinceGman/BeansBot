@@ -16,7 +16,7 @@ module.exports = {
         let current_time_in_seconds = Math.floor(Date.now() / 1000);
         let seconds_in_a_day = 86400;
 
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let daily_tokens_used = db_user?.daily_tokens_used ? +db_user.daily_tokens_used : 0;
         let daily_token_reset = db_user?.daily_token_reset ? +db_user.daily_token_reset : 0;
         let extra_token_pool = db_user?.extra_token_pool ? +db_user.extra_token_pool : 0;
@@ -24,7 +24,7 @@ module.exports = {
 
         if (daily_token_reset + seconds_in_a_day <= current_time_in_seconds) {
 
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 all_time_tokens_used: (all_time_tokens_used + daily_tokens_used).toString(),
                 daily_tokens_used: '0',
                 daily_token_reset: current_time_in_seconds.toString(),
@@ -59,7 +59,7 @@ module.exports = {
             keyFilename: './service-account.json'
         });
 
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let daily_tokens_used = db_user?.daily_tokens_used ? +db_user.daily_tokens_used : 0;
         let extra_token_pool = db_user?.extra_token_pool ? +db_user.extra_token_pool : 0;
         let all_time_tokens_used = db_user?.all_time_tokens_used ? +db_user.all_time_tokens_used : 0;
@@ -78,7 +78,7 @@ module.exports = {
             daily_tokens_used += cost;
         }
 
-        await db.doc(`members/${msg.author.id}`).set({
+        await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
             all_time_tokens_used: all_time_tokens_used.toString(),
             daily_tokens_used: daily_tokens_used.toString(),
             extra_token_pool: extra_token_pool.toString()

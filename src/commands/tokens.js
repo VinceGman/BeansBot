@@ -21,7 +21,7 @@ module.exports = {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
         if (args.length == 0) {
-            let user = await require('../utility/queries').user(msg.author.id);
+            let user = await require('../utility/queries').user(msg.guildId, msg.author.id);
 
             let tokens_guide = new EmbedBuilder()
                 .setTitle(`Tokens Guide & Dashboard`)
@@ -77,12 +77,12 @@ module.exports = {
 
             if (!(await require('../utility/credits').transaction(discord_client, msg, +args[0]))) return; // credits manager validates transaction
 
-            let db_user = await require('../utility/queries').user(msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let extra_token_pool = db_user?.extra_token_pool ? +db_user.extra_token_pool : 0;
 
             extra_token_pool += Math.floor(+args[0] / 10);
 
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 extra_token_pool: extra_token_pool.toString()
             }, { merge: true });
         }

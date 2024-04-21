@@ -26,7 +26,7 @@ module.exports = {
             let cost = 100000;
             if (!(await require('../utility/credits').transaction(discord_client, msg, cost))) return; // credits manager validates transaction
 
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 lootbox_flips_per_hour: "0",
                 lootbox_flips_timestamp: "0",
             }, { merge: true });

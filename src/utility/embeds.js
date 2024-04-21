@@ -81,7 +81,7 @@ module.exports = {
         return;
     },
     async personalized_embed(msg, id = msg.author.id, db_user, guild_member) {
-        db_user = db_user ? db_user : await require('../utility/queries').user(id);
+        db_user = db_user ? db_user : await require('../utility/queries').user(msg.guildId, id);
         guild_member = guild_member ? guild_member : await msg.guild.members.fetch(id);
 
         let personalized_embed = new EmbedBuilder()

@@ -219,7 +219,7 @@ module.exports = {
             bet = +args[0];
         }
         else if (args.length == 1 && args[0].toLowerCase() == 'all') {
-            bet = +(await require('../utility/queries').user(msg.author.id)).credits;
+            bet = +(await require('../utility/queries').user(msg.guildId, msg.author.id)).credits;
         }
 
         bet = random ? Math.floor(Math.random() * bet) + 1 : bet;
@@ -239,7 +239,7 @@ module.exports = {
 
             let winnings = game.state.player_multiplier * bet;
 
-            let db_user = await require('../utility/queries').user(msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let credits = +db_user.credits;
             let times_played_blackjack = db_user?.times_played_blackjack ? +db_user.times_played_blackjack : 0;
             let times_won_blackjack = db_user?.times_won_blackjack ? +db_user.times_won_blackjack : 0;
@@ -259,7 +259,7 @@ module.exports = {
                 net_winnings_blackjack += bet;
             }
 
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 credits: credits.toFixed(2).toString(),
                 times_played_blackjack: times_played_blackjack.toString(),
                 times_won_blackjack: times_won_blackjack.toString(),

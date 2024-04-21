@@ -76,19 +76,19 @@ module.exports = {
             if (code) {
                 code.claimed = msg.author.username;
 
-                let db_user = await require('../utility/queries').user(msg.author.id);
+                let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
                 let vault_total = db_user?.vault_total ? +db_user.vault_total : 0;
                 let vault_hits = db_user?.vault_hits ? +db_user.vault_hits : 0;
 
                 vault_total += +code.reward;
                 vault_hits += 1;
 
-                await db.doc(`members/${msg.author.id}`).set({
+                await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                     vault_total: vault_total.toString(),
                     vault_hits: vault_hits.toString(),
                 }, { merge: true });
 
-                await require('../utility/credits').refund(discord_client, msg.author.id, +code.reward); // credits manager refunds credits
+                await require('../utility/credits').refund(discord_client, msg, msg.author.id, +code.reward); // credits manager refunds credits
 
                 hash_output.setColor('#37914f')
                     .addFields({ name: 'Reward', value: `+${comma_adder.add(code.reward)}`, inline: false });

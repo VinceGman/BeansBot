@@ -17,7 +17,7 @@ module.exports = {
 
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
-        let user = await require('../utility/queries').user(msg.author.id);
+        let user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let income = user.hasOwnProperty('income') ? +user['income'] : 0;
         let income_max_charges = user.hasOwnProperty('income_max_charges') ? +user['income_max_charges'] : 6;
 
@@ -43,7 +43,7 @@ module.exports = {
         await this.income_embed(msg, charges, pay, next_charge, new_cooldown, booster);
 
         if (charges == 0) return;
-        await db.doc(`members/${msg.author.id}`).set({
+        await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
             credits: (+user['credits'] + pay).toFixed(2).toString(),
             income: new_cooldown.toString(),
         }, { merge: true });

@@ -1,5 +1,5 @@
 module.exports = {
-    async user(id) { // returns the attributes of a user by id
+    async user(guildId, id) { // returns the attributes of a user by id
         // dashboard: https://console.cloud.google.com/firestore/data?project=beans-326017
         const { Firestore } = require('@google-cloud/firestore');
         const db = new Firestore({
@@ -7,7 +7,7 @@ module.exports = {
             keyFilename: './service-account.json'
         });
 
-        let user = (await db.doc(`members/${id}`).get()).data() ?? {};
+        let user = (await db.doc(`servers/${guildId}/members/${id}`).get()).data() ?? {};
         user.credits = user.credits == null ? '0' : user.credits;
         return user;
     },

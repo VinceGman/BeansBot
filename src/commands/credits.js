@@ -38,7 +38,7 @@ module.exports = {
     async credits_embed(discord_client, msg, id) {
         const { EmbedBuilder } = require('discord.js');
 
-        let user = await require('../utility/queries').user(id);
+        let user = await require('../utility/queries').user(msg.guildId, id);
         let user_discord = msg.guild.members.cache.find(user => user.id === id);
 
         // let lootbox_value = await this.get_lootbox_value(id);
@@ -104,7 +104,7 @@ module.exports = {
     async get_stocks_value(id) {
         let total = 0;
 
-        let user = await require('../utility/queries').user(id);
+        let user = await require('../utility/queries').user(msg.guildId, id);
         let user_stocks = user.stocks ? user.stocks : {};
 
         for (let entry in user_stocks) {

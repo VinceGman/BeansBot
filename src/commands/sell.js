@@ -72,7 +72,7 @@ module.exports = {
                 return;
             }
 
-            let user = await require('../utility/queries').user(msg.author.id);
+            let user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let user_stocks = user.stocks ? user.stocks : {};
 
             if (!user_stocks?.[stock_symbol]) user_stocks[stock_symbol] = { count: 0, per: 0 };
@@ -103,11 +103,11 @@ module.exports = {
                 delete user_stocks[stock_symbol];
             }
 
-            await require('../utility/credits').refund(discord_client, msg.author.id, cost); // credits manager refunds creditsFF
+            await require('../utility/credits').refund(discord_client, msg, msg.author.id, cost); // credits manager refunds creditsFF
 
             let new_public = +stock_db.public + quantity;
 
-            await db.doc(`members/${msg.author.id}`).update({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).update({
                 stocks: user_stocks,
             });
 

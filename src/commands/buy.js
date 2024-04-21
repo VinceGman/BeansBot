@@ -85,7 +85,7 @@ module.exports = {
 
             let cost = (price / +stock_db.base_price) * 1000 * quantity;
 
-            let user = await require('../utility/queries').user(msg.author.id);
+            let user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let user_stocks = user.stocks ? user.stocks : {};
 
             let stock_count = 0;
@@ -105,7 +105,7 @@ module.exports = {
             user_stocks[stock_symbol].count += quantity;
             let new_public = +stock_db.public - quantity;
 
-            await db.doc(`members/${msg.author.id}`).update({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).update({
                 stocks: user_stocks,
             });
 

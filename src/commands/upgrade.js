@@ -26,12 +26,12 @@ module.exports = {
             let cost = 1000000;
             if (!(await require('../utility/credits').transaction(discord_client, msg, cost))) return; // credits manager validates transaction
 
-            let db_user = await require('../utility/queries').user(msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let income_max_charges = db_user?.income_max_charges ? +db_user.income_max_charges : 6;
 
             income_max_charges += 1;
 
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 income_max_charges: income_max_charges.toString(),
             }, { merge: true });
 
@@ -51,12 +51,12 @@ module.exports = {
             let cost = 1000000;
             if (!(await require('../utility/credits').transaction(discord_client, msg, cost))) return; // credits manager validates transaction
 
-            let db_user = await require('../utility/queries').user(msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let lootbox_total_cards_limit = db_user?.lootbox_total_cards_limit ? +db_user.lootbox_total_cards_limit : 100; // if not there, 200
 
             lootbox_total_cards_limit += 100;
 
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 lootbox_total_cards_limit: lootbox_total_cards_limit.toString(),
             }, { merge: true });
 
@@ -76,12 +76,12 @@ module.exports = {
             let cost = 1000000;
             if (!(await require('../utility/credits').transaction(discord_client, msg, cost))) return; // credits manager validates transaction
 
-            let db_user = await require('../utility/queries').user(msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let wish_chance = db_user?.wish_chance ? +db_user.wish_chance : 5;
 
             wish_chance += 2;
 
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 wish_chance: wish_chance.toString(),
             }, { merge: true });
 
@@ -101,12 +101,12 @@ module.exports = {
             let cost = 1000000;
             if (!(await require('../utility/credits').transaction(discord_client, msg, cost))) return; // credits manager validates transaction
 
-            let db_user = await require('../utility/queries').user(msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let wishlist_max_size = db_user?.wishlist_max_size ? +db_user.wishlist_max_size : 5;
 
             wishlist_max_size += 1;
 
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 wishlist_max_size: wishlist_max_size.toString(),
             }, { merge: true });
 
@@ -128,7 +128,7 @@ module.exports = {
         }
     },
     async upgrade_guide(msg) {
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let lootbox_total_cards_limit = db_user?.lootbox_total_cards_limit ? +db_user.lootbox_total_cards_limit : 100; // if not there, 200
         let income_max_charges = db_user?.income_max_charges ? +db_user.income_max_charges : 6;
         let wishlist_max_size = db_user?.wishlist_max_size ? +db_user.wishlist_max_size : 5;

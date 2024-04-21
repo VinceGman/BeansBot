@@ -19,7 +19,7 @@ module.exports = {
     async execute(discord_client, msg, args, admin) {
         if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
-        let db_user = await require('../utility/queries').user(msg.author.id);
+        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let lootbox_total_cards = db_user?.lootbox_total_cards ? +db_user.lootbox_total_cards : 0;
         let lootbox_total_cards_limit = db_user?.lootbox_total_cards_limit ? +db_user.lootbox_total_cards_limit : 100; // if not there, 200
         let lootbox_flips_per_hour = db_user?.lootbox_flips_per_hour ? +db_user.lootbox_flips_per_hour : 0;
@@ -68,7 +68,7 @@ module.exports = {
         }
         catch (err) {
             msg.channel.send(`${msg.author.username} - System Error: Anime API Failed`);
-            await require('../utility/credits').refund(discord_client, msg.author.id, card_cost); // credits manager refunds on error
+            await require('../utility/credits').refund(discord_client, msg, msg.author.id, card_cost); // credits manager refunds on error
             return;
         }
 
@@ -129,7 +129,7 @@ module.exports = {
             }
             catch (err) {
                 msg.channel.send(`${msg.author.username} - System Error: Database Failed - Logging Card Changes`);
-                await require('../utility/credits').refund(discord_client, msg.author.id, card_cost); // credits manager refunds on error
+                await require('../utility/credits').refund(discord_client, msg, msg.author.id, card_cost); // credits manager refunds on error
                 return;
             }
 
@@ -139,7 +139,7 @@ module.exports = {
         lootbox_flips_per_hour += 1;
 
         try {
-            await db.doc(`members/${msg.author.id}`).set({
+            await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
                 lootbox_total_cards: lootbox_total_cards.toString(),
                 lootbox_flips_per_hour: lootbox_flips_per_hour.toString(),
                 lootbox_flips_timestamp: lootbox_flips_timestamp.toString(),
