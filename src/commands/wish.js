@@ -167,8 +167,9 @@ module.exports = {
         require('../utility/timers').reset_timer(msg, this.name); // release resource
         return;
     },
-    async notice_wishlist(discord_client, rolling_msg, character) {
+    async notice_wishlist(rolling_msg, character) {
         let members_to_notify = ((await db.collection(`members`).where('wishlist', 'array-contains', character.rank_text).get())._docs()).map(m => m._ref._path.segments[1]);
+        if (members_to_notify.length == 0) return;
 
         let prompt = 'Your wishlist item was rolled:';
         let wishlist_notification = prompt;
