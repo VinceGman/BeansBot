@@ -168,7 +168,8 @@ module.exports = {
         return;
     },
     async notice_wishlist(rolling_msg, character) {
-        let members_to_notify = ((await db.collection(`members`).where('wishlist', 'array-contains', character.rank_text).get())._docs()).map(m => m._ref._path.segments[1]);
+        let members_to_notify = ((await db.collection(`servers/${rolling_msg.guildId}/members`).where('wishlist', 'array-contains', character.rank_text).get())._docs()).map(m => m.id);
+        console.log(members_to_notify);
         if (members_to_notify.length == 0) return;
 
         let prompt = 'Your wishlist item was rolled:';
