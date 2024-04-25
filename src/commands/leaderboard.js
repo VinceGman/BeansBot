@@ -136,9 +136,9 @@ module.exports = {
         let discord_users_ids = [...(await msg.guild.members.fetch()).keys()];
 
         let map_users_ids_credits = new Map();
-        for (let doc of (await db.collection(`members`).get())._docs()) {
-            let net_credits = (+doc.data().credits ?? 0) + +(await require('./credits').get_stocks_value(doc._ref._path.segments[1]));
-            map_users_ids_credits.set(doc._ref._path.segments[1], net_credits);
+        for (let doc of (await db.collection(`servers/${msg.guildId}/members`).get()).docs) {
+            let net_credits = (+doc.data().credits ?? 0) + +(await require('./credits').get_stocks_value(doc.id));
+            map_users_ids_credits.set(doc.id, net_credits);
         }
 
         let users_credits = [];
@@ -168,7 +168,7 @@ module.exports = {
         let discord_users_ids = [...(await msg.guild.members.fetch()).keys()];
 
         let map_users_ids_credits = new Map();
-        ((await db.collection(`members`).get())._docs()).forEach((doc) => {
+        ((await db.collection(`servers/${msg.guildId}/members`).get()).docs).forEach((doc) => {
             let net_credits = 0;
             for (let [key, value] of Object.entries(doc.data())) {
                 if (key.startsWith('net_winnings')) {
@@ -180,7 +180,7 @@ module.exports = {
                     }
                 }
             }
-            map_users_ids_credits.set(doc._ref._path.segments[1], net_credits);
+            map_users_ids_credits.set(doc.id, net_credits);
         });
 
         let users_credits = [];
@@ -213,7 +213,7 @@ module.exports = {
         let discord_users_ids = [...(await msg.guild.members.fetch()).keys()];
 
         let map_users_ids_credits = new Map();
-        ((await db.collection(`members`).get())._docs()).forEach((doc) => {
+        ((await db.collection(`servers/${msg.guildId}/members`).get()).docs).forEach((doc) => {
             let net_credits = 0;
             for (let [key, value] of Object.entries(doc.data())) {
                 if (key.startsWith('net_winnings')) {
@@ -225,7 +225,7 @@ module.exports = {
                     }
                 }
             }
-            map_users_ids_credits.set(doc._ref._path.segments[1], net_credits);
+            map_users_ids_credits.set(doc.id, net_credits);
         });
 
         let users_credits = [];
