@@ -34,12 +34,16 @@ module.exports = {
         args = args.filter(a => !a.includes('<@'));
 
         let random = false;
+        let modifier = 1;
         if (args.length == 1) {
-            let prefixes = ['rand', 'ran', 'r'];
+            let prefixes = ['r', 'h', 't', 'f'];
             for (let pf of prefixes) {
                 if (args[0].toLowerCase().startsWith(pf)) {
                     args[0] = args[0].slice(pf.length, args[0].length);
-                    random = true;
+                    if (pf == 'r') random = true;
+                    else if (pf == 'h') modifier = 1/2;
+                    else if (pf == 't') modifier = 1/3;
+                    else if (pf == 'f') modifier = 1/4;
                     break;
                 }
             }
@@ -66,6 +70,7 @@ module.exports = {
         }
 
         amount = random ? Math.floor(Math.random() * amount) + 1 : amount;
+        amount = Math.floor(amount * modifier);
 
         if (!(await require('../utility/credits').transaction(discord_client, msg, amount))) return; // credits manager validates transaction
         await require('../utility/credits').refund(discord_client, msg, recipient, amount); // credits manager refunds credits

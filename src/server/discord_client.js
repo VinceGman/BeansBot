@@ -91,7 +91,7 @@ discord_client.on('messageCreate', async msg => {
 			let arg = args[i];
 
 			let set_prefix = '';
-			let prefixes = ['rand', 'ran', 'r'];
+			let prefixes = ['r', 'h', 't', 'f'];
 			for (let pf of prefixes) {
 				if (arg.toLowerCase().startsWith(pf)) {
 					set_prefix = pf;
