@@ -6,7 +6,7 @@ module.exports = {
                 case '1184186351260794880': // main-server // counting
                     if (run_type != 'production') return;
 
-                    let date_bonus = (new Date()).getDate() == 1 ? 2 : 1;
+                    let date_bonus = (new Date()).getDate() == 28 || (new Date()).getDate() == 1 ? 2 : 1;
                     await new Promise(r => setTimeout(r, 3000));
 
                     let count_verification = false;
