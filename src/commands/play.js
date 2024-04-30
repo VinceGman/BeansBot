@@ -69,7 +69,7 @@ async function play(guildId, song) {
         return;
     }
 
-    const stream = ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 25 }); // Increased buffer size
+    const stream = ytdl(song.url, { filter: 'audioonly', quality: 'highestaudio', highWaterMark: 1 << 25 }); // Increased buffer size
     const resource = createAudioResource(stream, {
         inputType: StreamType.Arbitrary,
         inlineVolume: true
