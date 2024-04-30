@@ -12,7 +12,7 @@ const db = new Firestore({
 });
 
 const { Client, Collection, EmbedBuilder } = require('discord.js');
-const discord_client = new Client({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'DirectMessages', 'GuildMessageReactions', 'MessageContent'], partials: ['Message', 'Channel', 'GuildMember'] });
+const discord_client = new Client({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'GuildVoiceStates', 'DirectMessages', 'GuildMessageReactions', 'MessageContent'], partials: ['Message', 'Channel', 'GuildMember'] });
 
 let prefix = '+';
 let run_type = 'production';
