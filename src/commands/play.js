@@ -29,6 +29,7 @@ module.exports = {
                 songs: [],
                 volume: 35, // Default volume at 35
                 playing: true,
+                timeout: null // Store timeout to clear later if needed
             };
 
             setQueue(guildId, queueConstruct);
@@ -51,6 +52,10 @@ module.exports = {
         } else {
             const serverQueue = getQueue(guildId);
             serverQueue.songs.push(song);
+            if (serverQueue.timeout) {
+                clearTimeout(serverQueue.timeout);  // Clear the existing timeout
+                serverQueue.timeout = null;
+            }
             return msg.channel.send(`${song.title} has been added to the queue!`);
         }
     }
@@ -59,13 +64,15 @@ module.exports = {
 async function play(guildId, song) {
     const serverQueue = getQueue(guildId);
     if (!song) {
-        if (serverQueue.voiceChannel) {
-            const connection = getVoiceConnection(serverQueue.voiceChannel.guild.id);
+        // Set a timeout to leave the channel after 10 seconds if the queue is empty
+        serverQueue.timeout = setTimeout(() => {
+            const connection = getVoiceConnection(guildId);
             if (connection) {
-                connection.destroy(); // Properly use the voice connection to leave or destroy it
+                connection.destroy();
+                serverQueue.textChannel.send('Disconnected due to inactivity.');
             }
-        }
-        deleteQueue(guildId);
+            deleteQueue(guildId);
+        }, 300000); // 5-minute delay before disconnecting
         return;
     }
 
@@ -74,7 +81,7 @@ async function play(guildId, song) {
         inputType: StreamType.Arbitrary,
         inlineVolume: true
     });
-    resource.volume.setVolumeLogarithmic(serverQueue.volume / 100); // Set the volume logaritmically
+    resource.volume.setVolumeLogarithmic(serverQueue.volume / 100); // Set the volume logarithmically
 
     const player = createAudioPlayer();
     serverQueue.connection.subscribe(player);
@@ -82,7 +89,11 @@ async function play(guildId, song) {
 
     player.on(AudioPlayerStatus.Idle, () => {
         serverQueue.songs.shift();
-        play(guildId, serverQueue.songs[0]);
+        if (serverQueue.songs.length === 0) {
+            play(guildId, null); // Call play with null to trigger timeout if queue is empty
+        } else {
+            play(guildId, serverQueue.songs[0]);
+        }
     });
 
     player.on('error', error => console.error('Error from audio player:', error));
