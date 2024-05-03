@@ -56,6 +56,9 @@ module.exports = {
                 clearTimeout(serverQueue.timeout);  // Clear the existing timeout
                 serverQueue.timeout = null;
             }
+            if (serverQueue.connection && !serverQueue.playing) {
+                play(guildId, serverQueue.songs[0]);
+            }
             return msg.channel.send(`${song.title} has been added to the queue!`);
         }
     }
