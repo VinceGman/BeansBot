@@ -121,6 +121,10 @@ discord_client.on('messageCreate', async msg => {
 		// msg.member.roles.cache.some(role => role.name.toLowerCase() === 'admins' || role.name.toLowerCase() === 'mods')
 		try {
 			if (discord_client.commands.get(command).type != run_type) return;
+			if (discord_client.commands.get(command).category == 'cards' && msg.guildId != '1126661700867854366') {
+				await require('../utility/embeds').notice_embed(discord_client, msg, "'Cards' commands only work in a different server for now.", '#fe3939');
+				return;
+			}
 			if (msg.author.id == '427677302608887810' || msg.author.id == '183019001058689025') admin = true;
 
 			for (let scope of discord_client.commands.get(command).scopes ?? ['commands']) {
