@@ -169,8 +169,8 @@ module.exports = {
             let { personalized_embed: profile_embed } = await require('../utility/embeds').personalized_embed(msg, id, db_user, guild_member);
 
             profile_embed.addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: true })
-                .addFields({ name: 'Card Count', value: `${lootbox_total_cards}/${lootbox_total_cards_limit}`, inline: true })
-                .addFields({ name: 'Cards Value', value: `${comma_adder.add(Math.trunc(lootbox_total_cards_value))} credits`, inline: true })
+                .addFields({ name: 'Card Count', value: `${cards.length}/${lootbox_total_cards_limit}`, inline: true })
+                .addFields({ name: 'Cards Value', value: `${comma_adder.add(Math.trunc(this.get_cards_value(cards)))} credits`, inline: true })
                 .addFields({ name: `Cards Owned`, value: `[none]`, inline: false })
 
             pages.push(profile_embed);
@@ -193,8 +193,8 @@ module.exports = {
                 if (new_page) {
                     ({ personalized_embed: profile_embed } = await require('../utility/embeds').personalized_embed(msg, id, db_user, guild_member));
                     profile_embed.addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: true })
-                        .addFields({ name: 'Card Count', value: `${lootbox_total_cards}/${lootbox_total_cards_limit}`, inline: true })
-                        .addFields({ name: 'Cards Value', value: `${comma_adder.add(Math.trunc(lootbox_total_cards_value))} credits`, inline: true });
+                        .addFields({ name: 'Card Count', value: `${cards.length}/${lootbox_total_cards_limit}`, inline: true })
+                        .addFields({ name: 'Cards Value', value: `${comma_adder.add(Math.trunc(this.get_cards_value(cards)))} credits`, inline: true });
                     pages.push(profile_embed);
                     new_page = false;
                     field_info = '';
@@ -232,8 +232,8 @@ module.exports = {
                     let { personalized_embed: profile_embed } = await require('../utility/embeds').personalized_embed(msg, id, db_user, guild_member);
 
                     profile_embed.addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(credits))} credits`, inline: true })
-                        .addFields({ name: 'Card Count', value: `${lootbox_total_cards}/${lootbox_total_cards_limit}`, inline: true })
-                        .addFields({ name: 'Cards Value', value: `${comma_adder.add(Math.trunc(lootbox_total_cards_value))} credits`, inline: true })
+                        .addFields({ name: 'Card Count', value: `${cards.length}/${lootbox_total_cards_limit}`, inline: true })
+                        .addFields({ name: 'Cards Value', value: `${comma_adder.add(Math.trunc(this.get_cards_value(cards)))} credits`, inline: true })
                         .addFields({ name: `Cards Owned${cards.length == 0 ? '' : ` - ${page_num}`}`, value: `${card_info}`, inline: false })
 
                     pages.push(profile_embed);
@@ -246,5 +246,35 @@ module.exports = {
         await require('../utility/pagination').paginationEmbed(msg, pages);
         require('../utility/timers').reset_timer(msg, this.name); // release resource
         return;
-    }
+    },
+    get_cards_value(cards) {
+        let total = 0;
+        for (const card of cards) {
+            let value = 0;
+            switch (card.rarity) {
+                case 'Common':
+                    value = 250;
+                    break;
+                case 'Uncommon':
+                    value = 500;
+                    break;
+                case 'Rare':
+                    value = 2500;
+                    break;
+                case 'Epic':
+                    value = 5000;
+                    break;
+                case 'Legendary':
+                    value = 15000;
+                    break;
+                case 'Ultimate':
+                    value = 25000;
+                    break;
+                default:
+                    value = 0;
+            }
+            total += value;
+        }
+        return total;
+    },
 }
