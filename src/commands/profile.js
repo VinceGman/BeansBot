@@ -88,7 +88,10 @@ module.exports = {
         let pref_att = `pref_${att.toLowerCase()}`;
         let pref_value = args.join(' ');
 
-        if (att.toLowerCase() == 'name') {
+        if (pref_value.toLowerCase() == 'clear') {
+            //
+        }
+        else if (att.toLowerCase() == 'name') {
             if (pref_value.length <= 0 || pref_value.length > 30) {
                 msg.channel.send('Names must be between 1 and 30 characters.');
                 return;
