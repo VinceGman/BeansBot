@@ -73,13 +73,16 @@ discord_client.on('ready', async () => {
 });
 
 let channel_utilities = require('../utility/channels');
-
+let war_utilities = require('../utility/war-utilities');
 discord_client.on('messageCreate', async msg => {
 	if (msg.author.bot) return;
 	if (msg.guildId === null) return;
 
-
-	if (channel_utilities.channels.includes(msg.channel.id)) {
+	if ((msg.content.toLowerCase().startsWith('//') || ['+alter', '+characters'].includes(msg.content.toLowerCase()) || msg.content.toLowerCase().startsWith('+location')) && run_type == 'production') {
+		await war_utilities.direct_message(msg);
+		return;
+	}
+	else if (channel_utilities.channels.includes(msg.channel.id)) {
 		channel_utilities.channel_function(discord_client, msg, run_type);
 	}
 	else if (msg.content.startsWith(prefix)) {
