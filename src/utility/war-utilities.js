@@ -272,6 +272,12 @@ module.exports = {
         }
     },
     async characters(msg) {
-
+        let output = '';
+        let characters = (await db.collection(`characters`).where('owner_id', '==', msg.author.id).get()).docs.map(char => char.data());
+        for (let char of characters) {
+            output += `${char.name} - location: ${char.location}\n`;
+        }
+        msg.channel.send(output);
+        return;
     }
 }
