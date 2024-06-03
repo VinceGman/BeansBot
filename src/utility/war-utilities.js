@@ -230,7 +230,7 @@ module.exports = {
     },
     async determined(msg, content, self) {
         let args = content.split('\n');
-        let characters = (await db.collection(`characters`).where('name', '==', args[0]).get()).docs.map(char => char.data());
+        let characters = (await db.collection(`characters`).where('name', '==', args[0].trim()).get()).docs.map(char => char.data());
         if (characters.length == 1) {
             characters[0].location = await this.location_from_channel_id(msg.channel.id);
             args.shift();
