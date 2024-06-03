@@ -195,7 +195,7 @@ module.exports = {
                     char.image = args[i].replace('location:', '').trim();
                 }
                 else {
-                    content += `${args[i]}\n\n`;
+                    content += `${args[i]}\n`;
                 }
             }
 
@@ -215,7 +215,7 @@ module.exports = {
         if (characters.length == 1) {
             characters[0].location = await this.location_from_channel_id(msg.channel.id);
             args.shift();
-            await this.distribute(msg, characters[0], args.join('\n\n').trim(), self);
+            await this.distribute(msg, characters[0], args.join('\n').trim(), self);
             if (msg) msg.delete();
             return;
         }
@@ -240,7 +240,7 @@ module.exports = {
                     char.image = args[i].replace('location:', '').trim();
                 }
                 else {
-                    content += `${args[i]}\n\n`;
+                    content += `${args[i]}\n`;
                 }
             }
 
