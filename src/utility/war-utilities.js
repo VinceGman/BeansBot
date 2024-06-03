@@ -102,11 +102,10 @@ module.exports = {
     },
     async distribute(msg, char, content, self = false) {
         let characters = (await db.collection(`characters`).where('location', '==', char.location).get()).docs.map(char => char.data());
-        let channel_ids = _.uniq([...characters.map(char => char.channel_id), '1245935041541050438']);
+        let channel_ids = _.uniq(characters.map(char => char.channel_id));
 
         if (self) {
             channel_ids = [char.channel_id];
-            content += `\n\n*Only you can see this message.*`;
         }
 
         for (let recipient_channel_id of channel_ids) {
@@ -135,6 +134,8 @@ module.exports = {
                 webhook_clients.set(recipient_channel_id, webhookClient);
             }
 
+            let individualized_content = content;
+
             try {
                 let username = char.name;
                 let avatarURL = char.image;
@@ -144,9 +145,27 @@ module.exports = {
                     avatarURL = char?.alter?.alter_image ?? char.image;
                 }
 
+                if (self) {
+                    individualized_content += `\n\n> *Only you can see this message.*`;
+                }
+
+                if (char.hasOwnProperty('only_to')) {
+                    if (recipient_channel_id == char.only_to) {
+                        individualized_content += `\n\n> *Only you can understand this message.*`;
+                    }
+                    else {
+                        if (char.hasOwnProperty('show_at_location') && char.show_at_location && char.hasOwnProperty('show_text')) {
+                            individualized_content = char.show_text;
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                }
+
                 let recipient_webhook_client = webhook_clients.get(recipient_channel_id);
                 await recipient_webhook_client.send({
-                    content: content,
+                    content: individualized_content,
                     username: username,
                     avatarURL: avatarURL,
                 });
