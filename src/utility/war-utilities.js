@@ -183,6 +183,7 @@ module.exports = {
             }
 
             let args = content.split('\n');
+            content = '';
             for (let i = 0; i < args.length; i++) {
                 if (i == 0) {
                     char.name = args[i];
@@ -193,9 +194,12 @@ module.exports = {
                 else if (args[i].startsWith('location:')) {
                     char.image = args[i].replace('location:', '').trim();
                 }
+                else {
+                    content += `${args[i]}\n\n`;
+                }
             }
 
-            content = args[args.length - 1];
+            content = content.trim();
             await this.distribute(msg, char, content, self);
         }
         catch (err) {
@@ -210,7 +214,8 @@ module.exports = {
         let characters = (await db.collection(`characters`).where('name', '==', args[0]).get()).docs.map(char => char.data());
         if (characters.length == 1) {
             characters[0].location = await this.location_from_channel_id(msg.channel.id);
-            await this.distribute(msg, characters[0], args[args.length - 1], self);
+            args.shift();
+            await this.distribute(msg, characters[0], args.join('\n\n').trim(), self);
             if (msg) msg.delete();
             return;
         }
@@ -223,6 +228,7 @@ module.exports = {
                 location: await this.location_from_channel_id(msg.channel.id),
             }
 
+            content = '';
             for (let i = 0; i < args.length; i++) {
                 if (i == 0) {
                     char.name = args[i];
@@ -233,11 +239,14 @@ module.exports = {
                 else if (args[i].startsWith('location:')) {
                     char.image = args[i].replace('location:', '').trim();
                 }
+                else {
+                    content += `${args[i]}\n\n`;
+                }
             }
 
             await db.collection(`characters`).add(char);
 
-            content = args[args.length - 1];
+            content = content.trim();
             await this.distribute(msg, char, content, self);
         }
         catch (err) {
