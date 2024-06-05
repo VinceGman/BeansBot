@@ -166,7 +166,7 @@ module.exports = {
 
 
                 if (individualized_content.includes(action_phrase)) {
-                    individualized_content = individualized_content.replace(action_phrase, '');
+                    individualized_content = individualized_content.replace(action_phrase, '').trim();
                 }
 
                 let recipient_webhook_client = webhook_clients.get(recipient_channel_id);
