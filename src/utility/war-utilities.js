@@ -149,8 +149,7 @@ module.exports = {
                     individualized_content += `\n\n> *Only you can see this message.*`;
                 }
 
-                let action_phrase = 'KYN';
-                if (char.hasOwnProperty('only_to') && !individualized_content.includes(action_phrase)) {
+                if (char.hasOwnProperty('only_to') && individualized_content.includes(`"`)) {
                     if (recipient_channel_id == char.only_to) {
                         individualized_content += `\n\n> *Only you can understand this message.*`;
                     }
@@ -162,11 +161,6 @@ module.exports = {
                             continue;
                         }
                     }
-                }
-
-
-                if (individualized_content.includes(action_phrase)) {
-                    individualized_content = individualized_content.replace(action_phrase, '').trim();
                 }
 
                 let recipient_webhook_client = webhook_clients.get(recipient_channel_id);
