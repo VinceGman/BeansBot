@@ -78,18 +78,6 @@ module.exports = {
                 return;
             }
 
-            if (['str', 'end', 'agl', 'mna', 'lck'].includes(content.toLowerCase())) {
-                let stat = char.stats[content.toLowerCase()];
-                if (stat && !isNaN(stat)) {
-                    let roll_num = Math.floor(Math.random() * 20) + 1; // [1, 20]
-                    content = `\`${content.toUpperCase()} Check: ${roll_num} + ${stat} = ${roll_num + +stat}\``;
-                }
-                else {
-                    msg.channel.send('Your character does not have this stat recorded.');
-                    return;
-                }
-            }
-
             await this.distribute(msg, char, content, self);
 
             if (msg) msg.delete();
@@ -145,11 +133,25 @@ module.exports = {
                     avatarURL = char?.alter?.alter_image ?? char.image;
                 }
 
+                let roll = false;
+                if (['str', 'end', 'agl', 'mna', 'lck'].includes(individualized_content.toLowerCase())) {
+                    roll = true;
+                    let stat = char.stats[individualized_content.toLowerCase()];
+                    if (stat && !isNaN(stat)) {
+                        let roll_num = Math.floor(Math.random() * 20) + 1; // [1, 20]
+                        individualized_content = `\`${individualized_content.toUpperCase()} Check: ${roll_num} + ${stat} = ${roll_num + +stat}\``;
+                    }
+                    else {
+                        msg.channel.send('Your character does not have this stat recorded.');
+                        return;
+                    }
+                }
+
                 if (self) {
                     individualized_content += `\n\n> *Only you can see this message.*`;
                 }
 
-                if (char.hasOwnProperty('only_to') && individualized_content.includes(`"`)) {
+                if (char.hasOwnProperty('only_to') && (individualized_content.includes(`"`) || individualized_content.includes(`“`))) {
                     if (recipient_channel_id == char.only_to) {
                         individualized_content += `\n\n> *Only you can understand this message.*`;
                     }
