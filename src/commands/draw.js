@@ -82,7 +82,8 @@ module.exports = {
             let highcards = this.highcardIndexes(outcomes);
             let lowcards = this.lowcardIndexes(outcomes);
 
-            let { index, icon, color } = this.input_to_color(highcards[0]);
+            let random_priority = Math.floor(Math.random() * highcards.length);
+            let { index, icon, color } = this.input_to_color(highcards[random_priority]);
 
             let draw_embed = new EmbedBuilder()
                 .setTitle(`Draw`)
@@ -101,7 +102,7 @@ module.exports = {
             const collector = msg.channel.createMessageCollector({ filter, time: 15000 });
 
             collector.on('end', async (collected) => {
-                let { index, icon, color } = this.input_to_color(chosen ? chosen : highcards[0]);
+                let { index, icon, color } = this.input_to_color(chosen ? chosen : highcards[random_priority]);
 
                 outcomes = this.draw(12, outcomes);
 
