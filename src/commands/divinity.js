@@ -8,21 +8,14 @@ const db = new Firestore({
 const { EmbedBuilder } = require('discord.js');
 const comma_adder = require('commas');
 
-
-// 5 actions
-// 3 coins
-// shooting the coin deletes it
-// duplicate - creates an extra coin and divinities both
-// bumping - gives a chance for each coin to divinity on a 50/50
-
 module.exports = {
     name: 'divinity',
     alias: ['div', 'coins', 'coin'],
     alias_show: ['div'],
-    description: "pick the highest color",
+    description: "make the highest coin streak",
     category: 'gambling',
     admin: true,
-    type: "production",
+    type: "test",
     cooldown: 45,
     async execute(discord_client, msg, args, admin) {
         try {
@@ -98,7 +91,7 @@ module.exports = {
             this.divinity_show(msg, in_play, bet, random, modifier, coins, actions);
             collector.on('collect', m => {
                 let input = m.content.toLowerCase().replace('+', '');
-                if (['flip', 'shoot', 'dupe', 'bump', 'quit', 'kill', 'swap', 'flow', 'bash', 'split'].includes(input)) {
+                if (['flip', 'shoot', 'dupe', 'bump', 'quit', 'kill', 'swap', 'flow', 'bash', 'split', 'consume'].includes(input)) {
                     collector.resetTimer();
 
                     let valid_action = false;
@@ -190,6 +183,19 @@ module.exports = {
                             for (let i = 0; i < randomCoins.length; i++) {
                                 in_play[randomCoins[i]] += 1;
                             }
+                            valid_action = true;
+                            break;
+                        case 'consume':
+                            if (in_play.length < 3) {
+                                msg.channel.send('You must have 3 coins in play to consume.');
+                                break;
+                            }
+                            if (!in_play.every(c => c % 2 === in_play[0] % 2)) {
+                                msg.channel.send('All coins must be a streak to consume.');
+                                break;
+                            }
+                            coins += in_play.length;
+                            in_play = [];
                             valid_action = true;
                             break;
                         default:
