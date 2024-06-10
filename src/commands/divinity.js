@@ -251,7 +251,7 @@ module.exports = {
         let multiplier = this.multiplier(turns, coins, actions, in_play);
         multiplier = multiplier > 0 ? multiplier : 0;
         let multiplier_text = ``;
-        let color = '#AA5533';
+        let color = '#EC7357';
         if (multiplier >= 1.5) {
             color = '#Cc4b53';
             multiplier_text = ` - ${multiplier}x`;
@@ -263,6 +263,14 @@ module.exports = {
         if (multiplier >= 4.5) {
             color = '#FFC759';
             multiplier_text = ` - ${multiplier}x!?`;
+        }
+        if (multiplier >= 6) {
+            color = '#7FD8BE';
+            multiplier_text = ` - ${multiplier}x!?!`;
+        }
+        if (multiplier >= 10) {
+            color = '#DF2935';
+            multiplier_text = ` - ${multiplier}X!!!`;
         }
 
         let divinity_embed = new EmbedBuilder()
@@ -292,7 +300,7 @@ module.exports = {
         let multiplier = this.multiplier(turns, coins, actions, in_play);
         multiplier = multiplier > 0 ? multiplier : 0;
         let multiplier_text = '';
-        let color = '#AA5533';
+        let color = '#EC7357';
         let outcome = 'Lost';
         let winnings = 0;
         if (in_play.length >= 3 && in_play.every(c => c % 2 === in_play[0] % 2)) {
@@ -310,6 +318,14 @@ module.exports = {
             if (multiplier >= 4.5) {
                 color = '#FFC759';
                 multiplier_text = ` - ${multiplier}x!?`;
+            }
+            if (multiplier >= 6) {
+                color = '#7FD8BE';
+                multiplier_text = ` - ${multiplier}x!?!`;
+            }
+            if (multiplier >= 10) {
+                color = '#DF2935';
+                multiplier_text = ` - ${multiplier}X!!!`;
             }
         }
 
