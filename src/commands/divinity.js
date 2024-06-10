@@ -83,15 +83,16 @@ module.exports = {
 
             let coins = 3;
             let actions = 5;
+            let turns = 0;
 
             const filter = m => m.author.id == msg.author.id;
-            const collector = msg.channel.createMessageCollector({ filter, time: 15000 });
+            const collector = msg.channel.createMessageCollector({ filter, time: 20000 });
 
             let in_play = [];
-            this.divinity_show(msg, in_play, bet, random, modifier, coins, actions);
+            this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns);
             collector.on('collect', m => {
                 let input = m.content.toLowerCase().replace('+', '');
-                if (['flip', 'shoot', 'dupe', 'bump', 'quit', 'kill', 'swap', 'flow', 'bash', 'split', 'consume'].includes(input)) {
+                if (['flip', 'shoot', 'dupe', 'bump', 'bum0', 'quit', 'kill', 'swap', 'flow', 'bash', 'split', 'consume'].includes(input)) {
                     collector.resetTimer();
 
                     let valid_action = false;
@@ -116,17 +117,18 @@ module.exports = {
                                 msg.channel.send('You do not have a coin to duplicate.');
                                 break;
                             }
-                            // if (actions < 2) {
-                            //     msg.channel.send('You do not have enough actions.');
-                            //     break;
-                            // }
+                            if (actions < 2) {
+                                msg.channel.send('You need 2 actions to duplicate.');
+                                break;
+                            }
                             coins -= 1;
-                            // actions -= 1;
+                            actions -= 1;
                             in_play.push(this.entropy());
                             in_play.push(this.entropy());
                             valid_action = true;
                             break;
                         case 'bump':
+                        case 'bum0':
                             if (in_play.length < 1) {
                                 msg.channel.send('You must have 1 coin in play to bump.');
                                 break;
@@ -138,6 +140,7 @@ module.exports = {
                             break;
                         case 'quit':
                         case 'kill':
+                            turns += actions;
                             actions = 0;
                             break;
                         case 'swap':
@@ -150,7 +153,7 @@ module.exports = {
                             break;
                         case 'flow':
                             if (!coins) {
-                                msg.channel.send('You do not have a coin flow with.');
+                                msg.channel.send('You do not have a coin to flow with.');
                                 break;
                             }
                             if (in_play.length < 1) {
@@ -179,15 +182,14 @@ module.exports = {
                                 break;
                             }
                             let randomCoins = this.getRandomIndices(in_play.length, in_play.length / 2);
-                            console.log(randomCoins);
                             for (let i = 0; i < randomCoins.length; i++) {
                                 in_play[randomCoins[i]] += 1;
                             }
                             valid_action = true;
                             break;
                         case 'consume':
-                            if (in_play.length < 3) {
-                                msg.channel.send('You must have 3 coins in play to consume.');
+                            if (in_play.length < 2) {
+                                msg.channel.send('You must have 2 coins in play to consume.');
                                 break;
                             }
                             if (!in_play.every(c => c % 2 === in_play[0] % 2)) {
@@ -196,25 +198,29 @@ module.exports = {
                             }
                             coins += in_play.length;
                             in_play = [];
-                            valid_action = true;
                             break;
                         default:
                             msg.channel.send('This action has no binded function.');
                     }
 
-                    if (valid_action) actions -= 1;
+                    if (valid_action) {
+                        actions -= 1;
+                        turns += 1;
+                    }
 
                     if (actions <= 0) {
+                        turns += coins;
+                        coins = 0;
                         collector.stop();
                     }
                     else {
-                        this.divinity_show(msg, in_play, bet, random, modifier, coins, actions);
+                        this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns);
                     }
                 }
             });
 
             collector.on('end', async (collected) => {
-                await this.divinity_end(msg, in_play, bet, random, modifier, coins, actions);
+                await this.divinity_end(msg, in_play, bet, random, modifier, coins, actions, turns);
                 require('../utility/timers').reset_timer(msg, this.name); // release resource
             });
         }
@@ -225,7 +231,7 @@ module.exports = {
     entropy() {
         return Math.random() < 0.5 ? 0 : 1;
     },
-    divinity_show(msg, in_play, bet, random, modifier, coins, actions) {
+    divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns) {
         let content = '';
         for (let coin of in_play) {
             content += `${coin % 2 ? 'H' : 'T'} `;
@@ -233,9 +239,18 @@ module.exports = {
 
         content = content ? content : '[No Coins]';
 
+        let multiplier = 2 + (turns + actions + coins - 5) + (in_play.length - 3);
+        multiplier = multiplier > 0 ? multiplier : 0;
+        let multiplier_text = ` - ${multiplier}x`;
+        let color = '#AA5533';
+        if (multiplier >= 3) {
+            color = '#Cc4b53';
+            multiplier_text = ` - ${multiplier}x!`;
+        }
+
         let divinity_embed = new EmbedBuilder()
-            .setTitle(`Divinity`)
-            .setColor('#AA5533');
+            .setTitle(`Divinity${multiplier_text}`)
+            .setColor(color);
 
         if (random || modifier != 1) divinity_embed.addFields({ name: random ? `Random` : `Mod`, value: `Bet: ${comma_adder.add(Math.trunc(bet))}`, inline: false });
 
@@ -247,7 +262,7 @@ module.exports = {
 
         msg.channel.send({ embeds: [divinity_embed] });
     },
-    async divinity_end(msg, in_play, bet, random, modifier, coins, actions) {
+    async divinity_end(msg, in_play, bet, random, modifier, coins, actions, turns) {
 
         let content = '';
         for (let coin of in_play) {
@@ -256,16 +271,25 @@ module.exports = {
 
         content = content ? content : '[No Coins]';
 
+        let multiplier = 2 + (turns + actions + coins - 5) + (in_play.length - 3);
+        multiplier = multiplier > 0 ? multiplier : 0;
+        let multiplier_text = '';
+        let color = '#AA5533';
         let outcome = 'Lost';
         let winnings = 0;
         if (in_play.length >= 3 && in_play.every(c => c % 2 === in_play[0] % 2)) {
             outcome = 'Won';
-            winnings = (in_play.length * 1 / 3 * bet) + bet;
+            winnings = bet * multiplier;
+            multiplier_text = ` - ${multiplier}x`;
+            if (multiplier >= 3) {
+                color = '#Cc4b53';
+                multiplier_text = ` - ${multiplier}x!`;
+            }
         }
 
         let divinity_embed = new EmbedBuilder()
-            .setTitle(`Divinity`)
-            .setColor('#AA5533')
+            .setTitle(`Divinity${multiplier_text}`)
+            .setColor(color)
             .addFields({ name: `Result: ${outcome}`, value: `Winnings: ${comma_adder.add(Math.trunc(winnings))}`, inline: false })
             .setFooter({ text: `${msg.author.username}` })
             .setTimestamp();
