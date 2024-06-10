@@ -202,10 +202,9 @@ module.exports = {
                                 msg.channel.send('All coins must be a streak to overclock.');
                                 break;
                             }
-                            in_play = [];
+                            in_play.splice(0, 4);
                             coins += 3;
-                            actions += 5;
-                            valid_action = true;
+                            actions += 4;
                             break;
                         default:
                             msg.channel.send('This action has no binded function.');
