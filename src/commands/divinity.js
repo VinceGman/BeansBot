@@ -15,7 +15,7 @@ module.exports = {
     description: "make the highest coin streak",
     category: 'gambling',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 45,
     async execute(discord_client, msg, args, admin) {
         try {
