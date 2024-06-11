@@ -10,12 +10,12 @@ const comma_adder = require('commas');
 
 module.exports = {
     name: 'divinity',
-    alias: ['div', 'coins', 'coin'],
+    alias: ['divin', 'coins', 'coin'],
     alias_show: ['div'],
     description: "make the highest coin streak",
     category: 'gambling',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 45,
     async execute(discord_client, msg, args, admin) {
         try {
@@ -92,7 +92,7 @@ module.exports = {
             this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns);
             collector.on('collect', m => {
                 let input = m.content.toLowerCase().replace('+', '');
-                if (['flip', 'shoot', 'dupe', 'bump', 'bum0', 'quit', 'swap', 'flow', 'bash', 'split', 'consume', 'swipe', 'overclock'].includes(input)) {
+                if (['flip', 'dupe', 'bump', 'bum0', 'quit', 'swap', 'flow', 'bash', 'split', 'swipe', 'overclock', 'time', 'shoot', 'wager', 'pull'].includes(input)) {
                     collector.resetTimer();
 
                     let valid_action = false;
@@ -100,6 +100,9 @@ module.exports = {
                         case 'quit':
                             collector.stop();
                             return;
+                        case 'time':
+                            collector.resetTimer({ time: 120000 });
+                            break;
                         case 'flip':
                             if (!coins) {
                                 msg.channel.send('You do not have a coin to flip.');
@@ -180,18 +183,16 @@ module.exports = {
                             }
                             valid_action = true;
                             break;
-                        case 'consume':
                         case 'swipe':
-                            if (in_play.length < 2) {
-                                msg.channel.send('You must have 2 coins in play to swipe.');
+                            if (in_play.length < 1) {
+                                msg.channel.send('You must have 1 coin in play to swipe.');
                                 break;
                             }
-                            if (!in_play.every(c => c % 2 === in_play[0] % 2)) {
-                                msg.channel.send('All coins must be a streak to swipe.');
-                                break;
-                            }
-                            coins += in_play.length;
-                            in_play = [];
+                            let match = in_play[0] % 2;
+                            do {
+                                in_play.splice(0, 1);
+                                coins += 1;
+                            } while (in_play.length >= 1 && match == in_play[0] % 2);
                             break;
                         case 'overclock':
                             if (in_play.length < 4) {
@@ -205,6 +206,30 @@ module.exports = {
                             in_play.splice(0, 4);
                             coins += 3;
                             actions += 4;
+                            break;
+                        case 'shoot':
+                            let randomCoin = Math.floor(Math.random() * in_play.length);
+                            in_play.splice(randomCoin, 1);
+                            valid_action = true;
+                            break;
+                        case 'wager':
+                            for (let i = 0; i < actions; i++) {
+                                if (this.entropy()) {
+                                    in_play.push(this.entropy());
+                                }
+                                else {
+                                    turns += 1;
+                                }
+                            }
+                            actions = 0;
+                            break;
+                        case 'pull':
+                            for (let i = 0; i < in_play.length * 2; i++) {
+                                if (this.entropy()) {
+                                    actions += 1;
+                                }
+                            }
+                            in_play = [];
                             break;
                         default:
                             msg.channel.send('This action has no binded function.');
@@ -279,10 +304,11 @@ module.exports = {
 
         if (random || modifier != 1) divinity_embed.addFields({ name: random ? `Random` : `Mod`, value: `Bet: ${comma_adder.add(Math.trunc(bet))}`, inline: false });
 
+        let stats = turns + coins + actions + in_play.length;
         divinity_embed
             .addFields({ name: `Resources`, value: `\`\`\`Actions: ${actions}\nCoins: ${coins}\`\`\``, inline: false })
             .addFields({ name: `In Play`, value: `\`\`\`${content}\`\`\``, inline: false })
-            // .addFields({ name: `Calc`, value: `\`\`\`${turns}t + ${coins}c + ${actions}a + ${in_play.length}ip - 11 = ${turns + coins + actions + in_play.length - 11}x\`\`\``, inline: false })
+            // .addFields({ name: `Mult`, value: `\`\`\`${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)} + ${(stats > 8 ? (stats - 8) : 0)}x\`\`\``, inline: false })
             .setFooter({ text: `${msg.author.username}` })
             .setTimestamp();
 
@@ -338,8 +364,9 @@ module.exports = {
 
         if (random || modifier != 1) divinity_embed.addFields({ name: random ? `Random` : `Mod`, value: `Bet: ${comma_adder.add(Math.trunc(bet))}`, inline: false });
 
+        let stats = turns + coins + actions + in_play.length;
         divinity_embed.addFields({ name: `In Play`, value: `\`\`\`${content}\`\`\``, inline: false })
-        // .addFields({ name: `Calc`, value: `\`\`\`${turns}t + ${coins}c + ${actions}a + ${in_play.length}ip - 11 = ${turns + coins + actions + in_play.length - 11}x\`\`\``, inline: false })
+        // .addFields({ name: `Mult`, value: `\`\`\`${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)} + ${(stats > 8 ? (stats - 8) : 0)}x\`\`\``, inline: false })
 
         await this.finish_game(msg, outcome, winnings, bet);
 
