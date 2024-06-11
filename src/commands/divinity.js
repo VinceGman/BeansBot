@@ -414,6 +414,6 @@ module.exports = {
     },
     multiplier(turns, coins, actions, in_play) {
         let stats = turns + coins + actions + in_play.length;
-        return (in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0) + (in_play.length > 3 ? (in_play.length - 3) : 0) + (stats > 8 ? (stats - 8) : 0);
+        return (in_play.length > 2 ? ((in_play.length - 2) * 1.75) : 0) + (in_play.length > 3 ? ((in_play.length - 3) * 0.5) : 0) + (stats > 8 ? (stats - 8) : 0);
     }
 }
