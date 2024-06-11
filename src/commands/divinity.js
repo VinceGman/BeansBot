@@ -19,8 +19,6 @@ module.exports = {
     cooldown: 45,
     async execute(discord_client, msg, args, admin) {
         try {
-            if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
-
             if (args.length == 1 && args[0].toLowerCase() == 'stats' && admin) {
                 let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
 
@@ -40,7 +38,6 @@ module.exports = {
                 }
 
                 msg.channel.send({ embeds: [divinity_stats] });
-                require('../utility/timers').reset_timer(msg, this.name); // release resource
                 return;
             }
 
@@ -80,6 +77,7 @@ module.exports = {
             bet = Math.floor(bet * modifier);
 
             if (!(await require('../utility/credits').transaction(discord_client, msg, bet))) return; // credits manager validates transaction
+            if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
             let coins = 3;
             let actions = 5;
@@ -416,6 +414,6 @@ module.exports = {
     },
     multiplier(turns, coins, actions, in_play) {
         let stats = turns + coins + actions + in_play.length;
-        return (in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0) + (stats > 8 ? (stats - 8) : 0);
+        return (in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0) + (in_play.length > 3 ? (in_play.length - 3) : 0) + (stats > 8 ? (stats - 8) : 0);
     }
 }
