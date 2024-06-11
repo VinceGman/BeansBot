@@ -71,7 +71,7 @@ module.exports = {
                 `i need more twitter followers. follow me and ill answer.`,
                 `i dont want to be here. stop talking to me. i want to be watching it come in and out.`,
                 `you stank. please use deodorant. fuck you`,
-                `dont worry about that... come over. i want make you come over.. and over.. and over.`,
+                `dont worry about that... come over. i want to make you come over.. and over.. and over.`,
                 `what the fuck? no`,
                 `YES YES SAY MY NAME YES`,
                 `that's when she told me she was into race play so i was li-. oh hi, get the fuck out of here. im busy.`,
