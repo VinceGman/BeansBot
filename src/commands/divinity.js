@@ -127,8 +127,8 @@ module.exports = {
                             in_play.push(this.entropy());
                             valid_action = true;
                             break;
-                        case 'bump':
-                        case 'bum0':
+                        case 'bump-removed':
+                        case 'bum0-removed':
                             for (let i = 0; i < in_play.length; i++) {
                                 in_play[i] += this.entropy();
                             }
