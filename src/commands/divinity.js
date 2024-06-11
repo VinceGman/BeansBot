@@ -10,7 +10,7 @@ const comma_adder = require('commas');
 
 module.exports = {
     name: 'divinity',
-    alias: ['divin', 'coins', 'coin'],
+    alias: ['div', 'coins', 'coin'],
     alias_show: ['div'],
     description: "make the highest coin streak",
     category: 'gambling',
