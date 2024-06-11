@@ -127,11 +127,16 @@ module.exports = {
                             in_play.push(this.entropy());
                             valid_action = true;
                             break;
-                        case 'bump-removed':
-                        case 'bum0-removed':
+                        case 'bump':
+                        case 'bum0':
+                            if (actions < 2) {
+                                msg.channel.send('You need 2 actions to bump.');
+                                break;
+                            }
                             for (let i = 0; i < in_play.length; i++) {
                                 in_play[i] += this.entropy();
                             }
+                            actions -= 1;
                             valid_action = true;
                             break;
                         case 'swap':
@@ -172,15 +177,20 @@ module.exports = {
                                 in_play.splice(randomCoin, 1);
                             }
                             break;
-                        case 'split-removed':
+                        case 'split':
                             if (in_play.length < 2) {
                                 msg.channel.send('You must have 2 coins in play to split.');
+                                break;
+                            }
+                            if (actions < 2) {
+                                msg.channel.send('You need 2 actions to split.');
                                 break;
                             }
                             let randomCoins = this.getRandomIndices(in_play.length, in_play.length / 2);
                             for (let i = 0; i < randomCoins.length; i++) {
                                 in_play[randomCoins[i]] += 1;
                             }
+                            actions -= 1;
                             valid_action = true;
                             break;
                         case 'swipe':
