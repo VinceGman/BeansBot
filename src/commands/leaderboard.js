@@ -34,8 +34,39 @@ module.exports = {
 
             if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
-            if (msg.content.toLowerCase().startsWith('+stats') || (args.length == 1 && args[0].toLowerCase() == 'stats')) {
+            if (msg.content.toLowerCase().startsWith('+stats') && args.length == 0) {
                 this.leaderboard_stats(msg, recipient ?? msg.author.id);
+                return;
+            }
+
+            try {
+                if (msg.content.toLowerCase().startsWith('+stats') && args.length == 1 && admin) {
+                    let game_name = args[0];
+                    let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
+
+                    let game_stats = new EmbedBuilder()
+                        .setTitle(`Stats: ${game_name}`)
+                        .setColor('#000000')
+                        .setFooter({ text: `${msg.author.username}` })
+                        .setTimestamp();
+
+                    if (!db_user.hasOwnProperty(`times_played_${game_name}`)) {
+                        game_stats.addFields({ name: 'No Games', value: 'You have no games with this name.', inline: false });
+                    }
+
+                    if (db_user?.[`times_played_${game_name}`] && db_user?.[`times_won_${game_name}`] && db_user?.[`net_winnings_${game_name}`]) {
+                        game_stats.addFields({ name: 'Winrate', value: `Has won ${(db_user[`times_won_${game_name}`] / db_user[`times_played_${game_name}`] * 100).toFixed(2)}% of ${db_user[`times_played_${game_name}`]} divinities.`, inline: false });
+                        let net_credits = db_user[`net_winnings_${game_name}`] >= 0 ? `You've earned ${comma_adder.add(Math.trunc(db_user[`net_winnings_${game_name}`]))} credits.` : `You've lost ${comma_adder.add(Math.trunc(db_user[`net_winnings_${game_name}`]))} credits.`;
+                        game_stats.addFields({ name: 'Net Credits', value: `${net_credits}`, inline: false });
+                    }
+
+                    msg.channel.send({ embeds: [game_stats] });
+                    require('../utility/timers').reset_timer(msg, this.name); // release resource
+                    return;
+                }
+            }
+            catch (err) {
+                require('../utility/embeds').notice_embed(discord_client, msg, 'There was an issue retrieving stats for this game.', '#fe3939');
                 return;
             }
 
