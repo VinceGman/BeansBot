@@ -55,7 +55,7 @@ module.exports = {
                     }
 
                     if (db_user?.[`times_played_${game_name}`] && db_user?.[`times_won_${game_name}`] && db_user?.[`net_winnings_${game_name}`]) {
-                        game_stats.addFields({ name: 'Winrate', value: `Has won ${(db_user[`times_won_${game_name}`] / db_user[`times_played_${game_name}`] * 100).toFixed(2)}% of ${db_user[`times_played_${game_name}`]} divinities.`, inline: false });
+                        game_stats.addFields({ name: 'Winrate', value: `Has won ${(db_user[`times_won_${game_name}`] / db_user[`times_played_${game_name}`] * 100).toFixed(2)}% of ${db_user[`times_played_${game_name}`]}.`, inline: false });
                         let net_credits = db_user[`net_winnings_${game_name}`] >= 0 ? `You've earned ${comma_adder.add(Math.trunc(db_user[`net_winnings_${game_name}`]))} credits.` : `You've lost ${comma_adder.add(Math.trunc(db_user[`net_winnings_${game_name}`]))} credits.`;
                         game_stats.addFields({ name: 'Net Credits', value: `${net_credits}`, inline: false });
                     }
