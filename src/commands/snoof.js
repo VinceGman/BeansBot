@@ -17,10 +17,10 @@ module.exports = {
     cooldown: 1,
     async execute(discord_client, msg, args, admin) {
         try {
-            if (!require('../src/utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
+            if (!require('../utility/timers').timer(msg, this.name, this.cooldown)) return; // timers manager checks cooldown
 
             if (args.length == 1 && args[0].toLowerCase() == 'stats' && admin) {
-                let db_user = await require('../src/utility/queries').user(msg.guildId, msg.author.id);
+                let db_user = await require('../utility/timers').user(msg.guildId, msg.author.id);
 
                 let snoof_stats = new EmbedBuilder()
                     .setTitle(`Snoof Stats`)
@@ -70,13 +70,13 @@ module.exports = {
                 bet = +args[0];
             }
             else if (args.length == 1 && args[0].toLowerCase() == 'all') {
-                bet = +(await require('../src/utility/queries').user(msg.guildId, msg.author.id)).credits;
+                bet = +(await require('../utility/queries').user(msg.guildId, msg.author.id)).credits;
             }
 
             bet = random ? Math.floor(Math.random() * bet) + 1 : bet;
             bet = Math.floor(bet * modifier);
 
-            if (!(await require('../src/utility/credits').transaction(discord_client, msg, bet))) return; // credits manager validates transaction
+            if (!(await require('../utility/credits').transaction(discord_client, msg, bet))) return; // credits manager validates transaction
 
             let max_num = 100;
             let roll_num = Math.floor(Math.random() * max_num) + 1; // [1, 100]
@@ -85,7 +85,7 @@ module.exports = {
             let win = roll_num <= max_num / 100 ? 1 : 0;
 
 
-            let db_user = await require('../src/utility/queries').user(msg.guildId, msg.author.id);
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
             let credits = +db_user.credits;
             let times_played_snoof = db_user?.times_played_snoof ? +db_user.times_played_snoof : 0;
             let times_won_snoof = db_user?.times_won_snoof ? +db_user.times_won_snoof : 0;
@@ -114,11 +114,11 @@ module.exports = {
             if (random) snoof_embed.addFields({ name: `Random`, value: `Bet: ${comma_adder.add(Math.trunc(bet))}`, inline: false });
 
             msg.channel.send({ embeds: [snoof_embed] });
-            require('../src/utility/timers').reset_timer(msg, this.name); // release resource
+            require('../utility/timers').reset_timer(msg, this.name); // release resource
             return;
         }
         catch (err) {
-            // console.log(err);
+            console.log(err);
         }
     }
 }
