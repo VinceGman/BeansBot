@@ -31,11 +31,16 @@ module.exports = {
                 let foreign_accounts = (await db.collection(`servers/${msg.guildId}/members`).where('joint.users', 'array-contains', msg.author.id).get()).docs.map(m => m.id);
                 let joint_accounts = foreign_accounts.map(u => discord_users.has(u) ? discord_users.get(u).user.username : '').filter(Boolean).join('\n') || '[none]';
 
-                let joint_embed = new EmbedBuilder()
-                    .setTitle(`Joint Account`)
-                    .setColor('#607d8b')
-                    .setDescription(`Use **+joint @user** to give and remove access.`)
+                let { personalized_embed: joint_embed } = await require('../utility/embeds').personalized_embed(msg, msg.author.id, db_user, discord_users.get(msg.author.id));
+
+                joint_embed
                     .addFields({ name: `Joint`, value: `${comma_adder.add(Math.trunc(joint.credits))} credits`, inline: false })
+
+                if (joint_users == '[none]') {
+                    joint_embed.addFields({ name: `Access`, value: `Use **+joint @user** to give and remove access.`, inline: false })
+                }
+
+                joint_embed
                     .addFields({ name: `Access To:`, value: `${joint_users}`, inline: true })
                     .addFields({ name: `Access From:`, value: `${joint_accounts}`, inline: true })
                     .setFooter({ text: `${msg.author.username}` })
@@ -60,10 +65,9 @@ module.exports = {
             let foreign_accounts = (await db.collection(`servers/${msg.guildId}/members`).where('joint.users', 'array-contains', msg.author.id).get()).docs.map(m => m.id);
             let joint_accounts = foreign_accounts.map(u => discord_users.has(u) ? discord_users.get(u).user.username : '').filter(Boolean).join('\n') || '[none]';
 
-            let joint_embed = new EmbedBuilder()
-                .setTitle(`Joint Account`)
-                .setColor('#607d8b')
-                .setDescription(`Use **+joint @user** to give and remove access.`)
+            let { personalized_embed: joint_embed } = await require('../utility/embeds').personalized_embed(msg, msg.author.id, db_user, discord_users.get(msg.author.id));
+
+            joint_embed
                 .addFields({ name: `Joint`, value: `${comma_adder.add(Math.trunc(joint.credits))} credits`, inline: false })
                 .addFields({ name: `${needs_removing ? 'Removed' : 'Added'}`, value: `${discord_users.get(recipient).user.username}`, inline: false })
                 .addFields({ name: `Access To:`, value: `${joint_users}`, inline: true })
