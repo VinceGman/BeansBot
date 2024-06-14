@@ -11,7 +11,7 @@ const comma_adder = require('commas');
 module.exports = {
     name: 'joint',
     alias: ['join'],
-    description: "add someone to your savings account",
+    description: "add someone to your joint account",
     category: 'credits',
     admin: false,
     type: "production",
@@ -23,16 +23,16 @@ module.exports = {
             let { recipient } = await require('../utility/parsers').parse_user(msg, args);
 
             let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
-            let savings = db_user?.savings ? db_user.savings : { credits: '0', joint: [] };
+            let joint = db_user?.joint ? db_user.joint : { credits: '0', users: [] };
 
             if (!recipient) {
                 let discord_users = await msg.guild.members.fetch();
-                let joint_users = savings.joint.map(u => discord_users.has(u) ? discord_users.get(u).user.username : '').filter(Boolean).join('\n') || '[none]';
-                let foreign_accounts = (await db.collection(`servers/${msg.guildId}/members`).where('savings.joint', 'array-contains', msg.author.id).get()).docs.map(m => m.id);
+                let joint_users = joint.users.map(u => discord_users.has(u) ? discord_users.get(u).user.username : '').filter(Boolean).join('\n') || '[none]';
+                let foreign_accounts = (await db.collection(`servers/${msg.guildId}/members`).where('joint.users', 'array-contains', msg.author.id).get()).docs.map(m => m.id);
                 let joint_accounts = foreign_accounts.map(u => discord_users.has(u) ? discord_users.get(u).user.username : '').filter(Boolean).join('\n') || '[none]';
 
                 let joint_embed = new EmbedBuilder()
-                    .setTitle(`Joint Info`)
+                    .setTitle(`Joint Account`)
                     .setColor('#607d8b')
                     .setDescription(`Use **+joint @user** to give and remove access.`)
                     .addFields({ name: `Access To:`, value: `${joint_users}`, inline: true })
@@ -43,24 +43,24 @@ module.exports = {
                 return;
             }
 
-            let needs_removing = savings.joint.includes(recipient);
+            let needs_removing = joint.users.includes(recipient);
             if (needs_removing) {
-                savings.joint = savings.joint.filter(u => u !== recipient);
+                joint.users = joint.users.filter(u => u !== recipient);
             } else {
-                savings.joint.push(recipient);
+                joint.users.push(recipient);
             }
 
             await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
-                savings: savings,
+                joint: joint,
             }, { merge: true });
 
             let discord_users = await msg.guild.members.fetch();
-            let joint_users = savings.joint.map(u => discord_users.has(u) ? discord_users.get(u).user.username : '').filter(Boolean).join('\n') || '[none]';
-            let foreign_accounts = (await db.collection(`servers/${msg.guildId}/members`).where('savings.joint', 'array-contains', msg.author.id).get()).docs.map(m => m.id);
+            let joint_users = joint.users.map(u => discord_users.has(u) ? discord_users.get(u).user.username : '').filter(Boolean).join('\n') || '[none]';
+            let foreign_accounts = (await db.collection(`servers/${msg.guildId}/members`).where('joint.users', 'array-contains', msg.author.id).get()).docs.map(m => m.id);
             let joint_accounts = foreign_accounts.map(u => discord_users.has(u) ? discord_users.get(u).user.username : '').filter(Boolean).join('\n') || '[none]';
 
             let joint_embed = new EmbedBuilder()
-                .setTitle(`Joint Info`)
+                .setTitle(`Joint Account`)
                 .setColor('#607d8b')
                 .setDescription(`Use **+joint @user** to give and remove access.`)
                 .addFields({ name: `${needs_removing ? 'Removed' : 'Added'}`, value: `${discord_users.get(recipient).user.username}`, inline: false })

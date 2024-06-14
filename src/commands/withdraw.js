@@ -11,7 +11,7 @@ const comma_adder = require('commas');
 module.exports = {
     name: 'withdraw',
     alias: ['wd'],
-    description: "withdraw from a savings account",
+    description: "withdraw from a joint account",
     category: 'credits',
     admin: false,
     type: "production",
@@ -24,14 +24,14 @@ module.exports = {
             args = parsed_args;
 
             let db_user = await require('../utility/queries').user(msg.guildId, recipient);
-            let savings = db_user?.savings ? db_user.savings : { credits: '0', joint: [] };
+            let joint = db_user?.joint ? db_user.joint : { credits: '0', users: [] };
 
-            if (!savings.joint.includes(msg.author.id) && recipient != msg.author.id) {
+            if (!joint.users.includes(msg.author.id) && recipient != msg.author.id) {
                 await require('../utility/embeds').notice_embed(discord_client, msg, "You don't have joint access to this account. See -> **+joint**", '#ebcf34');
                 return;
             }
 
-            let credits = +savings.credits;
+            let credits = +joint.credits;
 
             let amount = 1000;
             let random = false;
@@ -84,7 +84,7 @@ module.exports = {
             await require('../utility/credits').refund(discord_client, msg, msg.author.id, amount); // credits manager refunds credits
 
             await db.doc(`servers/${msg.guildId}/members/${recipient}`).set({
-                savings: { credits: credits.toFixed(2).toString(), joint: savings.joint },
+                joint: { credits: credits.toFixed(2).toString(), users: joint.users },
             }, { merge: true });
 
             let withdraw_result = new EmbedBuilder()

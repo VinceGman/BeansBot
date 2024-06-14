@@ -11,7 +11,7 @@ const comma_adder = require('commas');
 module.exports = {
     name: 'deposit',
     alias: ['dp'],
-    description: "deposit a savings account",
+    description: "deposit to a joint account",
     category: 'credits',
     admin: false,
     type: "production",
@@ -24,8 +24,8 @@ module.exports = {
             args = parsed_args;
 
             let db_user = await require('../utility/queries').user(msg.guildId, recipient);
-            let savings = db_user?.savings ? db_user.savings : { credits: '0', joint: [] };
-            let credits = +savings.credits;
+            let joint = db_user?.joint ? db_user.joint : { credits: '0', users: [] };
+            let credits = +joint.credits;
 
             let { bet: amount } = await require('../utility/parsers').parse_payment(msg, args);
 
@@ -34,7 +34,7 @@ module.exports = {
             credits += +amount;
 
             await db.doc(`servers/${msg.guildId}/members/${recipient}`).set({
-                savings: { credits: credits.toFixed(2).toString(), joint: savings.joint },
+                joint: { credits: credits.toFixed(2).toString(), users: joint.users },
             }, { merge: true });
 
             let deposit_result = new EmbedBuilder()
@@ -42,7 +42,7 @@ module.exports = {
                 .setColor('#37914f')
                 // .setDescription(`Paid: ${+args[0]}`)
                 // .addFields({ name: 'From', value: `${msg.author.username}`, inline: true })
-                .addFields({ name: `Savings`, value: `${(await msg.guild.members.fetch(recipient)).user.username}`, inline: true })
+                .addFields({ name: `Joint`, value: `${(await msg.guild.members.fetch(recipient)).user.username}`, inline: true })
                 .addFields({ name: `Deposit`, value: `+${comma_adder.add(Math.trunc(amount))} credits`, inline: true })
                 .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
