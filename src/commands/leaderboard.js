@@ -168,7 +168,7 @@ module.exports = {
 
         let map_users_ids_credits = new Map();
         for (let doc of (await db.collection(`servers/${msg.guildId}/members`).get()).docs) {
-            let net_credits = (+doc.data().credits ?? 0) + +(await require('./credits').get_stocks_value(doc.id));
+            let net_credits = (+doc.data().credits ?? 0);// + +(await require('./credits').get_stocks_value(doc.id));
             map_users_ids_credits.set(doc.id, net_credits);
         }
 

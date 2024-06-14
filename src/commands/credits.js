@@ -41,7 +41,7 @@ module.exports = {
         let user = await require('../utility/queries').user(msg.guildId, id);
         let user_discord = msg.guild.members.cache.find(user => user.id === id);
 
-        let joint = user?.joint ? +user.joint.credits : 0;
+        // let joint = user?.joint ? +user.joint.credits : 0;
 
         // let lootbox_value = await this.get_lootbox_value(id);
         // let stocks_value = await this.get_stocks_value(msg, id);
@@ -65,7 +65,7 @@ module.exports = {
         // if (lootbox_value > 0) currency_embed.addFields({ name: 'Lootbox Value', value: `${comma_adder.add(Math.trunc(lootbox_value))} credits`, inline: false })
         // if (stocks_value > 0) currency_embed.addFields({ name: 'Stocks Value', value: `${comma_adder.add(Math.trunc(stocks_value))} credits`, inline: false })
         // if (cumulative_value > +user.credits) currency_embed.addFields({ name: 'Cumulative Value', value: `${comma_adder.add(Math.trunc(cumulative_value))} credits`, inline: false })
-        if (joint > 0) currency_embed.addFields({ name: 'Joint', value: `${comma_adder.add(Math.trunc(joint))} credits`, inline: false })
+        // if (joint > 0) currency_embed.addFields({ name: 'Joint', value: `${comma_adder.add(Math.trunc(joint))} credits`, inline: false })
         // if (cumulative_value > +user.credits) currency_embed.addFields({ name: 'Cumulative Value', value: `${comma_adder.add(Math.trunc(cumulative_value))} credits`, inline: false })
 
 
