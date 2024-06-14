@@ -125,19 +125,15 @@ module.exports = {
 
         let stats = false;
         let net_winnings = 0;
-        for (let [key, value] of Object.entries(db_user)) {
-            let net_credits = 0;
-            let stat_name = '';
-            if (key.startsWith('net_winnings')) {
-                net_credits = +value;
-                stat_name = _.capitalize(key.split('_')[key.split('_').length - 1]);
-            }
-            if (key == 'deathroll_stats') {
-                for (let stats in value) {
-                    net_credits = +value[stats].credit_net;
-                }
-                stat_name = 'Deathroll';
-            }
+
+        const net_winnings_entries = Object.entries(db_user)
+            .filter(([key]) => key.startsWith('net_winnings'))
+            .map(([key, value]) => ({ key: key.replace('net_winnings_', ''), value: value }))
+            .sort((a, b) => a.key.localeCompare(b.key));
+
+        for (let entry of net_winnings_entries) {
+            let stat_name = _.capitalize(entry.key.split('_')[entry.key.split('_').length - 1]);
+            let net_credits = +entry.value;
             if (net_credits != 0) {
                 stats = true;
                 net_winnings += net_credits;
