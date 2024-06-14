@@ -41,14 +41,17 @@ module.exports = {
         let user = await require('../utility/queries').user(msg.guildId, id);
         let user_discord = msg.guild.members.cache.find(user => user.id === id);
 
+        let savings = user?.savings ? +user.savings.credits : 0;
+
         // let lootbox_value = await this.get_lootbox_value(id);
-        let stocks_value = await this.get_stocks_value(msg, id);
+        // let stocks_value = await this.get_stocks_value(msg, id);
 
         // let cumulative_value = +user.credits + +lootbox_value + +stocks_value;
-        let cumulative_value = +user.credits + +stocks_value;
+        // let cumulative_value = +user.credits + +stocks_value;
+        // let cumulative_value = +user.credits + savings;
 
         let currency_embed = new EmbedBuilder()
-            .addFields({ name: 'Currency', value: `${comma_adder.add(Math.trunc(user.credits))} credits`, inline: false })
+            .addFields({ name: 'Checking', value: `${comma_adder.add(Math.trunc(user.credits))} credits`, inline: false })
             .setTitle(`${user.pref_name ?? user_discord.nickname ?? user_discord.displayName}`)
             .setThumbnail(user.pref_image ?? user_discord.displayAvatarURL())
             .setColor(user.pref_color ?? user_discord.displayHexColor)
@@ -60,8 +63,11 @@ module.exports = {
         }
 
         // if (lootbox_value > 0) currency_embed.addFields({ name: 'Lootbox Value', value: `${comma_adder.add(Math.trunc(lootbox_value))} credits`, inline: false })
-        if (stocks_value > 0) currency_embed.addFields({ name: 'Stocks Value', value: `${comma_adder.add(Math.trunc(stocks_value))} credits`, inline: false })
-        if (cumulative_value > +user.credits) currency_embed.addFields({ name: 'Cumulative Value', value: `${comma_adder.add(Math.trunc(cumulative_value))} credits`, inline: false })
+        // if (stocks_value > 0) currency_embed.addFields({ name: 'Stocks Value', value: `${comma_adder.add(Math.trunc(stocks_value))} credits`, inline: false })
+        // if (cumulative_value > +user.credits) currency_embed.addFields({ name: 'Cumulative Value', value: `${comma_adder.add(Math.trunc(cumulative_value))} credits`, inline: false })
+        if (savings > 0) currency_embed.addFields({ name: 'Savings', value: `${comma_adder.add(Math.trunc(savings))} credits`, inline: false })
+        // if (cumulative_value > +user.credits) currency_embed.addFields({ name: 'Cumulative Value', value: `${comma_adder.add(Math.trunc(cumulative_value))} credits`, inline: false })
+
 
         msg.channel.send({ embeds: [currency_embed] });
     },
