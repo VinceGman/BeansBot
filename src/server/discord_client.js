@@ -78,6 +78,13 @@ discord_client.on('messageCreate', async msg => {
 	if (msg.author.bot) return;
 	if (msg.guildId === null) return;
 
+	if (message.webhookID) {
+		// Process the webhook payload
+		console.log('Received a webhook payload:');
+		console.log(msg.content);
+		return;
+	}
+
 	if (msg.content.toLowerCase().startsWith('h8b') && run_type == 'production') {
 		require('../utility/h8b').question(msg);
 		return;
