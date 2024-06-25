@@ -139,7 +139,7 @@ module.exports = {
                     let stat = char.stats[individualized_content.toLowerCase()];
                     if (stat && !isNaN(stat)) {
                         let roll_num = Math.floor(Math.random() * 20) + 1; // [1, 20]
-                        let unknown_bonus = char?.unknown ? char.stats.lck : 0;
+                        let unknown_bonus = char?.unknown ? +char.stats.lck : 0;
                         let unknown_text = unknown_bonus > 0 ? ` + ${unknown_bonus}` : '';
                         individualized_content = `\`${individualized_content.toUpperCase()} Check: ${roll_num} + ${stat}${unknown_text} = ${roll_num + +stat + unknown_bonus}\``;
                     }
