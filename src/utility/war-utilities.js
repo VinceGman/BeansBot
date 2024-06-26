@@ -78,9 +78,20 @@ module.exports = {
                 return;
             }
 
-            await this.distribute(msg, char, content, self);
+            if (msg.reference) {
+                await this.reply(msg, msg.author);
+            }
+            else {
+                await this.distribute(msg, char, content, self);
+            }
 
-            if (msg) msg.delete();
+
+            try {
+                if (msg.deletable) await msg.delete();
+            }
+            catch (err) {
+                console.log('tried some shit and got hit');
+            }
         }
         catch (err) {
             msg.channel.send('There was an error sending your msg.');
@@ -91,19 +102,17 @@ module.exports = {
     async distribute(msg, char, content, self = false) {
         let characters = (await db.collection(`characters`).where('location', '==', char.location).get()).docs.map(char => char.data());
         let channel_ids = _.uniq(characters.map(char => char.channel_id));
-
         if (self) {
             channel_ids = [char.channel_id];
         }
 
         for (let recipient_channel_id of channel_ids) {
-
             if (!webhook_clients.has(recipient_channel_id)) {
-                console.log('Did not find corresponding webhook in Map.');
+                // console.log('Did not find corresponding webhook in Map.');
 
                 let webhook = (await db.doc(`webhooks/${recipient_channel_id}`).get()).data();
                 if (!webhook) {
-                    console.log('Did not find corresponding webhook in Database.');
+                    // console.log('Did not find corresponding webhook in Database.');
                     let channel = await msg.guild.channels.fetch(recipient_channel_id);
                     const newWebhook = await channel.createWebhook({ name: recipient_channel_id });
 
@@ -115,7 +124,7 @@ module.exports = {
 
                     await db.doc(`webhooks/${recipient_channel_id}`).set(webhook, { merge: true });
 
-                    console.log('Made a new webhook.');
+                    // console.log('Made a new webhook.');
                 }
 
                 const webhookClient = new WebhookClient({ id: webhook.id, token: webhook.token });
@@ -192,7 +201,7 @@ module.exports = {
         let content = char.alter.active ? '*Alter.*' : '*Restore.*';
         await this.distribute(msg, char, content, true);
 
-        if (msg) msg.delete();
+        if (msg.deletable) await msg.delete();
 
         return;
     },
@@ -229,7 +238,7 @@ module.exports = {
             // silent
         }
 
-        if (msg) msg.delete();
+        if (msg.deletable) await msg.delete();
         return;
     },
     async determined(msg, content, self) {
@@ -239,7 +248,7 @@ module.exports = {
             characters[0].location = await this.location_from_channel_id(msg.channel.id);
             args.shift();
             await this.distribute(msg, characters[0], args.join('\n').trim(), self);
-            if (msg) msg.delete();
+            if (msg.deletable) await msg.delete();
             return;
         }
 
@@ -276,7 +285,7 @@ module.exports = {
             // silent
         }
 
-        if (msg) msg.delete();
+        if (msg.deletable) await msg.delete();
         return;
     },
     async location_from_channel_id(id) {
@@ -299,7 +308,7 @@ module.exports = {
             let content = msg.content.replace('+location', '').trim();
             char.location = content;
             await db.doc(`characters/${char.id}`).set(char, { merge: true });
-            if (msg) msg.delete();
+            if (msg.deletable) await msg.delete();
             return;
         }
     },
@@ -312,9 +321,102 @@ module.exports = {
         msg.channel.send(output);
         return;
     },
+    async reply(proc, member) {
+        const msg = await proc.channel.messages.fetch(proc.reference.messageId);
+
+        let characters = (await db.collection(`characters`).where('owner_id', '==', member.id).where('channel_id', '==', msg.channelId).where('name', 'in', [msg.author.username, `${msg.author.username} (Alter)`]).where('main', '==', true).get()).docs.map(char => char.data());
+        if (characters.length == 0) return;
+
+        let webhook = (await db.collection(`webhooks`).get()).docs;
+        let channel_ids = _.uniq(webhook.map(char => char.data().channel_id));
+
+        let foundMessage = null;
+        let messageCounter = 0;
+
+        // Loop through each channel ID
+        for (const channelId of channel_ids) {
+            const channel = msg.guild.channels.cache.get(channelId);
+
+            if (!channel) {
+                continue;
+            }
+
+            // Fetch messages from the channel
+            const messages = await channel.messages.fetch({ limit: 20 });
+
+            // Iterate through fetched messages
+            for (const [, message] of messages) {
+                // Check conditions here (example: message.author.bot === true)
+                if (message.author.bot && message.author.username == msg.author.username && message.content == msg.content) {
+                    foundMessage = message;
+                    break;
+                }
+            }
+
+            // Increment message counter
+            messageCounter++;
+
+            // Check if we found a message or reached the limit
+            if (foundMessage || messageCounter >= 20) {
+                break;
+            }
+        }
+
+        if (foundMessage) {
+            try {
+                if (foundMessage.editable) await foundMessage.edit(proc.content);
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    },
     async delete(msg, member) {
         let characters = (await db.collection(`characters`).where('owner_id', '==', member.id).where('channel_id', '==', msg.channelId).where('name', 'in', [msg.author.username, `${msg.author.username} (Alter)`]).where('main', '==', true).get()).docs.map(char => char.data());
         if (characters.length == 0) return;
-        if (msg) msg.delete();
+
+        let webhook = (await db.collection(`webhooks`).get()).docs;
+        let channel_ids = _.uniq(webhook.map(char => char.data().channel_id));
+
+        let foundMessage = null;
+        let messageCounter = 0;
+
+        // Loop through each channel ID
+        for (const channelId of channel_ids) {
+            const channel = msg.guild.channels.cache.get(channelId);
+
+            if (!channel) {
+                continue;
+            }
+
+            // Fetch messages from the channel
+            const messages = await channel.messages.fetch({ limit: 20 });
+
+            // Iterate through fetched messages
+            for (const [, message] of messages) {
+                // Check conditions here (example: message.author.bot === true)
+                if (message.author.bot && message.author.username == msg.author.username && message.content == msg.content) {
+                    foundMessage = message;
+                    break;
+                }
+            }
+
+            // Increment message counter
+            messageCounter++;
+
+            // Check if we found a message or reached the limit
+            if (foundMessage || messageCounter >= 20) {
+                break;
+            }
+        }
+
+        if (foundMessage) {
+            try {
+                if (foundMessage.deletable) foundMessage.delete();
+            }
+            catch (err) {
+                //
+            }
+        }
     }
 }

@@ -107,7 +107,7 @@ module.exports = {
         await require('../utility/credits').refund(discord_client, msg, msg.author.id, refund_value); // credits manager refunds on error
         await require('../utility/data_management').update_user_card_count(msg, msg.author.id, cards.length * -1);
 
-        if (warning_msg) warning_msg.delete();
+        if (warning_msg.deletable) warning_msg.delete();
 
         let pay_result = new EmbedBuilder()
             .setTitle(`Purge Payment`)

@@ -182,7 +182,7 @@ module.exports = {
             leaderboard_embed.addFields({ name: discord_user.user.globalName ?? discord_user.user.username, value: `${comma_adder.add(Math.trunc(user.credits))} credits`, inline: false });
         }
 
-        if (warning) warning.delete();
+        if (warning.deletable) warning.delete();
         msg.reply({ embeds: [leaderboard_embed] });
     },
     async leaderboard_dl(msg) {
