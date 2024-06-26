@@ -78,13 +78,7 @@ module.exports = {
                 return;
             }
 
-            if (msg.reference) {
-                await this.reply(msg, msg.author);
-            }
-            else {
-                await this.distribute(msg, char, content, self);
-            }
-
+            await this.distribute(msg, char, content, self);
 
             try {
                 if (msg.deletable) await msg.delete();
@@ -321,56 +315,6 @@ module.exports = {
         msg.channel.send(output);
         return;
     },
-    async reply(proc, member) {
-        const msg = await proc.channel.messages.fetch(proc.reference.messageId);
-
-        let characters = (await db.collection(`characters`).where('owner_id', '==', member.id).where('channel_id', '==', msg.channelId).where('name', 'in', [msg.author.username, `${msg.author.username} (Alter)`]).where('main', '==', true).get()).docs.map(char => char.data());
-        if (characters.length == 0) return;
-
-        let webhook = (await db.collection(`webhooks`).get()).docs;
-        let channel_ids = _.uniq(webhook.map(char => char.data().channel_id));
-
-        let foundMessage = null;
-        let messageCounter = 0;
-
-        // Loop through each channel ID
-        for (const channelId of channel_ids) {
-            const channel = msg.guild.channels.cache.get(channelId);
-
-            if (!channel) {
-                continue;
-            }
-
-            // Fetch messages from the channel
-            const messages = await channel.messages.fetch({ limit: 20 });
-
-            // Iterate through fetched messages
-            for (const [, message] of messages) {
-                // Check conditions here (example: message.author.bot === true)
-                if (message.author.bot && message.author.username == msg.author.username && message.content == msg.content) {
-                    foundMessage = message;
-                    break;
-                }
-            }
-
-            // Increment message counter
-            messageCounter++;
-
-            // Check if we found a message or reached the limit
-            if (foundMessage || messageCounter >= 20) {
-                break;
-            }
-        }
-
-        if (foundMessage) {
-            try {
-                if (foundMessage.editable) await foundMessage.edit(proc.content);
-            }
-            catch (err) {
-                console.log(err);
-            }
-        }
-    },
     async delete(msg, member) {
         let characters = (await db.collection(`characters`).where('owner_id', '==', member.id).where('channel_id', '==', msg.channelId).where('name', 'in', [msg.author.username, `${msg.author.username} (Alter)`]).where('main', '==', true).get()).docs.map(char => char.data());
         if (characters.length == 0) return;
@@ -378,44 +322,26 @@ module.exports = {
         let webhook = (await db.collection(`webhooks`).get()).docs;
         let channel_ids = _.uniq(webhook.map(char => char.data().channel_id));
 
-        let foundMessage = null;
-        let messageCounter = 0;
-
         // Loop through each channel ID
         for (const channelId of channel_ids) {
             const channel = msg.guild.channels.cache.get(channelId);
-
-            if (!channel) {
-                continue;
-            }
+            if (!channel) continue;
 
             // Fetch messages from the channel
-            const messages = await channel.messages.fetch({ limit: 20 });
+            const messages = await channel.messages.fetch({ limit: 12 });
 
             // Iterate through fetched messages
             for (const [, message] of messages) {
                 // Check conditions here (example: message.author.bot === true)
                 if (message.author.bot && message.author.username == msg.author.username && message.content == msg.content) {
-                    foundMessage = message;
+                    try {
+                        if (message.deletable) message.delete();
+                    }
+                    catch (err) {
+                        //
+                    }
                     break;
                 }
-            }
-
-            // Increment message counter
-            messageCounter++;
-
-            // Check if we found a message or reached the limit
-            if (foundMessage || messageCounter >= 20) {
-                break;
-            }
-        }
-
-        if (foundMessage) {
-            try {
-                if (foundMessage.deletable) foundMessage.delete();
-            }
-            catch (err) {
-                //
             }
         }
     }
