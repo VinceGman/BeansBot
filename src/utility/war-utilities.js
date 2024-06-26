@@ -328,7 +328,7 @@ module.exports = {
             if (!channel) continue;
 
             // Fetch messages from the channel
-            const messages = await channel.messages.fetch({ limit: 12 });
+            const messages = await channel.messages.fetch({ limit: 20 });
 
             // Iterate through fetched messages
             for (const [, message] of messages) {
