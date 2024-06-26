@@ -170,6 +170,12 @@ discord_client.on('messageCreate', async msg => {
 		}
 	}
 });
+discord_client.on('messageUpdate', async (prev, msg) => {
+	if (!msg.content.toLowerCase().startsWith('//')) return;
+	if (run_type !== 'test') return;
+	await war_utilities.direct_message(msg);
+	return;
+});
 
 discord_client.on('guildMemberUpdate', async (oldMember, newMember) => {
 	if (run_type != 'test') return;
