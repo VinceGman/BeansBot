@@ -83,7 +83,7 @@ discord_client.on('messageCreate', async msg => {
 		require('../utility/h8b').question(msg);
 		return;
 	}
-	else if ((msg.content.toLowerCase().startsWith('//') || ['+alter', '+characters'].includes(msg.content.toLowerCase()) || msg.content.toLowerCase().startsWith('+location')) && run_type == 'test') {
+	else if ((msg.content.toLowerCase().startsWith('//') || ['+alter', '+characters'].includes(msg.content.toLowerCase()) || msg.content.toLowerCase().startsWith('+location')) && run_type == 'production') {
 		await war_utilities.direct_message(msg);
 		return;
 	}
@@ -172,14 +172,14 @@ discord_client.on('messageCreate', async msg => {
 });
 
 discord_client.on('messageUpdate', async (prev, msg) => {
-	if (run_type !== 'test') return;
+	if (run_type !== 'production') return;
 	if (!msg.content.toLowerCase().startsWith('//')) return;
 	await war_utilities.direct_message(msg);
 	return;
 });
 
 discord_client.on('raw', async packet => {
-	if (run_type !== 'test') return;
+	if (run_type !== 'production') return;
 	// Check if the event type is 'MESSAGE_REACTION_ADD'
 	if (!['MESSAGE_REACTION_ADD'].includes(packet.t)) return;
 	if (packet.d.emoji.name != '❌') return;
