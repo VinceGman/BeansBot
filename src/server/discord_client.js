@@ -171,13 +171,6 @@ discord_client.on('messageCreate', async msg => {
 	}
 });
 
-discord_client.on('messageUpdate', async (prev, msg) => {
-	if (run_type !== 'production') return;
-	if (!msg.content.toLowerCase().startsWith('//')) return;
-	await war_utilities.direct_message(msg);
-	return;
-});
-
 discord_client.on('raw', async packet => {
 	if (run_type !== 'production') return;
 	// Check if the event type is 'MESSAGE_REACTION_ADD'
