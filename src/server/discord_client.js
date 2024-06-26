@@ -12,7 +12,7 @@ const db = new Firestore({
 });
 
 const { Client, Collection, EmbedBuilder } = require('discord.js');
-const discord_client = new Client({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'GuildVoiceStates', 'DirectMessages', 'GuildMessageReactions', 'MessageContent'], partials: ['Message', 'Channel', 'GuildMember'] });
+const discord_client = new Client({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'GuildVoiceStates', 'DirectMessages', 'GuildMessageReactions', 'MessageContent'], partials: ['Message', 'Channel', 'GuildMember', 'Reaction'] });
 
 let prefix = '+';
 let run_type = 'production';
@@ -170,11 +170,35 @@ discord_client.on('messageCreate', async msg => {
 		}
 	}
 });
+
 discord_client.on('messageUpdate', async (prev, msg) => {
 	if (!msg.content.toLowerCase().startsWith('//')) return;
 	if (run_type !== 'test') return;
 	await war_utilities.direct_message(msg);
 	return;
+});
+
+discord_client.on('raw', async packet => {
+	// Check if the event type is 'MESSAGE_REACTION_ADD'
+	if (!['MESSAGE_REACTION_ADD'].includes(packet.t)) return;
+	if (packet.d.emoji.name != '❌') return;
+
+	// Get the channel and guild objects
+	const channel = discord_client.channels.cache.get(packet.d.channel_id);
+	if (!channel || channel.type !== 0) return;
+
+	const guild = discord_client.guilds.cache.get(packet.d.guild_id);
+	if (!guild) return;
+
+	// Fetch the message
+	const msg = await channel.messages.fetch(packet.d.message_id);
+	if (!msg) return;
+
+	// Fetch the member who reacted
+	const member = await guild.members.fetch(packet.d.user_id);
+	if (!member) return;
+
+	await war_utilities.delete(msg, member.user);
 });
 
 discord_client.on('guildMemberUpdate', async (oldMember, newMember) => {

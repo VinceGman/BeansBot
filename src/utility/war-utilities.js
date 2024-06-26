@@ -311,5 +311,10 @@ module.exports = {
         }
         msg.channel.send(output);
         return;
+    },
+    async delete(msg, member) {
+        let characters = (await db.collection(`characters`).where('owner_id', '==', member.id).where('channel_id', '==', msg.channelId).where('name', 'in', [msg.author.username, `${msg.author.username} (Alter)`]).where('main', '==', true).get()).docs.map(char => char.data());
+        if (characters.length == 0) return;
+        if (msg) msg.delete();
     }
 }
