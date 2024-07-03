@@ -45,7 +45,10 @@ module.exports = {
                     .addFields({ name: `Access From:`, value: `${joint_accounts}`, inline: true })
                     .setFooter({ text: `${msg.author.username}` })
                     .setTimestamp();
-                msg.channel.send({ embeds: [joint_embed] });
+                const joint_msg = await msg.channel.send({ embeds: [joint_embed] });
+                await new Promise(r => setTimeout(r, 6000));
+                if (msg.deletable) msg.delete()
+                if (joint_msg.deletable) joint_msg.delete();
                 return;
             }
 
@@ -74,7 +77,10 @@ module.exports = {
                 .addFields({ name: `Access From:`, value: `${joint_accounts}`, inline: true })
                 .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
-            msg.channel.send({ embeds: [joint_embed] });
+            const joint_msg = await msg.channel.send({ embeds: [joint_embed] });
+            await new Promise(r => setTimeout(r, 6000));
+            if (msg.deletable) msg.delete()
+            if (joint_msg.deletable) joint_msg.delete();
             return;
         }
         catch (err) {
