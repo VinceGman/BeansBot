@@ -74,8 +74,8 @@ module.exports = {
             .setColor(color)
             .setDescription(`Claim a bonus every month. Choose one:`)
             .addFields({ name: '**Boosters**', value: `Earn an extra **25%** on any bonus you choose by boosting this server.`, inline: false })
-            .addFields({ name: '1. **+stimulus**', value: `Earn **${comma_adder.add(Math.trunc(stimulus_payout * booster))}** credits instantly.`, inline: false })
-            .addFields({ name: '2. **+raise**', value: `Increase your hourly **+income** by **${comma_adder.add(Math.trunc(raise_payout * booster))}** credits for the rest of the month.`, inline: false })
+            .addFields({ name: '**+stimulus**', value: `Earn **${comma_adder.add(Math.trunc(stimulus_payout * booster))}** credits instantly.`, inline: false })
+            .addFields({ name: '**+raise**', value: `Increase your hourly **+income** by **${comma_adder.add(Math.trunc(raise_payout * booster))}** credits for the rest of the month.`, inline: false })
             .setFooter({ text: `${msg.author.username}` })
             .setTimestamp();
 
