@@ -20,6 +20,7 @@ module.exports = {
         let user = await require('../utility/queries').user(msg.guildId, msg.author.id);
         let income = user.hasOwnProperty('income') ? +user['income'] : 0;
         let income_max_charges = user.hasOwnProperty('income_max_charges') ? +user['income_max_charges'] : 6;
+        const user_bonus = user.hasOwnProperty('bonus') ? user['bonus'] : { lastUsedMonth: -1, lastUsedYear: -1, method: '' };
 
         let charges = Math.floor(((current_time_in_seconds - income) / 3600));
         let new_cooldown, next_charge;
@@ -33,14 +34,16 @@ module.exports = {
             next_charge = income + ((charges + 1) * 3600);
         }
 
-        let booster = msg.member.roles.cache.some(role => role.name.toLowerCase().includes('booster')) ? 0.25 : 0;
+        const today = new Date();
+        let bonus = user_bonus.method == 'raise' && user_bonus.lastUsedMonth == today.getMonth() && user_bonus.lastUsedYear == today.getFullYear() ? 2500 : 0;
+        let booster = msg.member.roles.cache.some(role => role.name.toLowerCase().includes('booster')) ? 1.25 : 1;
 
-        let amount = charges * 2000;
-        let total_amount = amount + booster * amount;
+        let amount = charges * 2000 + charges * bonus;
+        let total_amount = amount * booster;
 
         let pay = +(total_amount.toFixed(2));
 
-        await this.income_embed(msg, charges, pay, next_charge, new_cooldown, booster);
+        await this.income_embed(msg, charges, pay, next_charge, new_cooldown, bonus, booster);
 
         if (charges == 0) return;
         await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({
@@ -48,19 +51,25 @@ module.exports = {
             income: new_cooldown.toString(),
         }, { merge: true });
     },
-    async income_embed(msg, charges, pay, next_charge, new_cooldown, booster) {
+    async income_embed(msg, charges, pay, next_charge, new_cooldown, bonus, booster) {
         const comma_adder = require('commas');
         let color = '#607d8b';
         let booster_income = '';
+
+        let bonus_raise = '';
+        if (bonus) {
+            bonus_raise = ' + Raise';
+        }
+
         let fields = [];
         // if (charges != 0) {
         //     fields.push({ name: 'Charges', value: `${charges}`, inline: false });
         // }
         if (pay != 0) {
-            fields.push({ name: 'Paid', value: `${comma_adder.add(Math.trunc(pay))} credits`, inline: false });
+            fields.push({ name: `Paid${bonus_raise}`, value: `${comma_adder.add(Math.trunc(pay))} credits`, inline: false });
         }
 
-        if (booster) {
+        if (booster > 1) {
             color = '#f47fff';
             booster_income = 'Booster ';
         }
