@@ -13,7 +13,7 @@ module.exports = {
     description: "pick the highest color",
     category: 'gambling',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 15,
     async execute(discord_client, msg, args, admin) {
         try {
@@ -78,7 +78,7 @@ module.exports = {
 
             if (!(await require('../utility/credits').transaction(discord_client, msg, bet))) return; // credits manager validates transaction
 
-            let outcomes = this.draw(12);
+            let outcomes = this.draw(10);
             let highcards = this.highcardIndexes(outcomes);
             let lowcards = this.lowcardIndexes(outcomes);
 
@@ -104,7 +104,7 @@ module.exports = {
             collector.on('end', async (collected) => {
                 let { index, icon, color } = this.input_to_color(chosen ? chosen : highcards[random_priority]);
 
-                outcomes = this.draw(12, outcomes);
+                outcomes = this.draw(10, outcomes);
 
                 let draw_end_embed = new EmbedBuilder()
                     .setTitle(`Draw`)
