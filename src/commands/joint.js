@@ -10,8 +10,8 @@ const comma_adder = require('commas');
 
 module.exports = {
     name: 'joint',
-    alias: ['join'],
-    description: "add someone to your joint account",
+    alias: ['bank'],
+    description: "access your bank account",
     category: 'credits',
     admin: false,
     type: "production",
@@ -34,7 +34,7 @@ module.exports = {
                 let { personalized_embed: joint_embed } = await require('../utility/embeds').personalized_embed(msg, msg.author.id, db_user, discord_users.get(msg.author.id));
 
                 joint_embed
-                    .addFields({ name: `Joint`, value: `${comma_adder.add(Math.trunc(joint.credits))} credits`, inline: false })
+                    .addFields({ name: `Bank`, value: `${comma_adder.add(Math.trunc(joint.credits))} credits`, inline: false })
 
                 if (joint_users == '[none]') {
                     joint_embed.addFields({ name: `Access`, value: `Use **+joint @user** to give and remove access.`, inline: false })
@@ -71,7 +71,7 @@ module.exports = {
             let { personalized_embed: joint_embed } = await require('../utility/embeds').personalized_embed(msg, msg.author.id, db_user, discord_users.get(msg.author.id));
 
             joint_embed
-                .addFields({ name: `Joint`, value: `${comma_adder.add(Math.trunc(joint.credits))} credits`, inline: false })
+                .addFields({ name: `Bank`, value: `${comma_adder.add(Math.trunc(joint.credits))} credits`, inline: false })
                 .addFields({ name: `${needs_removing ? 'Removed' : 'Added'}`, value: `${discord_users.get(recipient).user.username}`, inline: false })
                 .addFields({ name: `Access To:`, value: `${joint_users}`, inline: true })
                 .addFields({ name: `Access From:`, value: `${joint_accounts}`, inline: true })
