@@ -87,10 +87,10 @@ module.exports = {
             for (let stk in user_stocks) {
                 stock_count += user_stocks[stk].count;
             }
-            if (stock_count + quantity > 1000) {
-                msg.channel.send(`You may only own 1000 stocks. You have ${1000 - stock_count} slots left.`);
-                return;
-            }
+            // if (stock_count + quantity > 1000) {
+            //     msg.channel.send(`You may only own 1000 stocks. You have ${1000 - stock_count} slots left.`);
+            //     return;
+            // }
 
             if (!(await require('../utility/credits').transaction(discord_client, msg, cost))) return; // credits manager validates transaction
 
