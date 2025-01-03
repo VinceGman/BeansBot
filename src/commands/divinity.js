@@ -127,14 +127,14 @@ module.exports = {
                             break;
                         case 'bump':
                         case 'bum0':
-                            if (actions < 2) {
-                                msg.channel.send('You need 2 actions to bump.');
-                                break;
-                            }
+                            // if (actions < 2) {
+                            //     msg.channel.send('You need 2 actions to bump.');
+                            //     break;
+                            // }
                             for (let i = 0; i < in_play.length; i++) {
                                 in_play[i] += this.entropy();
                             }
-                            actions -= 1;
+                            // actions -= 1;
                             valid_action = true;
                             break;
                         case 'swap':
