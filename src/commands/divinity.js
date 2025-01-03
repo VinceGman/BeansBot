@@ -201,7 +201,7 @@ module.exports = {
                                 in_play.splice(0, 1);
                                 coins += 1;
                             } while (in_play.length >= 1 && match == in_play[0] % 2);
-                            valid_action = true;
+                            actions -= 1;
                             break;
                         case 'overclock':
                             if (in_play.length < 4) {
@@ -242,8 +242,7 @@ module.exports = {
                         case 'redo':
                             in_play.splice(Math.floor(Math.random() * in_play.length), 1); // delete random coin
                             coins += 1;
-                            turns -= 1;
-                            valid_action = true;
+                            actions -= 1;
                             break;
                         default:
                             msg.channel.send('This action has no binded function.');
