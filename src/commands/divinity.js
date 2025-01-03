@@ -90,7 +90,7 @@ module.exports = {
             this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns);
             collector.on('collect', m => {
                 let input = m.content.toLowerCase().replace('+', '');
-                if (['flip', 'dupe', 'bump', 'bum0', 'quit', 'swap', 'flow', 'bash', 'split-removed', 'swipe', 'overclock', 'time', 'shoot', 'wager', 'pull'].includes(input)) {
+                if (['flip', 'dupe', 'bump', 'bum0', 'quit', 'swap', 'flow', 'bash', 'split', 'swipe', 'overclock', 'time', 'shoot', 'wager', 'pull'].includes(input)) {
                     collector.resetTimer();
 
                     let valid_action = false;
@@ -191,7 +191,7 @@ module.exports = {
                             actions -= 1;
                             valid_action = true;
                             break;
-                        case 'swipe-removed':
+                        case 'swipe':
                             if (in_play.length < 1) {
                                 msg.channel.send('You must have 1 coin in play to swipe.');
                                 break;
@@ -201,6 +201,7 @@ module.exports = {
                                 in_play.splice(0, 1);
                                 coins += 1;
                             } while (in_play.length >= 1 && match == in_play[0] % 2);
+                            valid_action = true;
                             break;
                         case 'overclock':
                             if (in_play.length < 4) {
