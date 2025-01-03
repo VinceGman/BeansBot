@@ -90,7 +90,7 @@ module.exports = {
             this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns);
             collector.on('collect', m => {
                 let input = m.content.toLowerCase().replace('+', '');
-                if (['flip', 'dupe', 'bump', 'bum0', 'quit', 'swap', 'flow', 'bash', 'split', 'swipe', 'overclock', 'time', 'shoot', 'wager', 'pull', 'redo'].includes(input)) {
+                if (['flip', 'dupe', 'bump', 'bum0', 'quit', 'swap', 'flow', 'bash', 'split', 'swipe', 'overclock', 'time', 'shoot', 'wager', 'pull', 'redo', 'bonus'].includes(input)) {
                     collector.resetTimer();
 
                     let valid_action = false;
@@ -243,6 +243,14 @@ module.exports = {
                             in_play.splice(Math.floor(Math.random() * in_play.length), 1); // delete random coin
                             coins += 1;
                             actions -= 1;
+                            break;
+                        case 'bonus':
+                            if (actions < 3) {
+                                msg.channel.send('You need 3 actions to bonus.');
+                                break;
+                            }
+                            actions -= 3;
+                            turns += 4;
                             break;
                         default:
                             msg.channel.send('This action has no binded function.');
