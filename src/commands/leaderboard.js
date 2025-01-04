@@ -40,7 +40,7 @@ module.exports = {
             }
 
             try {
-                if (msg.content.toLowerCase().startsWith('+stats') && args.length == 1 && admin) {
+                if (msg.content.toLowerCase().startsWith('+stats') && args.length == 1) {
                     let game_name = args[0];
                     let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
 
