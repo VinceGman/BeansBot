@@ -396,7 +396,7 @@ module.exports = {
 
         let stats = turns + coins + actions + in_play.length;
         divinity_embed.addFields({ name: `In Play`, value: `\`\`\`${content}\`\`\``, inline: false })
-        .addFields({ name: `Mult`, value: `\`\`\`IP:${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)} + STATS:${(stats > 8 ? (stats - 8) : 0)} - MAG:${magic} = ${multiplier}x\`\`\``, inline: false })
+            .addFields({ name: `Mult`, value: `\`\`\`IP:${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)} + STATS:${(stats > 8 ? (stats - 8) : 0)} - MAG:${magic} = ${multiplier}x\`\`\``, inline: false })
 
         await this.finish_game(msg, outcome, winnings, bet);
 
