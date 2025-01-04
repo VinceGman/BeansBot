@@ -82,15 +82,16 @@ module.exports = {
             let coins = 3;
             let actions = 5;
             let turns = 0;
+            let magic = 0;
 
             const filter = m => m.author.id == msg.author.id;
             const collector = msg.channel.createMessageCollector({ filter, time: 20000 });
 
             let in_play = [];
-            this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns);
+            this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns, magic);
             collector.on('collect', m => {
                 let input = m.content.toLowerCase().replace('+', '');
-                if (['flip', 'dupe', 'bump', 'bum0', 'quit', 'swap', 'flow', 'bash', 'split', 'swipe', 'overclock', 'time', 'shoot', 'wager', 'pull', 'redo', 'bonus'].includes(input)) {
+                if (['flip', 'dupe', 'bump', 'bum0', 'quit', 'swap', 'flow', 'bash', 'split', 'swipe', 'overclock', 'time', 'shoot', 'wager', 'pull', 'redo', 'bonus', 'stake'].includes(input)) {
                     collector.resetTimer();
 
                     let valid_action = false;
@@ -252,6 +253,14 @@ module.exports = {
                             actions -= 3;
                             turns += 4;
                             break;
+                        case 'stake':
+                            if (turns > 0) {
+                                msg.channel.send('You must use stake as your turn 1 action.');
+                                break;
+                            }
+                            actions -= 2;
+                            turns += 4.5;
+                            break;
                         default:
                             msg.channel.send('This action has no binded function.');
                     }
@@ -270,12 +279,12 @@ module.exports = {
                         actions += 1;
                     }
 
-                    this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns);
+                    this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns, magic);
                 }
             });
 
             collector.on('end', async (collected) => {
-                await this.divinity_end(msg, in_play, bet, random, modifier, coins, actions, turns);
+                await this.divinity_end(msg, in_play, bet, random, modifier, coins, actions, turns, magic);
                 require('../utility/timers').reset_timer(msg, this.name); // release resource
             });
         }
@@ -286,7 +295,7 @@ module.exports = {
     entropy() {
         return Math.random() < 0.5 ? 0 : 1;
     },
-    divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns) {
+    divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns, magic) {
         let content = '';
         for (let coin of in_play) {
             content += `${coin % 2 ? 'H' : 'T'} `;
@@ -294,7 +303,7 @@ module.exports = {
 
         content = content ? content : '[No Coins]';
 
-        let multiplier = this.multiplier(turns, coins, actions, in_play);
+        let multiplier = this.multiplier(turns, coins, actions, in_play, magic);
         multiplier = multiplier > 0 ? multiplier : 0;
         let multiplier_text = ``;
         let color = '#EC7357';
@@ -335,7 +344,7 @@ module.exports = {
 
         msg.channel.send({ embeds: [divinity_embed] });
     },
-    async divinity_end(msg, in_play, bet, random, modifier, coins, actions, turns) {
+    async divinity_end(msg, in_play, bet, random, modifier, coins, actions, turns, magic) {
 
         let content = '';
         for (let coin of in_play) {
@@ -344,7 +353,7 @@ module.exports = {
 
         content = content ? content : '[No Coins]';
 
-        let multiplier = this.multiplier(turns, coins, actions, in_play);
+        let multiplier = this.multiplier(turns, coins, actions, in_play, magic);
         multiplier = multiplier > 0 ? multiplier : 0;
         let multiplier_text = '';
         let color = '#EC7357';
@@ -425,8 +434,8 @@ module.exports = {
         }
         return indices;
     },
-    multiplier(turns, coins, actions, in_play) {
+    multiplier(turns, coins, actions, in_play, magic) {
         let stats = turns + coins + actions + in_play.length;
-        return (in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0) + (stats > 8 ? (stats - 8) : 0);
+        return Math.max(0, (in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0) + (stats > 8 ? (stats - 8) : 0) - magic);
     }
 }
