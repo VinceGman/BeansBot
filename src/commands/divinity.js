@@ -338,7 +338,7 @@ module.exports = {
         divinity_embed
             .addFields({ name: `Resources`, value: `\`\`\`Actions: ${actions}\nCoins: ${coins}\`\`\``, inline: false })
             .addFields({ name: `In Play`, value: `\`\`\`${content}\`\`\``, inline: false })
-            .addFields({ name: `Mult`, value: `\`\`\`${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)} + ${(stats > 8 ? (stats - 8) : 0)} - ${magic}x\`\`\``, inline: false })
+            .addFields({ name: `Mult`, value: `\`\`\`(IP:${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)} + STATS:${(stats > 8 ? (stats - 8) : 0)} - MAG:${magic})x\`\`\``, inline: false })
             .setFooter({ text: `${msg.author.username}` })
             .setTimestamp();
 
