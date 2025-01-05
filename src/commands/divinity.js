@@ -262,7 +262,7 @@ module.exports = {
                                 break;
                             }
                             actions -= 2;
-                            turns += 3;
+                            turns += 4.5;
                             break;
                         default:
                             msg.channel.send('This action has no binded function.');
