@@ -262,7 +262,7 @@ module.exports = {
                                 break;
                             }
                             actions -= 2;
-                            turns += 4.5;
+                            turns += 3;
                             break;
                         default:
                             msg.channel.send('This action has no binded function.');
@@ -439,6 +439,6 @@ module.exports = {
     },
     multiplier(turns, coins, actions, in_play, magic) {
         let stats = turns + coins + actions + in_play.length;
-        return Math.max(0, (in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0) + (stats > 8 ? (stats - 8) : 0) - magic);
+        return Math.max(0, (in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0) + (stats > 8 ? (stats - 8) : 0) - (magic * 0.5));
     }
 }
