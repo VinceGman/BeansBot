@@ -41,6 +41,8 @@ module.exports = {
                 return;
             }
 
+            let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
+
             let random = false;
             let modifier = 1;
             if (args.length == 1) {
@@ -407,12 +409,11 @@ module.exports = {
             divinity_embed.addFields({ name: `Mult`, value: `\`\`\`+${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)}x : In Play\n+${(stats > 8 ? (stats - 8) : 0)}x : Stats\n-${magic * 0.5}x : Magic\n+${multiplier}x : Multiplier\`\`\``, inline: false }) // (${turns}t)+(${coins}c)+(${actions}a)+(${in_play.length}p)-8
         }
 
-        await this.finish_game(msg, outcome, winnings, bet);
+        await this.finish_game(msg, db_user, outcome, winnings, bet);
 
         msg.channel.send({ embeds: [divinity_embed] });
     },
-    async finish_game(msg, win_or_loss, winnings, bet) {
-        let db_user = await require('../utility/queries').user(msg.guildId, msg.author.id);
+    async finish_game(msg, db_user, win_or_loss, winnings, bet) {
         let credits = +db_user.credits;
         let times_played_divinity = db_user?.times_played_divinity ? +db_user.times_played_divinity : 0;
         let times_won_divinity = db_user?.times_won_divinity ? +db_user.times_won_divinity : 0;
