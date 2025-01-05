@@ -122,6 +122,7 @@ module.exports = {
                             }
                             coins -= 1;
                             actions -= 1;
+                            magic += 1;
                             in_play.push(this.entropy());
                             in_play.push(this.entropy());
                             valid_action = true;
@@ -161,6 +162,7 @@ module.exports = {
                             }
                             coins -= 1;
                             actions -= 1;
+                            magic += 1;
                             do {
                                 in_play.push(this.entropy());
                             } while (in_play.every(c => c % 2 === in_play[0] % 2));
@@ -181,15 +183,15 @@ module.exports = {
                                 msg.channel.send('You must have 2 coins in play to split.');
                                 break;
                             }
-                            if (actions < 2) {
-                                msg.channel.send('You need 2 actions to split.');
-                                break;
-                            }
+                            // if (actions < 2) {
+                            //     msg.channel.send('You need 2 actions to split.');
+                            //     break;
+                            // }
                             let randomCoins = this.getRandomIndices(in_play.length, in_play.length / 2);
                             for (let i = 0; i < randomCoins.length; i++) {
                                 in_play[randomCoins[i]] += 1;
                             }
-                            actions -= 1;
+                            // actions -= 1;
                             valid_action = true;
                             break;
                         case 'swipe':
@@ -222,15 +224,16 @@ module.exports = {
                             valid_action = true;
                             break;
                         case 'wager':
-                            for (let i = 0; i < actions; i++) {
-                                if (this.entropy()) {
-                                    in_play.push(this.entropy());
-                                }
-                                else {
-                                    turns += 1;
-                                }
+
+                            if (this.entropy()) {
+                                in_play.push(this.entropy());
+                                magic += 1;
                             }
-                            actions = 0;
+                            else {
+                                turns += 1;
+                            }
+
+                            actions -= 1;
                             break;
                         case 'pull':
                             for (let i = 0; i < in_play.length * 2; i++) {
@@ -396,7 +399,7 @@ module.exports = {
 
         let stats = turns + coins + actions + in_play.length;
         divinity_embed.addFields({ name: `In Play`, value: `\`\`\`${content}\`\`\``, inline: false })
-            // .addFields({ name: `Mult`, value: `\`\`\`+${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)}x : In Play\n+${(stats > 8 ? (stats - 8) : 0)}x : Stats\n-${magic}x : Magic\n+${multiplier}x : Multiplier\`\`\``, inline: false }) // (${turns}t)+(${coins}c)+(${actions}a)+(${in_play.length}p)-8
+        // .addFields({ name: `Mult`, value: `\`\`\`+${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)}x : In Play\n+${(stats > 8 ? (stats - 8) : 0)}x : Stats\n-${magic}x : Magic\n+${multiplier}x : Multiplier\`\`\``, inline: false }) // (${turns}t)+(${coins}c)+(${actions}a)+(${in_play.length}p)-8
 
         await this.finish_game(msg, outcome, winnings, bet);
 
