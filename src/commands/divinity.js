@@ -171,10 +171,10 @@ module.exports = {
                                 msg.channel.send('You must have 2 coins in play to bash.');
                                 break;
                             }
-                            for (let i = 1; i <= 2; i++) {
-                                let randomCoin = Math.floor(Math.random() * in_play.length);
-                                in_play.splice(randomCoin, 1);
-                            }
+                            in_play.splice(Math.floor(Math.random() * in_play.length), 1); // delete random coin
+                            in_play.splice(Math.floor(Math.random() * in_play.length), 1); // delete random coin
+                            turns += 1;
+                            valid_action = true;
                             break;
                         case 'split':
                             if (in_play.length < 2) {
