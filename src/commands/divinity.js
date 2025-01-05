@@ -88,7 +88,7 @@ module.exports = {
             const collector = msg.channel.createMessageCollector({ filter, time: 20000 });
 
             let in_play = [];
-            this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns, magic);
+            this.divinity_show(msg, db_user, in_play, bet, random, modifier, coins, actions, turns, magic);
             collector.on('collect', m => {
                 let input = m.content.toLowerCase().replace('+', '');
                 if (['flip', 'dupe', 'bump', 'bum0', 'quit', 'swap', 'flow', 'bash', 'split', 'swipe', 'overclock', 'time', 'shoot', 'wager', 'pull', 'redo', 'bonus', 'stake'].includes(input)) {
@@ -282,12 +282,12 @@ module.exports = {
                         actions += 1;
                     }
 
-                    this.divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns, magic);
+                    this.divinity_show(msg, db_user, in_play, bet, random, modifier, coins, actions, turns, magic);
                 }
             });
 
             collector.on('end', async (collected) => {
-                await this.divinity_end(msg, in_play, bet, random, modifier, coins, actions, turns, magic);
+                await this.divinity_end(msg, db_user, in_play, bet, random, modifier, coins, actions, turns, magic);
                 require('../utility/timers').reset_timer(msg, this.name); // release resource
             });
         }
@@ -298,7 +298,7 @@ module.exports = {
     entropy() {
         return Math.random() < 0.5 ? 0 : 1;
     },
-    divinity_show(msg, in_play, bet, random, modifier, coins, actions, turns, magic) {
+    divinity_show(msg, db_user, in_play, bet, random, modifier, coins, actions, turns, magic) {
         let content = '';
         for (let coin of in_play) {
             content += `${coin % 2 ? 'H' : 'T'} `;
@@ -341,13 +341,16 @@ module.exports = {
         divinity_embed
             .addFields({ name: `Resources`, value: `\`\`\`Actions: ${actions}\nCoins: ${coins}\`\`\``, inline: false })
             .addFields({ name: `In Play`, value: `\`\`\`${content}\`\`\``, inline: false })
-            // .addFields({ name: `Mult`, value: `\`\`\`+${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)}x : In Play\n+${(stats > 8 ? (stats - 8) : 0)}x : Stats\n-${magic}x : Magic\n+${multiplier}x : Multiplier\`\`\``, inline: false }) // (${turns}t)+(${coins}c)+(${actions}a)+(${in_play.length}p)-8
             .setFooter({ text: `${msg.author.username}` })
             .setTimestamp();
 
+        if (db_user.dev_mode) {
+            divinity_embed.addFields({ name: `Mult`, value: `\`\`\`+${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)}x : In Play\n+${(stats > 8 ? (stats - 8) : 0)}x : Stats\n-${magic * 0.5}x : Magic\n+${multiplier}x : Multiplier\`\`\``, inline: false }) // (${turns}t)+(${coins}c)+(${actions}a)+(${in_play.length}p)-8
+        }
+
         msg.channel.send({ embeds: [divinity_embed] });
     },
-    async divinity_end(msg, in_play, bet, random, modifier, coins, actions, turns, magic) {
+    async divinity_end(msg, db_user, in_play, bet, random, modifier, coins, actions, turns, magic) {
 
         let content = '';
         for (let coin of in_play) {
@@ -399,7 +402,10 @@ module.exports = {
 
         let stats = turns + coins + actions + in_play.length;
         divinity_embed.addFields({ name: `In Play`, value: `\`\`\`${content}\`\`\``, inline: false })
-        // .addFields({ name: `Mult`, value: `\`\`\`+${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)}x : In Play\n+${(stats > 8 ? (stats - 8) : 0)}x : Stats\n-${magic}x : Magic\n+${multiplier}x : Multiplier\`\`\``, inline: false }) // (${turns}t)+(${coins}c)+(${actions}a)+(${in_play.length}p)-8
+
+        if (db_user.dev_mode) {
+            divinity_embed.addFields({ name: `Mult`, value: `\`\`\`+${(in_play.length > 2 ? ((in_play.length - 2) * 1.5) : 0)}x : In Play\n+${(stats > 8 ? (stats - 8) : 0)}x : Stats\n-${magic * 0.5}x : Magic\n+${multiplier}x : Multiplier\`\`\``, inline: false }) // (${turns}t)+(${coins}c)+(${actions}a)+(${in_play.length}p)-8
+        }
 
         await this.finish_game(msg, outcome, winnings, bet);
 
