@@ -12,7 +12,7 @@ module.exports = {
     description: "tiercheck enemy teams from op.gg link",
     category: 'utility',
     admin: false,
-    type: "production",
+    type: "test",
     cooldown: 3,
     async execute(discord_client, msg, args, admin) {
         try {
@@ -50,7 +50,10 @@ module.exports = {
             try {
                 for (const player of players) {
                     await driver.get('https://metashift.gg/lookup');
-                    let textBox = await driver.findElement(By.css('input[type="text"]'));
+
+                    await driver.wait(() => driver.executeScript('return document.readyState').then(state => state === 'complete'), 30000); // Wait for page load
+
+                    let textBox = await driver.wait(until.elementLocated(By.name('riot_id')), 30000); // Wait for the element to be located
                     await textBox.sendKeys(player, Key.RETURN); // Replace with actual input
 
                     // Wait until text containing "Tier #" appears anywhere in the body
