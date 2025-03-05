@@ -50,7 +50,7 @@ module.exports = {
             try {
                 for (const player of players) {
                     await driver.get('https://metashift.gg/lookup');
-                    let textBox = await driver.findElement(By.name('riot_id')); // Change selector as needed
+                    let textBox = await driver.wait(until.elementLocated(By.css('[name="riot_id"]')), 10000);
                     await textBox.sendKeys(player, Key.RETURN); // Replace with actual input
 
                     // Wait until text containing "Tier #" appears anywhere in the body
