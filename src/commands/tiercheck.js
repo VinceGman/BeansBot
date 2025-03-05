@@ -12,7 +12,7 @@ module.exports = {
     description: "tiercheck enemy teams from op.gg link",
     category: 'utility',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 3,
     async execute(discord_client, msg, args, admin) {
         try {
