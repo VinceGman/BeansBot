@@ -71,7 +71,7 @@ module.exports = {
 
             console.log(player_tiers);
 
-            msg.channel.send(`${player_tiers}`);
+            msg.channel.send(`Tiers:\n${player_tiers}`);
         }
         catch (err) {
             console.log(err);
