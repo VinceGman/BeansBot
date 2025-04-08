@@ -98,6 +98,10 @@ module.exports = {
             //     cost = cost_per_unit * quantity;
             // }
 
+            let current_realized_gain = cost - (user_stocks[stock_symbol].per * quantity);
+            user_stocks.realized_gain = user_stocks.realized_gain ?? 0;
+            user_stocks.realized_gain += current_realized_gain;
+
             user_stocks[stock_symbol].count -= quantity;
             if (user_stocks[stock_symbol].count == 0) {
                 delete user_stocks[stock_symbol];
@@ -109,16 +113,17 @@ module.exports = {
                 stocks: user_stocks,
             });
 
-            let buy_embed = new EmbedBuilder()
+            let sell_embed = new EmbedBuilder()
                 .setTitle(`Order Filled - [Sell]`)
                 .setColor('#37914f')
                 .addFields({ name: 'Price/Unit', value: `${comma_adder.add(cost_per_unit.toFixed(2))}`, inline: true })
                 .addFields({ name: `${stock_symbol}`, value: `${quantity}`, inline: true })
                 .addFields({ name: 'Total Earned', value: `${comma_adder.add(cost.toFixed(2))}`, inline: false })
+                .addFields({ name: 'Realized Gain', value: `${comma_adder.add(current_realized_gain.toFixed(2))}`, inline: false })
                 .setFooter({ text: `${msg.author.username}` })
                 .setTimestamp();
 
-            msg.channel.send({ embeds: [buy_embed] });
+            msg.channel.send({ embeds: [sell_embed] });
             return;
         }
         catch (err) {
