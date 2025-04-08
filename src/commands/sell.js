@@ -10,7 +10,6 @@ const comma_adder = require('commas');
 
 module.exports = {
     name: 'sell',
-    alias: ['testsell'],
     description: "sell stocks",
     category: 'stocks',
     admin: false,
