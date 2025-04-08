@@ -44,7 +44,7 @@ module.exports = {
 
         let user = await require('../utility/queries').user(msg.guildId, id);
         let user_stocks = user.stocks ? user.stocks : {};
-        let realized_gain = +user_stocks.realized_gain ?? 0;
+        let realized_gain = +(user_stocks.realized_gain) ?? 0;
         delete user_stocks.realized_gain;
 
         let portfolio_embed = new EmbedBuilder()
