@@ -70,13 +70,14 @@ module.exports = {
                 }
             }
 
-            if (Object.keys(user_stocks).length === 0) {
+            if (Object.keys(user_stocks).filter(key => key !== 'realized_gain').length === 0) {
                 portfolio_embed.addFields({ name: 'No Stocks', value: `[none] -> **+stocks**`, inline: false });
             }
             else {
                 portfolio_embed.addFields({ name: 'Combined Earnings', value: `${comma_adder.add(port_earnings.toFixed(2))}`, inline: false });
             }
 
+            portfolio_embed.addFields({ name: `Realized Gain`, value: `${comma_adder.add((user_stocks.realized_gain ?? 0).toFixed(2))} credits`, inline: false });
 
             msg.channel.send({ embeds: [portfolio_embed] });
             return;
@@ -96,7 +97,7 @@ module.exports = {
                 }
             }
 
-            if (Object.keys(user_stocks).length === 0) {
+            if (Object.keys(user_stocks).filter(key => key !== 'realized_gain').length === 0) {
                 portfolio_embed.addFields({ name: 'No Stocks', value: `[none] -> **+stocks**`, inline: false });
             }
             else {
@@ -105,6 +106,8 @@ module.exports = {
                 portfolio_embed.addFields({ name: `Percent Change`, value: `${((total_current_price - total_purchase_price) / total_purchase_price * 100).toFixed(2)}%`, inline: false });
                 portfolio_embed.addFields({ name: `Earnings`, value: `${comma_adder.add((total_current_price - total_purchase_price).toFixed(2))} credits`, inline: false });
             }
+
+            portfolio_embed.addFields({ name: `Realized Gain`, value: `${comma_adder.add((user_stocks.realized_gain ?? 0).toFixed(2))} credits`, inline: false });
 
             msg.channel.send({ embeds: [portfolio_embed] });
             return;
