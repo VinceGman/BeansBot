@@ -98,8 +98,8 @@ module.exports = {
             // }
 
             let current_realized_gain = cost - (user_stocks[stock_symbol].per * quantity);
-            user_stocks.realized_gain = user_stocks.realized_gain ?? 0;
-            user_stocks.realized_gain += current_realized_gain;
+            user_stocks.realized_gain = +user_stocks.realized_gain ?? 0;
+            user_stocks.realized_gain = `${(user_stocks.realized_gain + current_realized_gain).toFixed(2)}`;
 
             user_stocks[stock_symbol].count -= quantity;
             if (user_stocks[stock_symbol].count == 0) {
