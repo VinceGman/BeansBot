@@ -44,6 +44,8 @@ module.exports = {
 
         let user = await require('../utility/queries').user(msg.guildId, id);
         let user_stocks = user.stocks ? user.stocks : {};
+        let realized_gain = user_stocks.realized_gain ?? 0;
+        delete user_stocks.realized_gain;
 
         let portfolio_embed = new EmbedBuilder()
             .setTitle(`${user.pref_name ?? discord_user.nickname ?? discord_user.displayName}`)
@@ -77,7 +79,7 @@ module.exports = {
                 portfolio_embed.addFields({ name: 'Combined Earnings', value: `${comma_adder.add(port_earnings.toFixed(2))}`, inline: false });
             }
 
-            portfolio_embed.addFields({ name: `Realized Gain`, value: `${comma_adder.add((user_stocks.realized_gain ?? 0).toFixed(2))} credits`, inline: false });
+            portfolio_embed.addFields({ name: `Realized Gain`, value: `${comma_adder.add((realized_gain).toFixed(2))} credits`, inline: false });
 
             msg.channel.send({ embeds: [portfolio_embed] });
             return;
@@ -107,7 +109,7 @@ module.exports = {
                 portfolio_embed.addFields({ name: `Earnings`, value: `${comma_adder.add((total_current_price - total_purchase_price).toFixed(2))} credits`, inline: false });
             }
 
-            portfolio_embed.addFields({ name: `Realized Gain`, value: `${comma_adder.add((user_stocks.realized_gain ?? 0).toFixed(2))} credits`, inline: false });
+            portfolio_embed.addFields({ name: `Realized Gain`, value: `${comma_adder.add((realized_gain).toFixed(2))} credits`, inline: false });
 
             msg.channel.send({ embeds: [portfolio_embed] });
             return;
