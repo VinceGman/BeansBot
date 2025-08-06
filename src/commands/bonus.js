@@ -42,7 +42,7 @@ module.exports = {
         bonus.lastUsedYear = today.getFullYear();
 
         try {
-            if (msg.content.toLowerCase().startsWith('+stimulus')) {
+            if (msg.content.toLowerCase().startsWith('+stim')) {
                 bonus.method = 'stimulus';
                 await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({ bonus: bonus }, { merge: true });
                 await require('../utility/credits').refund(discord_client, msg, msg.author.id, stimulus_payout); // credits manager refunds on error
