@@ -6,7 +6,7 @@ const raise_payout = 2500;
 
 module.exports = {
     name: 'bonus',
-    alias: ['stimulus', 'raise'], // you cant add aliases
+    alias: ['stimulus', 'raise', "+stim"], // you cant add aliases
     description: "claim a bonus once a month",
     category: 'credits',
     admin: false,
@@ -42,7 +42,7 @@ module.exports = {
         bonus.lastUsedYear = today.getFullYear();
 
         try {
-            if (msg.content.toLowerCase().startsWith('+stim')) {
+            if (msg.content.toLowerCase().startsWith('+stimulus') || msg.content.toLowerCase().startsWith('+stim')) {
                 bonus.method = 'stimulus';
                 await db.doc(`servers/${msg.guildId}/members/${msg.author.id}`).set({ bonus: bonus }, { merge: true });
                 await require('../utility/credits').refund(discord_client, msg, msg.author.id, stimulus_payout); // credits manager refunds on error
