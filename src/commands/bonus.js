@@ -6,7 +6,7 @@ const raise_payout = 2500;
 
 module.exports = {
     name: 'bonus',
-    alias: ['stimulus', 'raise', "+stim"], // you cant add aliases
+    alias: ['stimulus', 'raise', "stim"], // you cant add aliases
     description: "claim a bonus once a month",
     category: 'credits',
     admin: false,
