@@ -119,7 +119,7 @@ module.exports = {
 
                 if (winners.includes(index) && winners.length == 1) {
                     win_or_loss = 'Won';
-                    winnings = (bet * 2); // + ((outcomes[index] - 7) * (bet / 5)) + ((highcard != index ? 1 : 0) * (bet / 5));
+                    winnings = (bet * 1.75); // + ((outcomes[index] - 7) * (bet / 5)) + ((highcard != index ? 1 : 0) * (bet / 5));
                 }
 
                 draw_end_embed.addFields({ name: `Result: ${win_or_loss}`, value: `Winnings: ${comma_adder.add(Math.trunc(winnings))}`, inline: false });
