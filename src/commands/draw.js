@@ -13,7 +13,7 @@ module.exports = {
     description: "pick the highest color",
     category: 'gambling',
     admin: false,
-    type: "test",
+    type: "production",
     cooldown: 15,
     async execute(discord_client, msg, args, admin) {
         try {
