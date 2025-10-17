@@ -137,7 +137,7 @@ module.exports = {
                 }
 
                 let roll = false;
-                if (['str', 'end', 'agl', 'mna', 'lck'].includes(individualized_content.toLowerCase())) {
+                if (['str', 'end', 'agl', 'mna', 'lck', 'std'].includes(individualized_content.toLowerCase())) {
                     roll = true;
                     let stat = char.stats[individualized_content.toLowerCase()];
                     if (stat && !isNaN(stat)) {
